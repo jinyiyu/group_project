@@ -7,6 +7,10 @@ const connectDB = async () => {
     const MONGO_URI =
       process.env.MONGO_URI || `mongodb://127.0.0.1:27017/${DB_NAME}`;
 
+    if (!DB_NAME) {
+      throw new Error("DB_NAME is not defined in environment variables.");
+    }
+
     await mongoose.connect(MONGO_URI);
     console.log(
       `[INFO]: Successfully connected to database | ${process.env.DB_NAME}`
