@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const User = require("./models/userSchema");
 const seedUsers = require("./data/userData");
-const EmergContact = require("./models/emergContactSchema");
-const seedEmergContacts = require("./data/emergContactData");
+const seedDocument = require("./data/documentData");
+const Document = require("./models/documentSchema");
 
 const start = async () => {
   try {
@@ -18,16 +18,13 @@ const start = async () => {
 const seedDatabase = async () => {
   try {
     await User.deleteMany({});
-    await EmergContact.deleteMany({});
+    await Document.deleteMany({});
     console.log("Existing data deleted successfully.");
 
     const createdUsers = await User.insertMany(seedUsers);
+    const createdDocument = await Document.insertMany(seedDocument);
     console.log("Users seeded successfully");
-
-    const createdEmergContacts = await EmergContact.insertMany(
-      seedEmergContacts
-    );
-    console.log("Emergency contacts seeded successfully");
+    console.log("Document seeded successfully");
   } catch (err) {
     console.error("Error seeding database:", err);
   }

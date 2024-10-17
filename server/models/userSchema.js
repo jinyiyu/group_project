@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Define the ContactInfo Schema as a subdocument
 const contactInfoSchema = new Schema({
   currentAddress: {
     apt: {
@@ -74,6 +73,61 @@ const userProfileSchema = new Schema({
   contactInfo: contactInfoSchema,
 });
 
+const driverLicenseSchema = new mongoose.Schema({
+  number: {
+    type: String,
+    required: true,
+  },
+  expirationDate: {
+    type: Date,
+    required: true,
+  },
+});
+
+const employmentSchema = new mongoose.Schema({
+  status: {
+    type: String,
+    enum: ["GC", "Citizen", "Visa"],
+    required: true,
+  },
+  start: {
+    type: Date,
+    required: true,
+  },
+  end: {
+    type: Date,
+    default: null,
+  },
+});
+
+const ContactSchema = new Schema({
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  middleName: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  relationship: {
+    type: String,
+    required: true,
+  },
+});
+
 // Define the User Schema
 const userSchema = new Schema({
   userName: {
@@ -94,10 +148,7 @@ const userSchema = new Schema({
     type: String,
     default: "not started",
   },
-  driverLicense: {
-    type: Schema.Types.ObjectId,
-    ref: "DriverLicense",
-  },
+  driverLicense: driverLicenseSchema,
   house: {
     type: Schema.Types.ObjectId,
     ref: "House",
@@ -109,20 +160,9 @@ const userSchema = new Schema({
       ref: "Comment",
     },
   ],
-  employment: {
-    type: Schema.Types.ObjectId,
-    ref: "Employment",
-  },
-  reference: {
-    type: Schema.Types.ObjectId,
-    ref: "Contact",
-  },
-  emergencyContact: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Contact",
-    },
-  ],
+  employment: employmentSchema,
+  reference: ContactSchema,
+  emergencyContact: ContactSchema,
   cellPhone: {
     type: String,
   },
@@ -132,12 +172,6 @@ const userSchema = new Schema({
   nextStep: {
     type: String,
   },
-  document: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Document",
-    },
-  ],
   citizenshipStatus: {
     type: String,
     required: true,
