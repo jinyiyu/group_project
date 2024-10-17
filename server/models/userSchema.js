@@ -1,37 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const contactInfoSchema = new Schema({
-  currentAddress: {
-    apt: {
-      type: String,
-      default: "",
-    },
-    strName: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
-    zip: {
-      type: String,
-      required: true,
-    },
-  },
-  cell: {
-    type: String,
-  },
-  work: {
-    type: String,
-  },
-});
-
 const userProfileSchema = new Schema({
   firstName: {
     type: String,
@@ -65,7 +34,38 @@ const userProfileSchema = new Schema({
     type: String,
     default: "placeholder.jpg",
   },
-  contactInfo: contactInfoSchema,
+});
+
+const addressSchema = new Schema({
+  apt: {
+    type: String,
+    default: "",
+  },
+  strName: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  zip: {
+    type: String,
+    required: true,
+  },
+});
+
+const contactInfoSchema = new Schema({
+  cellPhone: {
+    type: String,
+  },
+  workPhone: {
+    type: String,
+  },
 });
 
 const driverLicenseSchema = new mongoose.Schema({
@@ -123,6 +123,20 @@ const ContactSchema = new Schema({
   },
 });
 
+const carSchema = new mongoose.Schema({
+  model: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    required: true,
+  },
+  make: {
+    type: String,
+  },
+});
+
 // Define the User Schema
 const userSchema = new Schema({
   userName: {
@@ -134,11 +148,16 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  userProfile: userProfileSchema,
   role: {
     type: String,
     default: "employee",
   },
+  userProfile: userProfileSchema,
+  address: addressSchema,
+  contactInfo: contactInfoSchema,
+  employment: employmentSchema,
+  emergencyContact: ContactSchema,
+  reference: ContactSchema,
   onboardStatus: {
     type: String,
     default: "not started",
@@ -155,18 +174,10 @@ const userSchema = new Schema({
       ref: "Comment",
     },
   ],
-  employment: employmentSchema,
-  reference: ContactSchema,
-  emergencyContact: ContactSchema,
-  cellPhone: {
-    type: String,
-  },
-  workPhone: {
-    type: String,
-  },
   nextStep: {
     type: String,
   },
+  cars: [carSchema],
 });
 
 module.exports = mongoose.model("User", userSchema);
