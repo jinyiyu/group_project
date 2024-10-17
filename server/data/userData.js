@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const seedUsers = [
   {
-    userName: "john_doe",
+    userName: "john_doeeee",
     password: "securePassword123",
     userProfile: {
       firstName: "John",
       lastName: "Doe",
       middleName: "A",
       preferredName: "Johnny",
-      email: "john.doe@example.com",
+      email: "john.doeeee@example.com",
       SSN: "123-45-6789",
       DoB: new Date("1990-01-01"),
       gender: "Male",
@@ -44,7 +44,7 @@ const seedUsers = [
       lastName: "Doe",
       middleName: "B",
       phone: "098-765-4321",
-      email: "jane.do8423e@example.com",
+      email: "jane.do842we3e@example.com",
       relationship: "Sister",
     },
     emergencyContact: {
@@ -52,7 +52,7 @@ const seedUsers = [
       lastName: "Doe",
       middleName: "A",
       phone: "123-456-7890",
-      email: "john.doe@example.com",
+      email: "john.dowerfde@example.com",
       relationship: "Brother",
     },
     cellPhone: "123-456-7890",
@@ -60,14 +60,14 @@ const seedUsers = [
     nextStep: "Awaiting documents",
   },
   {
-    userName: "jane_doe",
+    userName: "jane_doewww",
     password: "securePassword456",
     userProfile: {
       firstName: "Jane",
       lastName: "Doe",
       middleName: "B",
       preferredName: "Janie",
-      email: "jane.doe3@example.com",
+      email: "jane.doe3wwsdfw@example.com",
       SSN: "987-65-4321",
       DoB: new Date("1992-02-02"),
       gender: "Female",
@@ -102,7 +102,7 @@ const seedUsers = [
       lastName: "Doe",
       middleName: "B",
       phone: "098-765-4321",
-      email: "jane.do654e@example.com",
+      email: "jane.do65dfe4e@example.com",
       relationship: "Sister",
     },
     emergencyContact: {
@@ -110,7 +110,7 @@ const seedUsers = [
       lastName: "Doe",
       middleName: "B",
       phone: "098-765-4321",
-      email: "jane.doe@example.com",
+      email: "jane.doexcv@example.com",
       relationship: "Sister",
     },
     cellPhone: "321-654-0987",
