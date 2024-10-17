@@ -14,7 +14,6 @@ const seedUsers = [
       DoB: new Date("1990-01-01"),
       gender: "Male",
       profilePicture: "john_picture.jpg",
-      citizenshipStatus: "Citizen",
       contactInfo: {
         currentAddress: {
           apt: "101",
@@ -59,7 +58,6 @@ const seedUsers = [
     cellPhone: "123-456-7890",
     workPhone: "098-765-4321",
     nextStep: "Awaiting documents",
-    citizenshipStatus: "Citizen",
   },
   {
     userName: "jane_doe",
@@ -74,7 +72,6 @@ const seedUsers = [
       DoB: new Date("1992-02-02"),
       gender: "Female",
       profilePicture: "jane_picture.jpg",
-      citizenshipStatus: "Green Card",
       contactInfo: {
         currentAddress: {
           apt: "202",
@@ -119,7 +116,6 @@ const seedUsers = [
     cellPhone: "321-654-0987",
     workPhone: "789-012-3456",
     nextStep: "Awaiting documents",
-    citizenshipStatus: "Green Card",
   },
 ];
 

@@ -65,11 +65,6 @@ const userProfileSchema = new Schema({
     type: String,
     default: "placeholder.jpg",
   },
-  citizenshipStatus: {
-    type: String,
-    required: true,
-    enum: ["Citizen", "Green Card", "Non-citizen"],
-  },
   contactInfo: contactInfoSchema,
 });
 
@@ -171,11 +166,6 @@ const userSchema = new Schema({
   },
   nextStep: {
     type: String,
-  },
-  citizenshipStatus: {
-    type: String,
-    required: true,
-    enum: ["Citizen", "Green Card", "Non-citizen"],
   },
 });
 
