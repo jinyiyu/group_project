@@ -1,5 +1,13 @@
+import EmailForm from "./utils/EmailJs";
+
 function App() {
-  return <>Hi</>;
+  return (
+    <>
+      <div>
+        <EmailForm />
+      </div>
+    </>
+  );
 }
 
 export default App;

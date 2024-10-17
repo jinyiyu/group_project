@@ -4,7 +4,6 @@ import emailjs from "@emailjs/browser";
 const EmailForm = () => {
   // sendFrom: email, sendTo: email, content: text
   const [formData, setFormData] = useState({
-    sendFrom: "",
     sendTo: "",
     content: "",
   });
@@ -22,7 +21,6 @@ const EmailForm = () => {
     e.preventDefault();
 
     const templateParams = {
-      from_email: formData.sendFrom,
       to_email: formData.sendTo,
       message: formData.content,
     };
@@ -49,16 +47,6 @@ const EmailForm = () => {
 
   return (
     <form onSubmit={sendEmail}>
-      <div>
-        <label>From Email:</label>
-        <input
-          type="email"
-          name="sendFrom"
-          value={formData.sendFrom}
-          onChange={handleChange}
-          required
-        />
-      </div>
       <div>
         <label>To Email:</label>
         <input
