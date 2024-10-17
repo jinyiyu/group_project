@@ -18,7 +18,6 @@ const start = async () => {
 const seedDatabase = async () => {
   try {
     await User.deleteMany({});
-
     await EmergContact.deleteMany({});
     console.log("Existing data deleted successfully.");
 
