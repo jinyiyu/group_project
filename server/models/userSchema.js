@@ -1,6 +1,79 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// Define the ContactInfo Schema as a subdocument
+const contactInfoSchema = new Schema({
+  currentAddress: {
+    apt: {
+      type: String,
+      default: "",
+    },
+    strName: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    zip: {
+      type: String,
+      required: true,
+    },
+  },
+  cell: {
+    type: String,
+  },
+  work: {
+    type: String,
+  },
+});
+
+const userProfileSchema = new Schema({
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  middleName: {
+    type: String,
+  },
+  preferredName: {
+    type: String,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  SSN: {
+    type: String,
+  },
+  DoB: {
+    type: Date,
+  },
+  gender: {
+    type: String,
+  },
+  profilePicture: {
+    type: String,
+    default: "placeholder.jpg",
+  },
+  citizenshipStatus: {
+    type: String,
+    required: true,
+    enum: ["Citizen", "Green Card", "Non-citizen"],
+  },
+  contactInfo: contactInfoSchema,
+});
+
 // Define the User Schema
 const userSchema = new Schema({
   userName: {
@@ -12,11 +85,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  userProfile: {
-    type: Schema.Types.ObjectId,
-    ref: "UserProfile",
-    required: true,
-  },
+  userProfile: userProfileSchema,
   role: {
     type: String,
     default: "employee",
@@ -48,16 +117,12 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Contact",
   },
-  emergency: [
+  emergencyContact: [
     {
       type: Schema.Types.ObjectId,
       ref: "Contact",
     },
   ],
-  addr: {
-    type: Schema.Types.ObjectId,
-    ref: "Address",
-  },
   cellPhone: {
     type: String,
   },
