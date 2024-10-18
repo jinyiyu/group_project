@@ -8,9 +8,9 @@ const {
 } = require("./aws-s3");
 const assert = require("assert");
 
-async function testListFiles(bucketName) {
+async function testListFiles() {
   try {
-    const files = await listFiles(bucketName);
+    const files = await listFiles();
     assert(Array.isArray(files), "Expected listFiles to return an array");
     console.log("Test passed: listFiles returns an array");
   } catch (error) {
@@ -37,8 +37,8 @@ async function testCreateBucket(bucketName) {
   }
 }
 
-//uploadFile("bfgp", "testupload/groupproject.pdf", "../../../Group_Project.pdf");
-//deleteFile("bfgp", "/testupload/groupproject.pdf");
-//downloadFile("bfgp", "testupload/groupproject.pdf", "Group_Project.pdf");
-testListFiles("bfgp");
-testListBuckets();
+// uploadFile("update.png", "update.png");
+//deleteFile("/testupload/groupproject.pdf");
+// downloadFile("testupload/groupproject.pdf", "Group_Project.pdf");
+// testListFiles();
+// testListBuckets();
