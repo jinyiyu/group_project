@@ -6,7 +6,7 @@ const baseUrl = "https://bfgp.s3.amazonaws.com"
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
-  const userId = "644191c7ed47a8c70b158fdc";
+  const userId = "6711ed1baa0764012569e17d";
   const { type } = req.query;
   const file = req.files.file;
 
@@ -36,7 +36,7 @@ const updateFile = async(req, res) => {
             uploadedAt: Date.now(),
           },
         },
-        { new: true }
+        { new: true, upsert: true }
       ).lean().exec();
     }
     return res.status(200).json({updated});
@@ -54,9 +54,9 @@ const fetchFileUrls = async (req, res) => {
   try {
     const user = await User.findById(userId).lean().exec();
     files["profilePicture"] = user.userProfile.profilePicture;
-    files["driverLicense"] = user.car.url; // TODO-ldl
+    // files["driverLicense"] = user.car.url; // TODO-ldl
 
-    const optFiles = await Document.find({ userId: userId }).lean().exec();
+    const optFiles = await Document.find({ user: userId }).lean().exec();
     optFiles.map((file) => {
       files[file.documentType] = file.fileUrl;
     })

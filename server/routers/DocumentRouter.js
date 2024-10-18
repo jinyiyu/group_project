@@ -1,10 +1,11 @@
 const express = require("express");
-const {updateFile} = require("../controllers/DocumentController.js")
+const {updateFile, fetchFileUrls} = require("../controllers/DocumentController.js")
 
 const DocumentRouter = express.Router();
 
 DocumentRouter
-  .put("/upload", updateFile);
+  .put("/upload", updateFile)
+  .get("/fetchUrls", fetchFileUrls);
 ;
 
 module.exports = DocumentRouter;
