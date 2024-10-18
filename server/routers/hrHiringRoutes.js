@@ -11,6 +11,8 @@ router.put("/applications/:userId", hrHiringController.updateApplicationStatus);
 
 // give feedback is put on hold
 // router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
-// router.get("/report", hrHiringController.getReport);
+
+// For testing purposes
+router.get("/report", hrHiringController.getReport);
 
 module.exports = router;
