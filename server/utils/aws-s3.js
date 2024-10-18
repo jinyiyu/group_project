@@ -1,9 +1,15 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
 
-// Load AWS credentials from a JSON file
-const credentialsPath = path.join(__dirname, "aws-credentials.json");
+const credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+};
+
+AWS.config.update(credentials);
 AWS.config.loadFromPath(credentialsPath);
 
 const s3 = new AWS.S3();
