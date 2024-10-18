@@ -7,8 +7,9 @@ const credentialsPath = path.join(__dirname, "aws-credentials.json");
 AWS.config.loadFromPath(credentialsPath);
 
 const s3 = new AWS.S3();
+const bucketName = "bfgp";
 
-const downloadFile = async (bucketName, key, downloadPath) => {
+const downloadFile = async (key, downloadPath) => {
   const params = {
     Bucket: bucketName,
     Key: key,
@@ -23,8 +24,8 @@ const downloadFile = async (bucketName, key, downloadPath) => {
   }
 };
 
-const uploadFile = async (bucketName, key, filePath) => {
-  const fileContent = fs.readFileSync(filePath);
+const uploadFile = async (key, fileContent) => {
+  // const fileContent = fs.readFileSync(filePath);
 
   const params = {
     Bucket: bucketName,
@@ -39,7 +40,7 @@ const uploadFile = async (bucketName, key, filePath) => {
     console.error(`Error uploading file: ${error.message}`);
   }
 };
-const deleteFile = async (bucketName, key) => {
+const deleteFile = async (key) => {
   const params = {
     Bucket: bucketName,
     Key: key,
@@ -52,7 +53,7 @@ const deleteFile = async (bucketName, key) => {
   }
 };
 
-const listFiles = async (bucketName) => {
+const listFiles = async () => {
   const params = {
     Bucket: bucketName,
   };

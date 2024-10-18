@@ -5,7 +5,11 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const dotenv =require("dotenv");
+const fileUpload = require('express-fileupload');
+
 const UserRouter = require("./routers/UserRouter.js");
+const DocumentRouter = require("./routers/DocumentRouter.js");
+
 
 // reads env variables
 dotenv.config();
@@ -15,12 +19,14 @@ const PORT = process.env.PORT || 3000;
 
 // third-party tools
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
 
 // routers
 app.use("/user", UserRouter);
+app.use("/document", DocumentRouter);
 
 // 
 app.get("/", (req, res) => {

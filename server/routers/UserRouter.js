@@ -1,9 +1,10 @@
-import express from "express";
-
+const express = require("express");
+const {fetchUserData, updateUserData} = require("../controllers/UserController.js")
 const UserRouter = express.Router();
 
 UserRouter
-  .get("/info", )
+  .get("/info", fetchUserData)
+  .put("/update", updateUserData);
 ;
 
-export default UserRouter;
+module.exports = UserRouter;
