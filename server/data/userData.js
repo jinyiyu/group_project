@@ -53,7 +53,7 @@ const seedUsers = [
       email: "jane.do8@example.com",
       relationship: "Sister",
     },
-    house: new mongoose.Types.ObjectId(), // Replace with valid ObjectId if needed
+    house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
     cars: [
@@ -116,7 +116,7 @@ const seedUsers = [
       email: "jane.do6@example.com",
       relationship: "Sister",
     },
-    house: new mongoose.Types.ObjectId(), // Replace with valid ObjectId if needed
+    house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
     cars: [
