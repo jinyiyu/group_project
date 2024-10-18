@@ -29,8 +29,20 @@ const seedDatabase = async () => {
 
     console.log("Existing data deleted successfully.");
 
+    const createdHouses = await House.insertMany(seedHouses);
+
+    // Assign house IDs to users (employees) - Hieu Tran
+    seedUsers[0].house = createdHouses[0]._id;
+    seedUsers[1].house = createdHouses[1]._id;
+
     const createdUsers = await User.insertMany(seedUsers);
     const userIds = createdUsers.map((user) => user._id);
+
+    // Update seedDocument with actual user IDs - Hieu Tran edit
+    const documentsWithUsers = seedDocument.map((document, index) => ({
+      ...document,
+      user: userIds[index % userIds.length],
+    }));
 
     const reportsWithUsers = seedReports.map((report, index) => ({
       ...report,
@@ -41,9 +53,9 @@ const seedDatabase = async () => {
       })),
     }));
 
-    const createdDocument = await Document.insertMany(seedDocument);
+    const createdDocument = await Document.insertMany(documentsWithUsers);
     const createdReports = await Report.insertMany(reportsWithUsers);
-    const createdHouses = await House.insertMany(seedHouses);
+
     console.log("Users seeded successfully");
     console.log("Document seeded successfully");
     console.log("Reports seeded successfully.");
