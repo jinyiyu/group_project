@@ -69,6 +69,10 @@ const contactInfoSchema = new Schema({
 });
 
 const driverLicenseSchema = new mongoose.Schema({
+  licenseCopy: {
+    type: String,
+    default: "placeholder.jpg",
+  },
   number: {
     type: String,
     required: true,
