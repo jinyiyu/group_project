@@ -4,12 +4,12 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const dotenv =require("dotenv");
-const fileUpload = require('express-fileupload');
+const dotenv = require("dotenv");
+const fileUpload = require("express-fileupload");
 
 const UserRouter = require("./routers/UserRouter.js");
 const DocumentRouter = require("./routers/DocumentRouter.js");
-
+const employeeRouter = require("./routers/employeeRouter.js");
 
 // reads env variables
 dotenv.config();
@@ -28,7 +28,9 @@ app.use(morgan(":method :url :status :response-time ms"));
 app.use("/user", UserRouter);
 app.use("/document", DocumentRouter);
 
-// 
+app.use("/employee", employeeRouter);
+
+//
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
@@ -46,7 +48,7 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error('Failed to connect to the database', err);
+    console.error("Failed to connect to the database", err);
     process.exit(1); // Exit with failure
   }
 };
