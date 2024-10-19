@@ -53,7 +53,9 @@ const fetchFileUrls = async (req, res) => {
 
   try {
     const user = await User.findById(userId).lean().exec();
-    files["profilePicture"] = user.userProfile.profilePicture;
+    if (user.userProfile.profilePicture) {
+      files["profilePicture"] = user.userProfile.profilePicture;
+    }
     // files["driverLicense"] = user.car.url; // TODO-ldl
 
     const optFiles = await Document.find({ user: userId }).lean().exec();
