@@ -1,8 +1,7 @@
 const express = require("express");
 const {
   getProfile,
-  searchEmployees,
-  getEmployeesPendingDoc,
+  getEmployeesPendingDocs,
   updateDocStatus,
   getVisaEmployees,
 } = require("../controllers/employeeController.js");
@@ -11,9 +10,8 @@ const employeeRouter = express.Router();
 
 employeeRouter
   .get("/profile", getProfile)
-  .get("/search", searchEmployees)
-  .get("/pending-docs", getEmployeesPendingDoc)
-  .post("/update-doc-status", updateDocStatus)
+  .get("/pending-docs", getEmployeesPendingDocs)
+  .put("/update", updateDocStatus)
   .get("/visa-employees", getVisaEmployees);
 
 module.exports = employeeRouter;
