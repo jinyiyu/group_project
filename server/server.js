@@ -6,13 +6,13 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const fileUpload = require("express-fileupload");
+dotenv.config();
 
 const UserRouter = require("./routers/UserRouter.js");
 const DocumentRouter = require("./routers/DocumentRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
-
-// reads env variables
-dotenv.config();
+const hrHiringRoutes = require("./routers/hrHiringRoutes");
+const hrHousingRoutes = require("./routers/hrHousingRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,9 +27,9 @@ app.use(morgan(":method :url :status :response-time ms"));
 // routers
 app.use("/user", UserRouter);
 app.use("/document", DocumentRouter);
-
 app.use("/employee", employeeRouter);
-
+app.use("/hr/hiring", hrHiringRoutes);
+app.use("/hr/housing", hrHousingRoutes);
 //
 app.get("/", (req, res) => {
   res.send("Server is running!");
