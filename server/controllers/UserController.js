@@ -16,7 +16,7 @@ const fetchUserData = async(req, res) => {
     }
 
     const user = await User.findById(userId).select(filter).lean().exec();
-    return res.status(200).json(user);
+    return res.status(200).json({user});
   }
   catch (error) {
     res.status(500).json({ message: `${error}` });
@@ -42,7 +42,7 @@ const updateUserData = async(req, res) => {
       return res.status(500).json({ message: `DB update error for ${userId, data}` });
     }
 
-    return res.status(200).json(updatedUser);
+    return res.status(200).json({updatedUser});
   }
   catch (error) {
     res.status(500).json({ message: `${error}` });
