@@ -102,13 +102,13 @@ const login = async (req, res) => {
   const { username, password } = req.body;
   try {
       // check if user exists
-      const user = await User.findOne({username});
+      const user = await User.findOne({userName:username}).lean().exec();
       if (!user) {
           return res
               .status(401)
               .json({ message: "Invalid username or password" });
       }
-
+      // console.log(username, password, user);
       // check if password is correct
       const isPasswordCorrect = await argon2.verify(user.password, password);
       if (!isPasswordCorrect) {
