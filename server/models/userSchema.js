@@ -170,7 +170,7 @@ const userSchema = new Schema({
   address: addressSchema,
   contactInfo: contactInfoSchema,
   employment: employmentSchema,
-  emergencyContact: ContactSchema,
+  emergencyContact: [ContactSchema],
   reference: ContactSchema,
   onboardStatus: {
     type: String,

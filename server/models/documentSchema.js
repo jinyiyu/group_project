@@ -9,7 +9,7 @@ const documentSchema = new mongoose.Schema({
   documentType: {
     type: String,
     required: true,
-    enum: ["OPT receipt", "OPT EAD", "I-983", "I-20"],
+    enum: ["OPT receipt", "OPT EAD", "I-983", "I-20", "carLicense"],
   },
   fileUrl: {
     type: String,
