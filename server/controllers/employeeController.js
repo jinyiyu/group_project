@@ -82,4 +82,8 @@ const searchEmployees = async (req, res) => {
   }
 };
 
+const getEmployeesPendingDocs = async (req, res) => {};
+const updateDocStatus = async (req, res) => {};
+const getVisaEmployees = async (req, res) => {};
+
 module.exports = { getProfile, searchEmployees };
