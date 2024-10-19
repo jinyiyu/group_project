@@ -1,12 +1,23 @@
-const AWS = require("aws-sdk");
+const {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  ListObjectsV2Command,
+  ListBucketsCommand,
+  CreateBucketCommand,
+} = require("@aws-sdk/client-s3");
 const fs = require("fs");
-const path = require("path");
+require("dotenv").config();
 
-// Load AWS credentials from a JSON file
-const credentialsPath = path.join(__dirname, "aws-credentials.json");
-AWS.config.loadFromPath(credentialsPath);
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
-const s3 = new AWS.S3();
 const bucketName = "bfgp";
 
 const downloadFile = async (key, downloadPath) => {
@@ -16,8 +27,9 @@ const downloadFile = async (key, downloadPath) => {
   };
 
   try {
-    const data = await s3.getObject(params).promise();
-    fs.writeFileSync(downloadPath, data.Body);
+    const data = await s3Client.send(new GetObjectCommand(params));
+    const body = await streamToBuffer(data.Body);
+    fs.writeFileSync(downloadPath, body);
     console.log(`File downloaded successfully to ${downloadPath}`);
   } catch (error) {
     console.error(`Error downloading file: ${error.message}`);
@@ -25,8 +37,6 @@ const downloadFile = async (key, downloadPath) => {
 };
 
 const uploadFile = async (key, fileContent) => {
-  // const fileContent = fs.readFileSync(filePath);
-
   const params = {
     Bucket: bucketName,
     Key: key,
@@ -34,19 +44,21 @@ const uploadFile = async (key, fileContent) => {
   };
 
   try {
-    await s3.upload(params).promise();
+    await s3Client.send(new PutObjectCommand(params));
     console.log(`File uploaded successfully to ${bucketName}/${key}`);
   } catch (error) {
     console.error(`Error uploading file: ${error.message}`);
   }
 };
+
 const deleteFile = async (key) => {
   const params = {
     Bucket: bucketName,
     Key: key,
   };
+
   try {
-    await s3.deleteObject(params).promise();
+    await s3Client.send(new DeleteObjectCommand(params));
     console.log(`File deleted successfully from ${bucketName}/${key}`);
   } catch (error) {
     console.error(`Error deleting file: ${error.message}`);
@@ -57,9 +69,9 @@ const listFiles = async () => {
   const params = {
     Bucket: bucketName,
   };
-  console.log("params", params);
+
   try {
-    const data = await s3.listObjectsV2(params).promise();
+    const data = await s3Client.send(new ListObjectsV2Command(params));
     const files = data.Contents.map((item) => item.Key);
     console.log(`Files in bucket ${bucketName}:`, files);
     return files;
@@ -70,7 +82,7 @@ const listFiles = async () => {
 
 const listBuckets = async () => {
   try {
-    const data = await s3.listBuckets().promise();
+    const data = await s3Client.send(new ListBucketsCommand());
     const buckets = data.Buckets.map((bucket) => bucket.Name);
     console.log("Buckets:", buckets);
     return buckets;
@@ -85,11 +97,20 @@ const createBucket = async (bucketName) => {
   };
 
   try {
-    await s3.createBucket(params).promise();
+    await s3Client.send(new CreateBucketCommand(params));
     console.log(`Bucket ${bucketName} created successfully`);
   } catch (error) {
     console.error(`Error creating bucket: ${error.message}`);
   }
+};
+
+const streamToBuffer = (stream) => {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+    stream.on("error", reject);
+  });
 };
 
 module.exports = {

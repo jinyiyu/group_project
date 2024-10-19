@@ -82,8 +82,22 @@ const driverLicenseSchema = new mongoose.Schema({
 const employmentSchema = new mongoose.Schema({
   status: {
     type: String,
-    enum: ["GC", "Citizen", "Visa"],
     required: true,
+    validate: {
+      validator: function (value) {
+        const enumValues = [
+          "GC",
+          "Citizen",
+          "H1B",
+          "L2",
+          "F1(CPT/OPT)",
+          "H4",
+          "other",
+        ];
+        return enumValues.includes(value) || typeof value === "string";
+      },
+      message: (props) => `${props.value} is not a valid status!`,
+    },
   },
   start: {
     type: Date,
@@ -156,7 +170,7 @@ const userSchema = new Schema({
   address: addressSchema,
   contactInfo: contactInfoSchema,
   employment: employmentSchema,
-  emergencyContact: ContactSchema,
+  emergencyContact: [ContactSchema],
   reference: ContactSchema,
   onboardStatus: {
     type: String,
