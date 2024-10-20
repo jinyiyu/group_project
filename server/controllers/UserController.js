@@ -8,7 +8,7 @@ const {genAccessToken} = require("../utils/genJwtToken.js");
 // will return specific fields if given in the query string
 const fetchUserData = async(req, res) => {
   // const { userId } = req.body;
-  const userId = "6711ed1baa0764012569e17d";
+  const userId = "67147b5445846b9bac51d17f";
   const { fields } = req.query;
 
   try {
@@ -30,7 +30,7 @@ const fetchUserData = async(req, res) => {
 const updateUserData = async(req, res) => {
   // const { userId, data } = req.body;
   const { data } = req.body;//TODO_ldl: might need middleware before this function to verify the data is in correct structure
-  const userId = "6711ed1baa0764012569e17d";
+  const userId = "67147b5445846b9bac51d17f";
 
   try {
     // Use $set to update nested fields

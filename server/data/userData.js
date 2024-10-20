@@ -56,13 +56,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
-    cars: [
-      {
+    car: {
         model: "Honda Civic",
         color: "Red",
         make: "Honda",
-      },
-    ],
+    },
   },
   {
     userName: "jane_doe",
@@ -119,13 +117,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
-    cars: [
-      {
+    car: {
         model: "Toyota Camry",
         color: "Blue",
         make: "Toyota",
-      },
-    ],
+    },
   },
 ];
 
