@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 
+// Added 2 more users - Hieu Tran
 const seedUsers = [
   {
     userName: "john_doe",
     password: "securePassword123",
     role: "employee",
-    onboardStatus: "not started",
+    onboardStatus: "pending",
     userProfile: {
       firstName: "John",
       lastName: "Doe",
@@ -53,7 +54,7 @@ const seedUsers = [
       email: "jane.do8@example.com",
       relationship: "Sister",
     },
-    house: new mongoose.Types.ObjectId(), // Replace with valid ObjectId if needed
+    house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
     cars: [
@@ -116,7 +117,7 @@ const seedUsers = [
       email: "jane.do6@example.com",
       relationship: "Sister",
     },
-    house: new mongoose.Types.ObjectId(), // Replace with valid ObjectId if needed
+    house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
     cars: [
@@ -124,6 +125,132 @@ const seedUsers = [
         model: "Toyota Camry",
         color: "Blue",
         make: "Toyota",
+      },
+    ],
+  },
+  {
+    userName: "alice_smith",
+    password: "password789",
+    role: "employee",
+    onboardStatus: "not started",
+    userProfile: {
+      firstName: "Alice",
+      lastName: "Smith",
+      middleName: "L",
+      preferredName: "Ally",
+      email: "alice.smith@example.com",
+      SSN: "567-89-0123",
+      DoB: new Date("1985-08-15"),
+      gender: "Female",
+      profilePicture: "alice_picture.jpg",
+    },
+    address: {
+      apt: "303",
+      strName: "Elm St",
+      city: "Sometown",
+      state: "TX",
+      zip: "54321",
+    },
+    contactInfo: {
+      cellPhone: "654-321-9870",
+      workPhone: "123-456-7890",
+    },
+    driverLicense: {
+      number: "D543210987",
+      expirationDate: new Date("2024-09-30"),
+    },
+    employment: {
+      status: "GC",
+      start: new Date("2019-03-10"),
+      end: null,
+    },
+    emergencyContact: {
+      firstName: "Robert",
+      lastName: "Smith",
+      middleName: "K",
+      phone: "654-321-9876",
+      email: "robert.smith@example.com",
+      relationship: "Husband",
+    },
+    reference: {
+      firstName: "Emily",
+      lastName: "Davis",
+      middleName: "C",
+      phone: "123-654-7890",
+      email: "emily.davis@example.com",
+      relationship: "Friend",
+    },
+    house: new mongoose.Types.ObjectId(),
+    feedback: [],
+    nextStep: "Submit background check",
+    cars: [
+      {
+        model: "Ford Focus",
+        color: "White",
+        make: "Ford",
+      },
+    ],
+  },
+  {
+    userName: "michael_johnson",
+    password: "password1010",
+    role: "employee",
+    onboardStatus: "Pending",
+    userProfile: {
+      firstName: "Michael",
+      lastName: "Johnson",
+      middleName: "P",
+      preferredName: "Mike",
+      email: "mike.johnson@example.com",
+      SSN: "678-90-1234",
+      DoB: new Date("1988-03-22"),
+      gender: "Male",
+      profilePicture: "mike_picture.jpg",
+    },
+    address: {
+      apt: "404",
+      strName: "Maple St",
+      city: "Anyplace",
+      state: "FL",
+      zip: "67890",
+    },
+    contactInfo: {
+      cellPhone: "789-012-3456",
+      workPhone: "345-678-9012",
+    },
+    driverLicense: {
+      number: "D678901234",
+      expirationDate: new Date("2027-01-15"),
+    },
+    employment: {
+      status: "Visa",
+      start: new Date("2022-05-01"),
+      end: new Date("2024-05-01"),
+    },
+    emergencyContact: {
+      firstName: "Sarah",
+      lastName: "Johnson",
+      middleName: "M",
+      phone: "789-012-3456",
+      email: "sarah.johnson@example.com",
+      relationship: "Wife",
+    },
+    reference: {
+      firstName: "James",
+      lastName: "Williams",
+      middleName: "R",
+      phone: "123-456-7890",
+      email: "james.williams@example.com",
+      relationship: "Colleague",
+    },
+    house: new mongoose.Types.ObjectId(),
+    feedback: [],
+    nextStep: "Submit visa documents",
+    cars: [
+      {
+        model: "Chevrolet Malibu",
+        color: "Black",
+        make: "Chevrolet",
       },
     ],
   },

@@ -10,6 +10,8 @@ const fileUpload = require("express-fileupload");
 const UserRouter = require("./routers/UserRouter.js");
 const DocumentRouter = require("./routers/DocumentRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
+const hrHiringRouter = require("./routers/hrHiringRoutes.js");
+const hrHousingRouter = require("./routers/hrHousingRoutes.js");
 
 // reads env variables
 dotenv.config();
@@ -18,6 +20,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // third-party tools
+app.use(cors());
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.json());
@@ -27,8 +30,9 @@ app.use(morgan(":method :url :status :response-time ms"));
 // routers
 app.use("/user", UserRouter);
 app.use("/document", DocumentRouter);
-
 app.use("/employee", employeeRouter);
+app.use("/hr/hiring", hrHiringRouter);
+app.use("/hr/housing", hrHousingRouter);
 
 //
 app.get("/", (req, res) => {
