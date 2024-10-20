@@ -59,8 +59,8 @@ export const updateApplicationStatus =
         type: UPDATE_APPLICATION_STATUS,
         payload: { userId, status, feedback },
       });
-      // Optionally refetch application data
       dispatch(fetchIndividualApplication(userId));
+      dispatch(fetchApplications());
     } catch (error) {
       console.error("Error updating status", error);
     }
