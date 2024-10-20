@@ -1,6 +1,6 @@
 // src/store/index.js
 import { configureStore } from "@reduxjs/toolkit";
-import employeeReducer from "../redux/employeeSlice"; // Adjust the path as needed
+import employeeReducer from "../redux/employeeSlice";
 import authReducer from "../redux/authSlice.js";
 import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
