@@ -9,7 +9,7 @@ const documentSchema = new mongoose.Schema({
   documentType: {
     type: String,
     required: true,
-    enum: ["OPT receipt", "OPT EAD", "I-983", "I-20"],
+    enum: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"],
   },
   fileUrl: {
     type: String,
@@ -17,9 +17,9 @@ const documentSchema = new mongoose.Schema({
   },
   daysRemaining: {
     type: Number,
-    required: function () {
-      return this.documentType === "OPT EAD";
-    },
+    // required: function () {
+    //   return this.documentType === "OPT_EAD";
+    // },
     default: undefined,
   },
   status: {

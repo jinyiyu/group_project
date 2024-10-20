@@ -18,6 +18,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // third-party tools
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
+  credentials: true, // Enable cookies and authorization headers
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.json());

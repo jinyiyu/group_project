@@ -1,5 +1,7 @@
 const express = require("express");
 const {updateFile, fetchFileUrls} = require("../controllers/DocumentController.js")
+const multer = require('multer');
+const upload = multer();
 
 const DocumentRouter = express.Router();
 
