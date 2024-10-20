@@ -33,7 +33,7 @@ const seedUsers = [
       expirationDate: new Date("2026-01-31"),
     },
     employment: {
-      status: "Citizen",
+      status: "OPT",
       start: new Date("2020-06-01"),
       end: new Date("2028-06-01"),
     },

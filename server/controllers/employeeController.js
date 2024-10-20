@@ -50,6 +50,7 @@ const getProfile = async (req, res) => {
   }
 };
 
+// Get all visa-status employees with the latest documents
 const getEmployeesPendingDocs = async (req, res) => {
   try {
     const searchQuery = req.query.query || "";
@@ -68,17 +69,21 @@ const getEmployeesPendingDocs = async (req, res) => {
     if (visaEmployees.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No visa-status employees found.",
+        message: "No employees found with pending document.",
       });
     }
 
+    const getLatestDocument = async (employee) => {
+      const latestDocument = await Document.findOne({
+        user: employee._id,
+        documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
+      }).sort({ uploadedAt: -1 });
+      return latestDocument;
+    };
+
     const result = await Promise.all(
       visaEmployees.map(async (employee) => {
-        // Fetch the employee's pending and rejected documents
-        const pendingAndRejectedDocuments = await Document.find({
-          user: employee._id,
-          status: { $in: ["Pending", "Rejected"] },
-        }).select("documentType status fileUrl");
+        const latestDocument = await getLatestDocument(employee);
 
         const endDate = employee.employment.end;
         const today = moment();
@@ -86,23 +91,35 @@ const getEmployeesPendingDocs = async (req, res) => {
           ? moment(endDate).diff(today, "days")
           : null;
 
+        let documentInfo;
+        if (!latestDocument) {
+          documentInfo = "Need to upload OPT-Receipts";
+        } else if (
+          latestDocument.documentType === "I-20" &&
+          latestDocument.status !== "Approved"
+        ) {
+          documentInfo = "All documents submitted";
+        } else {
+          documentInfo = {
+            documentType: latestDocument.documentType,
+            status: latestDocument.status,
+            fileUrl: latestDocument.fileUrl,
+          };
+        }
+
         return {
           name: {
             firstName: employee.userProfile.firstName,
             lastName: employee.userProfile.lastName,
             preferredName: employee.userProfile.preferredName,
           },
-          "Work Authorization Title": {
+          workAuthorizationTitle: {
             title: employee.employment.status,
             start: employee.employment.start,
             end: employee.employment.end,
           },
           daysRemaining: daysRemaining !== null ? daysRemaining : "N/A",
-          documents: pendingAndRejectedDocuments.map((doc) => ({
-            documentType: doc.documentType,
-            status: doc.status,
-            fileUrl: doc.fileUrl,
-          })),
+          latestDocument: documentInfo,
         };
       })
     );
@@ -169,13 +186,12 @@ const updateDocStatus = async (req, res) => {
   }
 };
 
-//Get all visa-status employees with approved documents
+//Get all visa-status employees with all documents uploaded
 const getVisaEmployees = async (req, res) => {
   try {
     const searchQuery = req.query.query || ""; // e.g., ?query=john
     const regex = new RegExp(searchQuery, "i");
 
-    // Find visa-status employees only, excluding "GC" and "Citizen"
     const visaEmployees = await User.find({
       "employment.status": { $nin: ["GC", "Citizen"] },
       $or: [
@@ -185,7 +201,6 @@ const getVisaEmployees = async (req, res) => {
       ],
     });
 
-    // Handle case where no visa-status employees are found
     if (visaEmployees.length === 0) {
       return res.status(404).json({
         success: false,
@@ -195,10 +210,9 @@ const getVisaEmployees = async (req, res) => {
 
     const result = await Promise.all(
       visaEmployees.map(async (employee) => {
-        // Fetch the employee's approved documents
+        // Fetch the employee's uploaded documents
         const approvedDocuments = await Document.find({
           user: employee._id,
-          status: "Approved",
         }).select("documentType fileUrl");
 
         const endDate = employee.employment.end;
@@ -221,7 +235,7 @@ const getVisaEmployees = async (req, res) => {
           daysRemaining: daysRemaining !== null ? daysRemaining : "N/A",
           documents: approvedDocuments.map((doc) => ({
             documentType: doc.documentType,
-            status: "Approved",
+            status: doc.status,
             fileUrl: doc.fileUrl,
           })),
         };

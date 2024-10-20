@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -14,19 +14,81 @@ import {
   Tab,
   Box,
 } from "@mui/material";
+import axios from "axios";
+import moment from "moment";
 
 const VisaStatusManagementPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(0); // State to manage active tab
+  const [activeTab, setActiveTab] = useState(0);
+  const [employeesWithPendingDocs, setEmployeesWithPendingDocs] = useState([]);
+  const [visaEmployees, setVisaEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from the pending-docs API
+  useEffect(() => {
+    const fetchPendingDocsData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/employee/pending-docs"
+        );
+        if (response.data.success) {
+          setEmployeesWithPendingDocs(response.data.data);
+          console.log(response.data.data);
+        } else {
+          setError("Failed to fetch pending documents.");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPendingDocsData();
+  }, []);
+
+  // Fetch data from the visa-employees API
+  useEffect(() => {
+    setLoading(true);
+    const fetchVisaEmployees = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/employee/visa-employees"
+        );
+        if (response.data.success) {
+          setVisaEmployees(response.data.data);
+          //   console.log(response.data.data);
+        } else {
+          setError("Failed to fetch visa employees.");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisaEmployees();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleOpenModal = (employee) => {
-    setSelectedEmployee(employee);
+  const handleOpenModal = (visaEmployees) => {
+    // setSelectedEmployee(employee);
     setModalOpen(true);
   };
 
@@ -38,71 +100,6 @@ const VisaStatusManagementPage = () => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
-
-  // Dummy data for demonstration
-  const inProgressEmployees = [
-    {
-      id: 1,
-      name: "John Doe",
-      workAuthorization: {
-        title: "OPT",
-        startDate: "2023-01-01",
-        endDate: "2023-12-31",
-        daysRemaining: 45,
-      },
-      nextStep: {
-        description:
-          "Submitted OPT receipt: next step is to wait for HR approval",
-        document: "opt_receipt.pdf",
-      },
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      workAuthorization: {
-        title: "CPT",
-        startDate: "2023-02-01",
-        endDate: "2023-12-31",
-        daysRemaining: 90,
-      },
-      nextStep: {
-        description: "Waiting for document submission",
-        document: "cpt_receipt.pdf",
-      },
-    },
-  ];
-
-  const allEmployees = [
-    {
-      id: 1,
-      name: "John Doe",
-      workAuthorization: {
-        title: "OPT",
-        startDate: "2023-01-01",
-        endDate: "2023-12-31",
-        daysRemaining: 45,
-      },
-      documents: [
-        { name: "OPT Receipt", link: "opt_receipt.pdf", status: "Approved" },
-        { name: "OPT Form", link: "opt_form.pdf", status: "Approved" },
-      ],
-      nextStep: "None",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      workAuthorization: {
-        title: "CPT",
-        startDate: "2023-02-01",
-        endDate: "2023-12-31",
-        daysRemaining: 90,
-      },
-      documents: [
-        { name: "CPT Receipt", link: "cpt_receipt.pdf", status: "Approved" },
-      ],
-      nextStep: "Submit final report",
-    },
-  ];
 
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
@@ -119,14 +116,11 @@ const VisaStatusManagementPage = () => {
         style={{ marginBottom: "20px" }}
       />
 
-      {/* In Progress Section */}
-      <Typography variant="h5" gutterBottom>
-        In Progress
-      </Typography>
+      {/* tabs to switch In Progress and All */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab label="Documents" />
-          <Tab label="All" /> {/* Kept the All tab */}
+          <Tab label="In Progress" />
+          <Tab label="All" />
         </Tabs>
       </Box>
 
@@ -139,39 +133,62 @@ const VisaStatusManagementPage = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Work Authorization</TableCell>
                 <TableCell>Document</TableCell>
+                <TableCell>Next Steps</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {inProgressEmployees.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell>{employee.name}</TableCell>
+              {employeesWithPendingDocs.map((employee, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    {employee.name.firstName} {employee.name.lastName}
+                  </TableCell>
                   <TableCell>
                     <div>
-                      <strong>{employee.workAuthorization.title}</strong>
+                      <strong>{employee.workAuthorizationTitle.title};</strong>
                       <div>
-                        Start Date: {employee.workAuthorization.startDate}
+                        Start Date:{" "}
+                        {moment(employee.workAuthorizationTitle.start).format(
+                          "MMMM Do YYYY"
+                        )}
                       </div>
-                      <div>End Date: {employee.workAuthorization.endDate}</div>
                       <div>
-                        Days Remaining:{" "}
-                        {employee.workAuthorization.daysRemaining}
+                        End Date:{" "}
+                        {moment(employee.workAuthorizationTitle.end).format(
+                          "MMMM Do YYYY"
+                        )}
                       </div>
+                      <div>Days Remaining:{employee.daysRemaining} </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
-                      {employee.nextStep.document}
-                      <Button
-                        onClick={() => handleOpenModal(employee)}
-                        variant="contained"
-                        color="purple" // Change color to purple
-                        style={{ marginLeft: "10px" }}
-                      >
-                        Preview
-                      </Button>
+                      {employee.latestDocument.length === 0 ? (
+                        <p>No documents pending or rejected.</p>
+                      ) : (
+                        <div className="document-card">
+                          <p>
+                            <strong>Document Type:</strong>{" "}
+                            {employee.latestDocument.documentType}
+                          </p>
+                          <p>
+                            <strong>Status:</strong>{" "}
+                            {employee.latestDocument.status}
+                          </p>
+                          <a
+                            href={employee.latestDocument.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <button className="preview-button">
+                              Preview Document
+                            </button>
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </TableCell>
+                  <TableCell>next step: random text</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
@@ -192,7 +209,7 @@ const VisaStatusManagementPage = () => {
       )}
 
       {/* All Tab Content */}
-      {activeTab === 1 && ( // When "All" tab is clicked, display the following content
+      {activeTab === 1 && (
         <>
           <Typography variant="h5" gutterBottom style={{ marginTop: "40px" }}>
             All
@@ -204,50 +221,67 @@ const VisaStatusManagementPage = () => {
                   <TableCell>Name</TableCell>
                   <TableCell>Work Authorization</TableCell>
                   <TableCell>Next Steps</TableCell>
-                  <TableCell>Uploaded Documents</TableCell>
+                  <TableCell>All Uploaded Documents</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {allEmployees.map((employee) => (
-                  <TableRow key={employee.id}>
-                    <TableCell>{employee.name}</TableCell>
+                {visaEmployees.map((visaEmployee, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      {visaEmployee.name.firstName} {visaEmployee.name.lastName}
+                    </TableCell>
                     <TableCell>
                       <div>
-                        <strong>{employee.workAuthorization.title}</strong>
+                        <strong>
+                          {visaEmployee["Work Authorization Title"].title}
+                        </strong>
                         <div>
-                          Start Date: {employee.workAuthorization.startDate}
+                          Start Date:{" "}
+                          {moment(
+                            visaEmployee["Work Authorization Title"].start
+                          ).format("MMMM Do YYYY")}
                         </div>
                         <div>
-                          End Date: {employee.workAuthorization.endDate}
+                          End Date:{" "}
+                          {moment(
+                            visaEmployee["Work Authorization Title"].end
+                          ).format("MMMM Do YYYY")}
                         </div>
-                        <div>
-                          Days Remaining:{" "}
-                          {employee.workAuthorization.daysRemaining}
-                        </div>
+                        <div>Days Remaining:{visaEmployee.daysRemaining} </div>
                       </div>
                     </TableCell>
-                    <TableCell>{employee.nextStep}</TableCell>
+                    <TableCell>Next steps: random text</TableCell>
                     <TableCell>
-                      {employee.documents.map((doc) => (
-                        <div key={doc.name}>
-                          <span>{doc.name}</span>
+                      {visaEmployee.documents.map((doc, index) => (
+                        <div key={index}>
+                          <span>
+                            document{doc.index}: {doc.documentType}
+                          </span>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                      {visaEmployee.documents.map((doc, index) => (
+                        <div key={index} style={{ marginBottom: "10px" }}>
                           <Button
-                            href={doc.link}
+                            onClick={() =>
+                              handleOpenModal(visaEmployee, doc.fileUrl)
+                            }
+                            variant="contained"
+                            color="blue"
+                            style={{ marginRight: "5px" }}
+                          >
+                            Preview
+                          </Button>
+                          <Button
+                            href={doc.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             variant="contained"
                             color="primary"
-                            style={{ marginLeft: "10px" }}
                           >
                             Download
-                          </Button>
-                          <Button
-                            onClick={() => handleOpenModal(employee)}
-                            variant="contained"
-                            color="purple" // Change color to purple
-                            style={{ marginLeft: "5px" }}
-                          >
-                            Preview
                           </Button>
                         </div>
                       ))}
@@ -260,7 +294,6 @@ const VisaStatusManagementPage = () => {
         </>
       )}
 
-      {/* Modal for Document Preview */}
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
