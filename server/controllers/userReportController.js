@@ -31,7 +31,13 @@ exports.createReport = async (req, res) => {
 exports.getUserReports = async (req, res) => {
   try {
     const userId = req.cookies.user_id;
-    const userReports = await Report.find({ createdBy: userId });
+    const userReports = await Report.find({ createdBy: userId }).populate({
+      path: "comments",
+      populate: {
+        path: "createdBy",
+        select: "userName",
+      },
+    });
 
     if (userReports.length === 0) {
       return res.status(404).json({ message: "No reports found" });
