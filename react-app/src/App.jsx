@@ -1,16 +1,14 @@
 import EmailForm from "./utils/EmailJs";
-import CountButton from "./utils/CountButton";
+import OnBoarding from "./pages/onBoarding";
 
 function App() {
   return (
     <>
-      <div>
-        {/* component to send email from HR */}
-        <EmailForm />
+      {/* component to send email from HR */}
+      {/* <EmailForm /> */}
 
-        {/* component to show a redux example */}
-        <CountButton />
-      </div>
+      {/* testing component for personal info and onboard application page */}
+      <OnBoarding></OnBoarding>
     </>
   );
 }
