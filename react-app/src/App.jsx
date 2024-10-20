@@ -1,5 +1,4 @@
 import EmailForm from "./utils/EmailJs";
-import CountButton from "./utils/CountButton";
 
 function App() {
   return (
@@ -7,9 +6,6 @@ function App() {
       <div>
         {/* component to send email from HR */}
         <EmailForm />
-
-        {/* component to show a redux example */}
-        <CountButton />
       </div>
     </>
   );

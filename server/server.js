@@ -23,6 +23,12 @@ app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow frontend to access this server
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
+  })
+);
 
 // routers
 app.use("/user", UserRouter);
