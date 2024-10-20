@@ -24,7 +24,7 @@ const getProfile = async (req, res) => {
       "userProfile.lastName": 1,
       "userProfile.preferredName": 1,
       "userProfile.email": 1,
-      SSN: 1,
+      "userProfile.SSN": 1,
       "employment.status": 1,
       "contactInfo.cellPhone": 1,
     });
@@ -36,7 +36,7 @@ const getProfile = async (req, res) => {
         lastName: user.userProfile.lastName,
         preferredName: user.userProfile.preferredName,
       },
-      SSN: user.SSN,
+      SSN: user.userProfile.SSN,
       "Work Authorization Title": user.employment.status,
       "Phone Number": user.contactInfo.cellPhone,
       Email: user.userProfile.email,
