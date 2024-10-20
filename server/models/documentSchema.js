@@ -15,13 +15,6 @@ const documentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  daysRemaining: {
-    type: Number,
-    // required: function () {
-    //   return this.documentType === "OPT_EAD";
-    // },
-    default: undefined,
-  },
   status: {
     type: String,
     required: true,

@@ -35,7 +35,7 @@ const seedUsers = [
     employment: {
       status: "Citizen",
       start: new Date("2020-06-01"),
-      end: new Date("2023-06-01"),
+      end: new Date("2028-06-01"),
     },
     emergencyContact: {
       firstName: "John",
