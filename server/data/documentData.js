@@ -13,7 +13,7 @@
 const seedDocument = [
   {
     user: "671550ed03a1c5e695124275",
-    documentType: "OPT-EAD",
+    documentType: "OPT_EAD",
     fileUrl: "/uploads/user_id_123_opt-ead.pdf",
     status: "Approved",
     feedback: "The document is expired.",
@@ -21,7 +21,7 @@ const seedDocument = [
   },
   {
     user: "671550ed03a1c5e695124275",
-    documentType: "OPT-receipt",
+    documentType: "OPT_receipt",
     fileUrl: "/uploads/user_id_124_opt-receipt.pdf",
     status: "Approved",
     feedback: "Document is valid and complete.",
@@ -29,7 +29,7 @@ const seedDocument = [
   },
   {
     user: "671550ed03a1c5e695124275",
-    documentType: "I-983",
+    documentType: "I_983",
     fileUrl: "/uploads/user_id_125_i-983.pdf",
     status: "Pending",
     feedback: "Awaiting review by the HR department.",
@@ -37,7 +37,7 @@ const seedDocument = [
   },
   {
     user: "671550ed03a1c5e695124275",
-    documentType: "I-20",
+    documentType: "I_20",
     fileUrl: "/uploads/user_id_126_i-20.pdf",
     status: "Rejected",
     feedback: "Incorrect dates provided on the document.",
@@ -45,7 +45,7 @@ const seedDocument = [
   },
   {
     user: "671550ed03a1c5e695124275",
-    documentType: "OPT-EAD",
+    documentType: "OPT_EAD",
     fileUrl: "/uploads/user_id_127_opt-ead.pdf",
     status: "Pending",
     feedback: "Document is under review.",
