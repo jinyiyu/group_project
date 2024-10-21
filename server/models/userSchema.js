@@ -69,6 +69,10 @@ const contactInfoSchema = new Schema({
 });
 
 const driverLicenseSchema = new mongoose.Schema({
+  licenseCopy: {
+    type: String,
+    default: "placeholder.jpg",
+  },
   number: {
     type: String,
     required: true,
@@ -191,7 +195,7 @@ const userSchema = new Schema({
   nextStep: {
     type: String,
   },
-  cars: [carSchema],
+  car: carSchema,
 });
 
 module.exports = mongoose.model("User", userSchema);

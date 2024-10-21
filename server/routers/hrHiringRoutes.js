@@ -7,8 +7,12 @@ router.get(
   "/applications/:userId",
   hrHiringController.getIndividualApplication
 );
-// router.get("/applications/:userId", hrHiringController.getIndividual);
 router.put("/applications/:userId", hrHiringController.updateApplicationStatus);
-router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
+
+// give feedback is put on hold
+// router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
+
+// For testing purposes
+router.get("/report", hrHiringController.getReport);
 
 module.exports = router;

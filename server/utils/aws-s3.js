@@ -10,6 +10,9 @@ const {
 const fs = require("fs");
 require("dotenv").config();
 
+//console log a value from .env file
+console.log(process.env.AWS_REGION);
+
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -44,7 +47,9 @@ const uploadFile = async (key, fileContent) => {
   };
 
   try {
+    console.log(params);
     await s3Client.send(new PutObjectCommand(params));
+
     console.log(`File uploaded successfully to ${bucketName}/${key}`);
   } catch (error) {
     console.error(`Error uploading file: ${error.message}`);

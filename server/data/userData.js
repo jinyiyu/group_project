@@ -34,9 +34,9 @@ const seedUsers = [
       expirationDate: new Date("2026-01-31"),
     },
     employment: {
-      status: "Citizen",
+      status: "OPT",
       start: new Date("2020-06-01"),
-      end: new Date("2023-06-01"),
+      end: new Date("2028-06-01"),
     },
     emergencyContact: {
       firstName: "John",
@@ -57,13 +57,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
-    cars: [
-      {
+    car: {
         model: "Honda Civic",
         color: "Red",
         make: "Honda",
-      },
-    ],
+    },
   },
   {
     userName: "jane_doe",
@@ -120,13 +118,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Awaiting documents",
-    cars: [
-      {
+    car: {
         model: "Toyota Camry",
         color: "Blue",
         make: "Toyota",
-      },
-    ],
+    },
   },
   {
     userName: "alice_smith",
