@@ -8,8 +8,8 @@ import EmployeeSummaryView from "./components/employeeSummaryView.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      {/* <App /> */}
-      <EmployeeSummaryView />
+      <App />
+      {/* <EmployeeSummaryView /> */}
     </Provider>
   </StrictMode>
 );

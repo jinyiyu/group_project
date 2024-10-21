@@ -9,10 +9,6 @@ function App() {
 
       {/* testing component for personal info and onboard application page */}
       <OnBoarding></OnBoarding>
-      <div>
-        {/* component to send email from HR */}
-        <EmailForm />
-      </div>
     </>
   );
 }

@@ -2,30 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchDocumentThunk } from './documentThunk';
 
 const initialState = {
-  "profilePicture": {
-    url: "",
-    file: null,
-  },
-  "licenseCopy": {
-    url: "",
-    file: null,
-  },
-  "OPT_receipt": {
-    url: "",
-    file: null,
-  },
-  "OPT_EAD": {
-    url: "",
-    file: null,
-  },
-  "I_983": {
-    url: "",
-    file: null,
-  },
-  "I_20": {
-    url: "",
-    file: null,
-  },
+  profilePicture: "",
+  licenseCopy: "",
+  OPT_receipt: "",
+  OPT_EAD: "",
+  I_983: "",
+  I_20: "",
 }
 
 const documentSlice = createSlice({
@@ -33,12 +15,8 @@ const documentSlice = createSlice({
   initialState: initialState,
   reducers: {
       updateDocument: (state, action) => {
-          let { type, url, file } = action.payload;
-          if (type.includes(".")) {
-            type = type.split('.').pop();
-          }
-          state[type]["url"] = url;
-          state[type]["file"] = file;
+          const { type, url } = action.payload;
+          state[type] = url;
       },
   },
 
