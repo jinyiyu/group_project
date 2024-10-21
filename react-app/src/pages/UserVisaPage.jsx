@@ -35,35 +35,35 @@ const UserVisaPage = () => {
 
   return (
     <div>
-      {documentType === "OPT-receipt" && (
+      {documentType === "OPT_receipt" && (
         <OPTReceipt
           status={status}
           feedback={feedback}
           onFileUploadComplete={handleFileUploadComplete}
         />
       )}
-      {documentType === "OPT-EAD" && (
+      {documentType === "OPT_EAD" && (
         <OPTEAD
           status={status}
           feedback={feedback}
           onFileUploadComplete={handleFileUploadComplete}
         />
       )}
-      {documentType === "I-983" && (
+      {documentType === "I_983" && (
         <I983
           status={status}
           feedback={feedback}
           onFileUploadComplete={handleFileUploadComplete}
         />
       )}
-      {documentType === "I-20" && (
+      {documentType === "I_20" && (
         <I20
           status={status}
           feedback={feedback}
           onFileUploadComplete={handleFileUploadComplete}
         />
       )}
-      {!["OPT-receipt", "OPT-EAD", "I-983", "I-20"].includes(documentType) && (
+      {!["OPT_receipt", "OPT_EAD", "I_983", "I_20"].includes(documentType) && (
         <p>You are all set.</p>
       )}
     </div>

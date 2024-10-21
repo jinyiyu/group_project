@@ -12,7 +12,7 @@ exports.getVisaStatus = async (req, res) => {
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I-983", "I-20"
     const latestDocument = await Doc.findOne({
       user: userId,
-      documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
+      documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
     }).sort({ uploadedAt: -1 });
 
     if (!latestDocument) {
