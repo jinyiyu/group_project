@@ -58,14 +58,15 @@ const register = async(req, res) => {
   const email = req.body.email;
   try{
     // check duplicate username
-    const dupUsername = await User.findOne({username}).lean().exec();
+    const dupUsername = await User.findOne({userName:username}).lean().exec();
     if(dupUsername){
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
+    console.log("email::", email);
     // check duplicate email
-    const dupEmail = await User.findOne({email}).lean().exec();
+    const dupEmail = await User.findOne({'userProfile.email':email}).lean().exec();
     if(dupEmail){
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
     // hash password
     const hashedPassword = await argon2.hash(password);
@@ -114,7 +115,7 @@ const login = async (req, res) => {
       if (!isPasswordCorrect) {
           return res
               .status(401)
-              .json({ message: "invalid user or password" });
+              .json({ message: "Invalid user or password" });
       }
 
       // generate access token
@@ -133,6 +134,23 @@ const login = async (req, res) => {
   }
 };
 
+// logout 
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    return res.status(500).json({ message: "Logout failed", error });
+  }
+};
+
+
+// is logged in
+const isLoggedIn = async (req, res) => {
+  return res.status(200).json({ message: "Logged in" });
+};
+
+
 // validate register URL
 const validRegisterURL = async (req, res) => {
   return res.status(200).json({ message: "Valid register URL", email: req.body.email });
@@ -143,3 +161,5 @@ exports.updateUserData = updateUserData;
 exports.register = register;  
 exports.login = login;
 exports.validRegisterURL = validRegisterURL;
+exports.logout = logout;
+exports.isLoggedIn = isLoggedIn;
