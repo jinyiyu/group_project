@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const User = require("./models/userSchema");
 const Document = require("./models/documentSchema");
-const Report = require("./models/reportSchema");
+const { Report, Comment } = require("./models/reportSchema");
 const House = require("./models/houseSchema");
 
 const seedUsers = require("./data/userData");
@@ -34,6 +34,8 @@ const seedDatabase = async () => {
     // Assign house IDs to users (employees) - Hieu Tran
     seedUsers[0].house = createdHouses[0]._id;
     seedUsers[1].house = createdHouses[1]._id;
+    seedUsers[2].house = createdHouses[0]._id;
+    seedUsers[3].house = createdHouses[1]._id;
 
     const createdUsers = await User.insertMany(seedUsers);
     const userIds = createdUsers.map((user) => user._id);

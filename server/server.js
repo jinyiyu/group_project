@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"], 
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
     credentials: true, // Allow cookies
   })
@@ -62,7 +62,7 @@ const startServer = async () => {
     });
   } catch (err) {
     console.error("Failed to connect to the database", err);
-    process.exit(1); 
+    process.exit(1);
   }
 };
 

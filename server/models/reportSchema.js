@@ -44,4 +44,14 @@ const reportSchema = new mongoose.Schema({
   comments: [commentSchema],
 });
 
-module.exports = mongoose.model("Report", reportSchema);
+// module.exports = mongoose.model("Report", reportSchema);
+
+// Exporting both models separately - Hieu Tran
+const Report = mongoose.model("Report", reportSchema);
+const Comment = mongoose.model("Comment", commentSchema);
+
+// Export comment schema for application feedback use, comment for report is a different thing that's related to the housing report. - Hieu Tran
+module.exports = {
+  Report,
+  Comment,
+};
