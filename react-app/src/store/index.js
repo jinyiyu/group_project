@@ -1,3 +1,4 @@
+
 // src/store/index.js
 import { configureStore } from "@reduxjs/toolkit";
 import employeeReducer from "../redux/employeeSlice";
@@ -11,8 +12,8 @@ const store = configureStore({
     user: userReducer,
     document: documentReducer,
 
-    devTools: true,
   },
+  devTools: true,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
