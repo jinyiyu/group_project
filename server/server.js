@@ -25,8 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow frontend to access this server
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"], // Allow frontend to access this server
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
+    credentials: true, // Allow cookies
   })
 );
 

@@ -58,12 +58,13 @@ const register = async(req, res) => {
   const email = req.body.email;
   try{
     // check duplicate username
-    const dupUsername = await User.findOne({username}).lean().exec();
+    const dupUsername = await User.findOne({userName:username}).lean().exec();
     if(dupUsername){
       return res.status(409).json({ message: "Username already exists" });
     }
+    console.log("email::", email);
     // check duplicate email
-    const dupEmail = await User.findOne({email}).lean().exec();
+    const dupEmail = await User.findOne({'userProfile.email':email}).lean().exec();
     if(dupEmail){
       return res.status(409).json({ message: "Email already exists" });
     }
