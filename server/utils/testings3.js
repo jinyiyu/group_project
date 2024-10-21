@@ -37,8 +37,11 @@ async function testCreateBucket(bucketName) {
   }
 }
 
-// uploadFile("update.png", "update.png");
+// uploadFile(
+//   "documents/documentId/Group_Project.pdf",
+//   "../../../Group_Project.pdf"
+// );
 //deleteFile("/testupload/groupproject.pdf");
-// downloadFile("testupload/groupproject.pdf", "Group_Project.pdf");
-// testListFiles();
-// testListBuckets();
+downloadFile("documents/documentId/Group_Project.pdf", "downloadedFile.pdf");
+testListFiles();
+testListBuckets();

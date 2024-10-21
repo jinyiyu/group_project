@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
+import emailjs from "@emailjs/browser";
 
 const VisaStatusManagementPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,6 +102,81 @@ const VisaStatusManagementPage = () => {
     setActiveTab(newValue);
   };
 
+  const determineNextStep = (employee) => {
+    const { documentType, status } = employee.latestDocument;
+
+    if (documentType === "OPT-receipt") {
+      if (status === "Pending") {
+        return "OPT receipt submitted, next step is to wait for HR approval.";
+      } else if (status === "Approved") {
+        return "OPT receipt approved, next step is to submit OPT-EAD.";
+      } else if (status === "Rejected") {
+        return "OPT receipt rejected, next step is to resubmit OPT receipt.";
+      }
+    }
+
+    if (documentType === "OPT-EAD") {
+      if (status === "Pending") {
+        return "OPT EAD submitted, next step is to wait for HR approval.";
+      } else if (status === "Approved") {
+        return "OPT EAD approved, next step is to submit I-983.";
+      } else if (status === "Rejected") {
+        return "OPT EAD rejected, next step is to resubmit OPT EAD.";
+      }
+    }
+
+    if (documentType === "I-983") {
+      if (status === "Pending") {
+        return "I-983 submitted, next step is to wait for HR approval.";
+      } else if (status === "Approved") {
+        return "I-983 approved, next step is to submit I-20.";
+      } else if (status === "Rejected") {
+        return "I-983 rejected, next step is to resubmit I-983.";
+      }
+    }
+
+    if (documentType === "I-20") {
+      if (status === "Pending") {
+        return "I-20 submitted, next step is to wait for HR approval.";
+      } else if (status === "Approved") {
+        return "I-20 approved, all steps completed!";
+      } else if (status === "Rejected") {
+        return "I-20 rejected, next step is to resubmit I-20.";
+      }
+    }
+
+    return "No document submitted, next step is to submit OPT receipt.";
+  };
+
+  const sendEmail = (employee) => {
+    const templateParams = {
+      to_email: employee.name.email,
+      message: `Dear ${employee.name.firstName} ${
+        employee.name.lastName
+      }, \n\nPlease be informed of your next step regarding your visa document: ${determineNextStep(
+        employee
+      )}\n\nBest regards,\nVisa Management Team`,
+    };
+
+    emailjs
+      .send(
+        "service_qajtlhi",
+        "template_dfpkctt",
+        templateParams,
+        "SlwYI4G9g1yD3FUSt"
+      )
+      .then(
+        (result) => {
+          console.log("Email successfully sent!", result.text);
+          alert("Notification sent successfully!");
+        },
+        (error) => {
+          console.log("Failed to send email:", error.text);
+          alert("Failed to send notification.");
+        }
+      );
+  };
+
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
       <Typography variant="h4" gutterBottom>
@@ -175,31 +251,51 @@ const VisaStatusManagementPage = () => {
                             <strong>Status:</strong>{" "}
                             {employee.latestDocument.status}
                           </p>
-                          <a
-                            href={employee.latestDocument.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <button className="preview-button">
-                              Preview Document
-                            </button>
-                          </a>
                         </div>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>next step: random text</TableCell>
                   <TableCell>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      style={{ marginRight: "5px" }}
-                    >
-                      Approve
-                    </Button>
-                    <Button variant="contained" color="error">
-                      Reject
-                    </Button>
+                    <strong>Next Step: </strong>
+                    {determineNextStep(employee)}
+                  </TableCell>
+                  <TableCell>
+                    {employee.latestDocument.status === "Pending" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          style={{ marginRight: "3px" }}
+                          onClick={() =>
+                            handleOpenModal(
+                              employee,
+                              employee.latestDocument.fileUrl
+                            )
+                          }
+                        >
+                          Preview Document
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          style={{ marginRight: "3px" }}
+                        >
+                          Approve
+                        </Button>
+                        <Button variant="contained" color="error">
+                          Reject
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        style={{ marginRight: "3px" }}
+                        onClick={() => sendEmail(employee)}
+                      >
+                        Send Notification
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -211,9 +307,6 @@ const VisaStatusManagementPage = () => {
       {/* All Tab Content */}
       {activeTab === 1 && (
         <>
-          <Typography variant="h5" gutterBottom style={{ marginTop: "40px" }}>
-            All
-          </Typography>
           <TableContainer>
             <Table>
               <TableHead>

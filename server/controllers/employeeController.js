@@ -78,6 +78,7 @@ const getEmployeesPendingDocs = async (req, res) => {
         user: employee._id,
         documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
       }).sort({ uploadedAt: -1 });
+
       return latestDocument;
     };
 
@@ -112,6 +113,7 @@ const getEmployeesPendingDocs = async (req, res) => {
             firstName: employee.userProfile.firstName,
             lastName: employee.userProfile.lastName,
             preferredName: employee.userProfile.preferredName,
+            email: employee.userProfile.email,
           },
           workAuthorizationTitle: {
             title: employee.employment.status,
@@ -124,9 +126,13 @@ const getEmployeesPendingDocs = async (req, res) => {
       })
     );
 
+    const filteredResult = result.filter(
+      (employee) => employee.latestDocument !== "All documents submitted"
+    );
+
     return res.status(200).json({
       success: true,
-      data: result,
+      data: filteredResult,
     });
   } catch (error) {
     console.error("Error fetching pending documents for employees:", error);
