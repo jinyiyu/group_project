@@ -14,8 +14,8 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       {/* <App /> */}
       {/* <EmployeeSummaryView /> */}
-      <Housing />
-      {/* <UserVisaPage /> */}
+      {/* <Housing /> */}
+      <UserVisaPage />
     </Provider>
   </StrictMode>
 );
