@@ -13,6 +13,7 @@ const DocumentRouter = require("./routers/DocumentRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
 const hrHiringRoutes = require("./routers/hrHiringRoutes");
 const hrHousingRoutes = require("./routers/hrHousingRoutes");
+const userStatusController = require("./routers/userStatusRoutes.js")
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,6 +46,8 @@ app.use("/document", DocumentRouter);
 app.use("/employee", employeeRouter);
 app.use("/hr/hiring", hrHiringRoutes);
 app.use("/hr/housing", hrHousingRoutes);
+app.use("/users/", userStatusController);
+
 //
 app.get("/", (req, res) => {
   res.send("Server is running!");

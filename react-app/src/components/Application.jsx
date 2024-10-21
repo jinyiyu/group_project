@@ -7,6 +7,8 @@ import { addEmergencyContact, updateField, deleteEmergencyContact} from '../stor
     
 const UserForm = () => {
     const BASE_URL = "http://localhost:3000";
+    const optDocOrder = ["OPT_receipt", "OPT_EAD", "I_983", "I_20"];
+    const [optDoc, setOptDoc] = useState({documentType: "OPT_receipt", status: "Pending", input: 0});
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     const document = useSelector((state) => state.document);
@@ -23,9 +25,29 @@ const UserForm = () => {
         relationship: '',
     });
 
+    const getVisaStatus = async() => {
+        const res = await fetch(
+            `${BASE_URL}/users/status`, 
+            {
+                method: 'GET',
+                credentials: "include",
+            });
+        
+        if (res.ok) {
+            const {documentType, status} = await res.json();
+            let input = optDocOrder.indexOf(documentType);
+            if (status == "Approved") {
+                input += 1; 
+            }
+
+            setOptDoc({documentType: documentType, status: status, input: input});
+        }
+    }
+
     useEffect(() => {
         dispatch(fetchUserThunk());
         dispatch(fetchDocumentThunk());
+        getVisaStatus();
     }, []);
 
     useEffect(()=> {
@@ -91,7 +113,6 @@ const UserForm = () => {
         }
         dispatch(updateDocument({type: fileType, url: base64File}));        
     }
-    console.log(document)
 
     const fileToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -102,10 +123,9 @@ const UserForm = () => {
         });
     };
 
-      //todo
-    const uploadDocuments = async ()=> {
+    const uploadDocument = async (docName)=> {
         const res = await fetch(
-            `${BASE_URL}/document/upload?type=profilePicture`,
+            `${BASE_URL}/document/upload?type=${docName}`,
             {
                 method: 'PUT',
                 credentials: "include",
@@ -113,14 +133,12 @@ const UserForm = () => {
                     'Content-Type': 'application/json'
                     },
                 body: JSON.stringify({
-                    base64File: document["profilePicture"],
+                    base64File: document[docName],
                 })
             });
-
-        
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
     }
 
     const handleLicenseChange = (e) => {
@@ -150,18 +168,38 @@ const UserForm = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log('Form submitted:', user);
+        const userRes = await fetch(
+            `${BASE_URL}/user/update`,
+            {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                    },
+                body: JSON.stringify({
+                    data: user,
+                })
+            });
+
+        for (let docName in document) {
+            if (document[docName].startsWith("https://bfgp.s3.amazonaws.com")==false) {
+                await uploadDocument(docName);
+            }
+        }
+        if (!userRes.ok) {
+            throw new Error('Network response was not ok');
+        }
+        else {
+            //redirect to main page
+        }
     };
-
-    console.log(user.employment)
-
 
     return (
         <>
         <form onSubmit={handleSubmit}>
-            <button onClick={uploadDocuments}>test doc upload</button>
+            <button onClick={uploadDocument}>test doc upload</button>
 
             <h1>section i</h1>
 
@@ -241,7 +279,7 @@ const UserForm = () => {
             <input type="text" name="userProfile.SSN" value={user.userProfile.SSN} onChange={handleChange} required/><br />
 
             <label htmlFor="userProfile.DoB">Date of Birth</label>
-            <input type="date" name="userProfile.DoB" value={user.userProfile.DoB} onChange={handleChange} required/><br />
+            <input type="date" name="userProfile.DoB" value={user.userProfile.DoB?.split("T")[0]} onChange={handleChange} required/><br />
 
             <label htmlFor="userProfile.gender">Gender</label>
             <select name="userProfile.gender" value={user.userProfile.gender} onChange={handleChange}>
@@ -254,7 +292,6 @@ const UserForm = () => {
             
 
             <h1>section viii</h1>
-            {/* todo OPT stuff */}
             <label>
                 Are you a citizen or permanent resident of the U.S?
                 <select
@@ -294,27 +331,39 @@ const UserForm = () => {
                 </label>
 
                 <label htmlFor="employment.start">Start Date: </label>
-                <input type="date" name="employment.start" value={other} onChange={handleChange} required /><br />
+                <input type="date" name="employment.start" value={user.employment.start?.split("T")[0]} onChange={handleChange} required /><br />
 
                 <label htmlFor="employment.end">End Date: </label>
-                <input type="date" name="employment.end" value={other} onChange={handleChange} required /><br />
+                <input type="date" name="employment.end" value={user.employment.end?.split("T")[0]} onChange={handleChange} required /><br />
                 </>
             )}
 
-            {user.employment.status == "opt" ? (
+            {user.employment.status == "f1" ? (
+                optDocOrder.slice(0, optDoc.input).map((docName, index) => (
+                    <div key={docName}>
+                        <p>{docName}</p>
+                        <img
+                        src={document[docName]} 
+                        alt={docName}
+                        style={{ width: '500px', height: '500px', objectFit: 'cover' }}
+                        />
+                    </div>
+                ))
+            )
+            :(<></>)}
+
+            {(user.employment.status == "f1" && optDoc.input < 4)? (
                 <>
-                <label>
-                    Citizen or Green Card Holders?
-                    <select
-                    name="employment.status"
-                    value={user.employment.status} 
-                    onChange={(e) => handleChange(e)}>
-                        <option value="citizen">Citizen</option>
-                        <option value="green_card">Green Card</option>
-                    </select>
-                </label>
+                <label htmlFor={optDocOrder[optDoc.input]}>{`Upload your ${optDocOrder[optDoc.input]}`}</label>
+                <input
+                    type="file"
+                    name={optDocOrder[optDoc.input]}
+                    accept="image/*"
+                    onChange={(e) => handleDocumentChange(e, optDocOrder[optDoc.input])}
+                    required
+                /><br />
                 </>
-            ):(<>TODO</>)}
+            ):(<></>)}
 
             {user.employment.status=="other" ? (
                 <>
@@ -341,7 +390,7 @@ const UserForm = () => {
             <input type="text" name="driverLicense.number" value={user.driverLicense.number} onChange={handleChange} required /><br />
 
             <label htmlFor="driverLicense.expirationDate">Expiration Date</label>
-            <input type="date" name="driverLicense.expirationDate" value={user.driverLicense.expirationDate} onChange={handleChange} required/><br />
+            <input type="date" name="driverLicense.expirationDate" value={user.driverLicense.expirationDate?.split("T")[0]} onChange={handleChange} required/><br />
 
             {(document.licenseCopy!=="") ? 
             (<img
@@ -356,7 +405,7 @@ const UserForm = () => {
                 name="driverLicense"
                 accept="image/*"
                 onChange={(e) => handleDocumentChange(e, "driverLicense.licenseCopy")}
-                required
+                required={document.licenseCopy==""}
             /><br />
             </>):(<></>)}
 
