@@ -7,6 +7,8 @@ import employeeReducer from "../redux/employeeSlice";
 import authReducer from "../redux/authSlice.js";
 import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
+import authReducer from "../store/reducers/auth.reducers";
+import applicationReducer from "./reducers/application.reducers";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ const store = configureStore({
     employees: employeeReducer,
     user: userReducer,
     document: documentReducer,
+    auth: authReducer,
+    application: applicationReducer,
   },
   devTools: true,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
