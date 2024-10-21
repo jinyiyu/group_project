@@ -33,8 +33,6 @@ const ApplicationDetails = ({ application, onBack }) => {
   };
 
   const isEmptyDocument = application.form.documents.length === 0;
-  const isEmptyFeedback =
-    !Array.isArray(application.feedback) || application.feedback.length === 0;
   const isApprovedOrRejected =
     application.onboardStatus.toLowerCase() == "approved" ||
     application.onboardStatus.toLowerCase() === "rejected";
