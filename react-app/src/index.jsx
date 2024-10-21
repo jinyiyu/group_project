@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")).render(
       {/* <EmployeeSummaryView /> */}
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
-      {/* <OnBoarding></OnBoarding> */}
+      {/* <OnBoarding /> */}
     </Provider>
   </StrictMode>
 );
