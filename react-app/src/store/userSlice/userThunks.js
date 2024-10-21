@@ -15,6 +15,8 @@ export const fetchUserThunk = createAsyncThunk('user/fetchUserData', async () =>
   }
 
   const {user} = await res.json();
+
+  
   return user;
 });
 

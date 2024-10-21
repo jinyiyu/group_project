@@ -2,31 +2,38 @@ const User = require("../models/userSchema.js");
 const Document = require("../models/documentSchema.js");
 const {uploadFile, downloadFile} = require('../utils/aws-s3.js');
 
-
 const baseUrl = "https://bfgp.s3.amazonaws.com"
-
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
   const userId = "67147b5445846b9bac51d17f";
   const { type } = req.query;
-  const file = req.files.file;
+  const {base64File} = req.body;
+  const fileType = base64File.slice(0, 30).split(/[;/]/)[1]
+
+  const base64Data = base64File.replace(/^data:image\/\w+;base64,/, "");
+  const buffer = Buffer.from(base64Data, 'base64');
+  const fileUrl = `${baseUrl}/${userId}/${type}.${fileType}`
 
   try {
-    await uploadFile(`${userId}/${type}`, file.data); 
+    await uploadFile(`${userId}/${type}.${fileType}`, buffer); 
     let updated;
 
     // for profile
     if (type === "profilePicture") {
       updated = await User.findByIdAndUpdate(
         userId,
-        { $set: { "userProfile.profilePicture": `${baseUrl}/${userId}/${type}` } },
+        { $set: { "userProfile.profilePicture": fileUrl} },
         { new: true }
       ).lean().exec();
     }
     //for driver license copy
-    else if (type == "carLicense") {
-      // todo
+    else if (type == "licenseCopy") {
+      updated = await User.findByIdAndUpdate(
+        userId,
+        { $set: { "driverLicense.licenseCopy": fileUrl} },
+        { new: true }
+      ).lean().exec();
     }
     //for opt-related documents
     else {
@@ -34,7 +41,7 @@ const updateFile = async(req, res) => {
         { user: userId, documentType: type },
         {
           $set: {
-            fileUrl: `${baseUrl}/${userId}/${type}`,
+            fileUrl: fileUrl,
             uploadedAt: Date.now(),
           },
         },
@@ -79,22 +86,6 @@ const fetchFileUrls = async (req, res) => {
     res.status(500).json({ message: `${error}` });
   }
 }
-
-// const fetchFileContent = async (req, res) => {
-//   // const { userId } = req.body;
-//   // const userId = "6711ed1baa0764012569e17d";
-//   const { url, destinationPath } = req.body;
-//   const parsedUrl = new URL(url);
-//   const objectPath = parsedUrl.pathname.substring(1);
-
-//   try {
-//     const file = await downloadFile(objectPath, "TODO-ldl, user download path");
-    
- 
-//   } catch (error) {
-//     res.status(500).json({ message: `Error fetching file: ${error.message}` });
-//   }
-// };
 
 module.exports = {
   updateFile,

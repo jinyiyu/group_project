@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserThunk } from '../store/userSlice/userThunks';
+import { fetchDocumentThunk } from '../store/documentSlice/documentThunk';
+import { updateDocument } from '../store/documentSlice/documentSlice';
 import { addEmergencyContact, updateField, deleteEmergencyContact} from '../store/userSlice/userSlice';
     
 const UserForm = () => {
     const BASE_URL = "http://localhost:3000";
+    const optDocOrder = ["OPT_receipt", "OPT_EAD", "I_983", "I_20"];
+    const [optDoc, setOptDoc] = useState({documentType: "OPT_receipt", status: "Pending", input: 0});
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
+    const document = useSelector((state) => state.document);
     const [showReference, setShowReference] = useState("no");
     const [showDriverLicense, setShowDriverLicense] = useState("no");
-    const [documents, setDocuments] = useState({});
-    const [status, setStatus] = useState({
-        citizen: "no",
-        opt: "no"
-    })
-    console.log(status.citizen)
+    const [other, setOther] = useState("");
+
     const [contact, setContact] = useState({
         firstName: '',
         lastName: '',
@@ -24,29 +25,30 @@ const UserForm = () => {
         relationship: '',
     });
 
+    const getVisaStatus = async() => {
+        const res = await fetch(
+            `${BASE_URL}/users/status`, 
+            {
+                method: 'GET',
+                credentials: "include",
+            });
+        
+        if (res.ok) {
+            const {documentType, status} = await res.json();
+            let input = optDocOrder.indexOf(documentType);
+            if (status == "Approved") {
+                input += 1; 
+            }
+
+            setOptDoc({documentType: documentType, status: status, input: input});
+        }
+    }
+
     useEffect(() => {
         dispatch(fetchUserThunk());
-        fetchDocuments();
+        dispatch(fetchDocumentThunk());
+        getVisaStatus();
     }, []);
-
-    useEffect(()=> {
-        if (user.employment.status=="green_card" || user.employment.status=="citizen") {
-            setStatus((prevState)=> (
-                {
-                    ...prevState,
-                    citizen: "yes"
-                }
-            ))
-        }
-        else {
-            setStatus((prevState)=> (
-                {
-                    ...prevState,
-                    citizen: "no"
-                }
-            ))
-        }
-    }, [user.employment.status])
 
     useEffect(()=> {
         if (user.driverLicense.number=='' && user.driverLicense.expirationDate=='' && user.driverLicense.licenseCopy=='') {
@@ -66,37 +68,15 @@ const UserForm = () => {
         }
     }, [user.reference])
 
-    const fetchDocuments = async() => {
-        const res = await fetch(
-        `${BASE_URL}/document/fetchUrls`, 
-        {
-            method: 'GET',
-            credentials: "include",
-        });
-    
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const {files} = await res.json();
-        const temp = {};
-        for (const key in files) {
-            temp[key] = {
-                url: files[key],
-                file: null,
-            };
-        }
-        setDocuments(temp);
-    }
-
     const handleStatusChange = (e, type)=> {
-        setStatus((prevState) => {
-            return {
-                ...prevState,
-                [type]: e.target.value
-            }
-        })
+        if (e.target.value=="yes") {
+            dispatch(updateField({field: "employment.status", value: "citizen"}))
+        }
+        else {
+            dispatch(updateField({field: "employment.status", value: "h1b"}))
+        }
     }
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         dispatch(updateField({ field: name, value: value }));
@@ -124,45 +104,41 @@ const UserForm = () => {
         });
     };
 
-    const handleFileChange = (e, type) => {
+    const handleDocumentChange = async (e, type) => {
         const file = e.target.files[0];
-        const url = URL.createObjectURL(file);
-        const formData = new FormData();
-        formData.append('file', file);
-
-        dispatch(updateField({field: type, value: url}));
-
-        let field = type;
+        const base64File = await fileToBase64(file);
+        let fileType = type;
         if (type.includes(".")) {
-            field = type.split('.').pop();
+            fileType = type.split('.').pop();
         }
-        setDocuments((prevState) => {
-            return {
-                ...prevState,
-                [field]: {
-                    url: url,
-                    file: formData
-                }
-            }
-        })
+        dispatch(updateDocument({type: fileType, url: base64File}));        
     }
 
-    const testUploadDoc = async ()=> {
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    const uploadDocument = async (docName)=> {
         const res = await fetch(
-            `${BASE_URL}/document/upload?type=profilePicture`,
+            `${BASE_URL}/document/upload?type=${docName}`,
             {
                 method: 'PUT',
                 credentials: "include",
-                body: documents["profilePicture"].file
+                headers: {
+                    'Content-Type': 'application/json'
+                    },
+                body: JSON.stringify({
+                    base64File: document[docName],
+                })
             });
-
-        
-            if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
-            else {
-                console.log(res.json())
-            }
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
     }
 
     const handleLicenseChange = (e) => {
@@ -192,16 +168,38 @@ const UserForm = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log('Form submitted:', user);
-    };
+        const userRes = await fetch(
+            `${BASE_URL}/user/update`,
+            {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                    },
+                body: JSON.stringify({
+                    data: user,
+                })
+            });
 
+        for (let docName in document) {
+            if (document[docName].startsWith("https://bfgp.s3.amazonaws.com")==false) {
+                await uploadDocument(docName);
+            }
+        }
+        if (!userRes.ok) {
+            throw new Error('Network response was not ok');
+        }
+        else {
+            //redirect to main page
+        }
+    };
 
     return (
         <>
         <form onSubmit={handleSubmit}>
-            <button onClick={testUploadDoc}>test Upload Doc</button>
+            <button onClick={uploadDocument}>test doc upload</button>
 
             <h1>section i</h1>
 
@@ -219,11 +217,11 @@ const UserForm = () => {
 
             <h1>section ii</h1>
 
-            {user.userProfile.profilePicture!=="" ? 
+            {(document.profilePicture!=="") ? 
             (<img
-                src={user.userProfile.profilePicture} 
+                src={document.profilePicture} 
                 alt="Profile"
-                style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                style={{ width: '500px', height: '500px', objectFit: 'cover' }}
             />): 
             (<></>)}
             <label htmlFor="profilePicture">Upload a new profile picture</label>
@@ -231,7 +229,7 @@ const UserForm = () => {
                 type="file"
                 name="profilePicture"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e, "userProfile.profilePicture")}
+                onChange={(e) => handleDocumentChange(e, "userProfile.profilePicture")}
             /><br />
 
             <h1>section iii</h1>
@@ -281,7 +279,7 @@ const UserForm = () => {
             <input type="text" name="userProfile.SSN" value={user.userProfile.SSN} onChange={handleChange} required/><br />
 
             <label htmlFor="userProfile.DoB">Date of Birth</label>
-            <input type="date" name="userProfile.DoB" value={user.userProfile.DoB.split('T')[0]} onChange={handleChange} required/><br />
+            <input type="date" name="userProfile.DoB" value={user.userProfile.DoB?.split("T")[0]} onChange={handleChange} required/><br />
 
             <label htmlFor="userProfile.gender">Gender</label>
             <select name="userProfile.gender" value={user.userProfile.gender} onChange={handleChange}>
@@ -294,35 +292,85 @@ const UserForm = () => {
             
 
             <h1>section viii</h1>
-            {/* todo OPT stuff */}
             <label>
                 Are you a citizen or permanent resident of the U.S?
                 <select
-                value={status.citizen} 
+                value={(user.employment.status=="citizen" || user.employment.status=="green_card")?"yes":"no"} 
                 onChange={(e) => handleStatusChange(e, "citizen")}>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
             </label>
 
-            {status.citizen == "yes" ? (
+            {(user.employment.status=="citizen" || user.employment.status=="green_card") ? (
                 <>
                 <label>
                     Citizen or Green Card Holders?
                     <select
                     name="employment.status"
                     value={user.employment.status} 
-                    onChange={(e) => handleChange(e, "")}>
-                        <option value="Citizen">Citizen</option>
-                        <option value="GC">Green Card</option>
+                    onChange={handleChange}>
+                        <option value="citizen">Citizen</option>
+                        <option value="green_card">Green Card</option>
                     </select>
                 </label>
                 </>
             ):(
-                <></>
-            )
+                <>
+                <label>
+                What is your work authorization?
+                    <select
+                    name="employment.status"
+                    value={user.employment.status} 
+                    onChange={handleChange}>
+                        <option value="h1b">H1-B</option>
+                        <option value="l2">L2</option>
+                        <option value="f1">{`F1(CPT/OPT)`}</option>
+                        <option value="other">Other</option>
+                    </select>
+                </label>
 
-            }
+                <label htmlFor="employment.start">Start Date: </label>
+                <input type="date" name="employment.start" value={user.employment.start?.split("T")[0]} onChange={handleChange} required /><br />
+
+                <label htmlFor="employment.end">End Date: </label>
+                <input type="date" name="employment.end" value={user.employment.end?.split("T")[0]} onChange={handleChange} required /><br />
+                </>
+            )}
+
+            {user.employment.status == "f1" ? (
+                optDocOrder.slice(0, optDoc.input).map((docName, index) => (
+                    <div key={docName}>
+                        <p>{docName}</p>
+                        <img
+                        src={document[docName]} 
+                        alt={docName}
+                        style={{ width: '500px', height: '500px', objectFit: 'cover' }}
+                        />
+                    </div>
+                ))
+            )
+            :(<></>)}
+
+            {(user.employment.status == "f1" && optDoc.input < 4)? (
+                <>
+                <label htmlFor={optDocOrder[optDoc.input]}>{`Upload your ${optDocOrder[optDoc.input]}`}</label>
+                <input
+                    type="file"
+                    name={optDocOrder[optDoc.input]}
+                    accept="image/*"
+                    onChange={(e) => handleDocumentChange(e, optDocOrder[optDoc.input])}
+                    required
+                /><br />
+                </>
+            ):(<></>)}
+
+            {user.employment.status=="other" ? (
+                <>
+                <label htmlFor="employment.status">Please specify: </label>
+                <input type="text" name="employment.status" value={other} onChange={(e)=> {setOther(e.target.value)}} required /><br />
+                </>
+            ):(<></>)}
 
             <h1>section ix</h1>
 
@@ -342,25 +390,37 @@ const UserForm = () => {
             <input type="text" name="driverLicense.number" value={user.driverLicense.number} onChange={handleChange} required /><br />
 
             <label htmlFor="driverLicense.expirationDate">Expiration Date</label>
-            <input type="date" name="driverLicense.expirationDate" value={user.driverLicense.expirationDate.split('T')[0]} onChange={handleChange} required/><br />
+            <input type="date" name="driverLicense.expirationDate" value={user.driverLicense.expirationDate?.split("T")[0]} onChange={handleChange} required/><br />
 
-            <img
-                src={user.driverLicense.licenseCopy}
-                alt="driverLicense"
+            {(document.licenseCopy!=="") ? 
+            (<img
+                src={document.licenseCopy} 
+                alt="licenseCopy"
                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-            />
+            />): (<></>)}
+            
             <label htmlFor="driverLicense">Upload a new license copy</label>
             <input
                 type="file"
                 name="driverLicense"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e, "driverLicense.licenseCopy")}
-                required
+                onChange={(e) => handleDocumentChange(e, "driverLicense.licenseCopy")}
+                required={document.licenseCopy==""}
             /><br />
             </>):(<></>)}
 
 
+
             <h1>section x</h1>
+            <label>
+                Are you referred by anyone?
+                <select
+                value={showReference} 
+                onChange={handleReferenceChange}>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </label>
 
             {showReference== "yes"?
             (<>
