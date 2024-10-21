@@ -43,21 +43,30 @@ exports.uploadDocument = async (req, res) => {
     const { type } = req.query;
     const file = req.files.file;
 
-    await uploadFile(`${userId}/${type}`, file.data);
-    const fileUrl = `${baseUrl}/${userId}/${type}`;
+    // Extract the file extension from the original filename
+    const fileExtension = path.extname(file.name); // e.g., '.pdf', '.png', etc.
 
-    const newDocument = new Doc({
-      user: userId,
-      documentType: type,
-      fileUrl: fileUrl,
-      status: "Pending",
-      uploadedAt: new Date(),
-    });
+    // Construct the full file path with dynamic extension
+    const fileKey = `${userId}/${type}${fileExtension}`;
 
-    await newDocument.save();
+    await uploadFile(fileKey, file.data);
+    const fileUrl = `${baseUrl}/${fileKey}`;
+
+    const updatedDocument = await Doc.findOneAndUpdate(
+      { user: userId, documentType: type },
+      {
+        $set: {
+          fileUrl: fileUrl,
+          uploadedAt: Date.now(),
+          status: "Pending", // Reset status to "Pending" on file re-upload
+        },
+      },
+      { new: true, upsert: true, lean: true } // Return the updated document, create if doesn't exist
+    );
+
     res.status(200).json({
       message: "Document uploaded successfully",
-      document: newDocument,
+      document: updatedDocument,
     });
   } catch (error) {
     console.error(error);
