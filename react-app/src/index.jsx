@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-// import EmployeeSummaryView from "./components/employeeSummaryView.jsx";
 import App from "./App.jsx";
 import store from "./store/store.js";
 import EmployeeSummaryView from "./components/employeeSummaryView.jsx";
@@ -18,8 +17,6 @@ createRoot(document.getElementById("root")).render(
       {/* <App /> */}
       {/* <EmployeeSummaryView /> */}
       {/* <VisaStatusManagementPage /> */}
-      {/* <OnBoarding></OnBoarding> */}
-
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
       {/* <OnBoarding /> */}
