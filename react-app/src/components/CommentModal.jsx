@@ -79,6 +79,7 @@ const CommentModal = ({
           <li key={comment._id}>
             <p>{comment.desc}</p>
             <small>By: {comment.createdBy.userName}</small>
+
             <small>{new Date(comment.timestamp).toLocaleDateString()}</small>
 
             {comment.createdBy._id === currentUserId && (

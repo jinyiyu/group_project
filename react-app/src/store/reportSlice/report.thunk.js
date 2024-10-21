@@ -32,6 +32,7 @@ export const addCommentThunk = createAsyncThunk(
       const response = await axios.post(`/users/${reportId}/comments`, {
         desc: comment,
       });
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
