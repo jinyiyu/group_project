@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const User = require("./models/userSchema");
 const Document = require("./models/documentSchema");
-const Report = require("./models/reportSchema");
+const { Report, Comment } = require("./models/reportSchema");
 const House = require("./models/houseSchema");
 
 const seedUsers = require("./data/userData");

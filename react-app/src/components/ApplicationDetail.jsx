@@ -1,20 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateApplicationStatus } from "../store/actions/application.actions";
+import {
+  updateApplicationStatus,
+  giveFeedback,
+} from "../store/actions/application.actions";
 
 const ApplicationDetails = ({ application, onBack }) => {
   const dispatch = useDispatch();
+  const [feedbackInput, setFeedbackInput] = useState("");
+  const [feedbackError, setFeedbackError] = useState("");
 
   const handleStatusUpdate = (status) => {
-    const feedback = status === "Rejected" ? prompt("Provide feedback:") : null;
-    dispatch(updateApplicationStatus(application.user, status, feedback));
+    dispatch(
+      updateApplicationStatus(application.user, status, application.feedback)
+    );
+  };
+
+  const handleGiveFeedback = () => {
+    if (feedbackInput.trim()) {
+      dispatch(
+        giveFeedback(
+          application.user,
+          feedbackInput,
+          "671600ba18cf70faee977ec3"
+        )
+      ); //  using a sample userId
+      setFeedbackInput("");
+      setFeedbackError("");
+    } else {
+      setFeedbackError("Feedback cannot be empty.");
+    }
   };
 
   const isEmptyDocument = application.form.documents.length === 0;
+  const isEmptyFeedback =
+    !Array.isArray(application.feedback) || application.feedback.length === 0;
+  const isApprovedOrRejected =
+    application.onboardStatus.toLowerCase() == "approved" ||
+    application.onboardStatus.toLowerCase() === "rejected";
 
   return (
     <div>
-      <button onClick={onBack}>Back</button> {/* Back button */}
+      <h2>Onboarding Applications</h2>
       <h2>Application Details for {application.fullName}</h2>
       <p>Email: {application.email}</p>
       <p>Status: {application.onboardStatus}</p>
@@ -29,6 +56,29 @@ const ApplicationDetails = ({ application, onBack }) => {
         ))}
         {isEmptyDocument && <p>No documents available</p>}
       </ul>
+      <div>
+        <h3>Feedback</h3>
+        {Array.isArray(application.feedback) ? (
+          application.feedback.map((f, index) => (
+            <p key={index}>
+              "{f.desc}" - {f.createdBy}
+            </p>
+          ))
+        ) : (
+          <p>{application.feedback}</p>
+        )}
+        {application.onboardStatus.toLowerCase() === "pending" && (
+          <div>
+            <textarea
+              placeholder="Enter feedback"
+              value={feedbackInput}
+              onChange={(e) => setFeedbackInput(e.target.value)}
+            />
+            {feedbackError && <p style={{ color: "red" }}>{feedbackError}</p>}
+            <button onClick={handleGiveFeedback}>Add Feedback</button>
+          </div>
+        )}
+      </div>
       {/* Show Approve/Reject buttons only if status is "Pending" */}
       {application.onboardStatus.toLowerCase() === "pending" && (
         <div>
@@ -36,13 +86,12 @@ const ApplicationDetails = ({ application, onBack }) => {
             Approve
           </button>
           <button onClick={() => handleStatusUpdate("rejected")}>Reject</button>
+          <button onClick={onBack}>Back</button>
         </div>
       )}
-      {/* Feedback section visible for Rejected applications */}
-      {application.onboardStatus === "Rejected" && (
+      {isApprovedOrRejected && (
         <div>
-          <h3>Feedback</h3>
-          <p>{application.feedback}</p>
+          <button onClick={onBack}>Back</button>
         </div>
       )}
     </div>

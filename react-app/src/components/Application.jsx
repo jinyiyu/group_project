@@ -27,8 +27,6 @@ const ApplicationReview = () => {
     setSelectedApplication(null);
   };
 
-  console.log(application);
-
   const renderApplications = (applications) => {
     return applications.map((app, index) => (
       <div key={index} className="application-item">

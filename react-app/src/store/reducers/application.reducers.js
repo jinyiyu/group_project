@@ -6,6 +6,9 @@ import {
   FETCH_INDIVIDUAL_APPLICATION_SUCCESS,
   FETCH_INDIVIDUAL_APPLICATION_FAILURE,
   UPDATE_APPLICATION_STATUS,
+  GIVE_FEEDBACK_REQUEST,
+  GIVE_FEEDBACK_SUCCESS,
+  GIVE_FEEDBACK_FAILURE,
 } from "../actions/application.actions";
 
 const initialState = {
@@ -20,6 +23,12 @@ const initialState = {
 
 const applicationReducer = (state = initialState, action) => {
   switch (action.type) {
+    case GIVE_FEEDBACK_REQUEST:
+      return { ...state, loading: true };
+    case GIVE_FEEDBACK_SUCCESS:
+      return { ...state, loading: false };
+    case GIVE_FEEDBACK_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     case FETCH_APPLICATIONS_REQUEST:
     case FETCH_INDIVIDUAL_APPLICATION_REQUEST:
       return { ...state, loading: true, error: null };

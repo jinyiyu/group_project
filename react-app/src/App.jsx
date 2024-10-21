@@ -1,5 +1,5 @@
-import EmailForm from "./utils/EmailJs";
-import CountButton from "./utils/CountButton";
+// import EmailForm from "./utils/EmailJs";
+// import CountButton from "./utils/CountButton";
 import GenerateTokenForm from "./components/GenerateTokenForm";
 import Application from "./components/Application";
 import "./App.css";
@@ -12,10 +12,11 @@ function App() {
         <GenerateTokenForm /> <br />
         {/* application component */}
         <Application /> <br />
+        {/* Commented out for readability purposes */}
         {/* component to send email from HR */}
-        <EmailForm />
+        {/* <EmailForm /> */}
         {/* component to show a redux example */}
-        <CountButton />
+        {/* <CountButton /> */}
       </div>
     </>
   );

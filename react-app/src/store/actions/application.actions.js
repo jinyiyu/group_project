@@ -4,6 +4,10 @@ export const FETCH_APPLICATIONS_REQUEST = "FETCH_APPLICATIONS_REQUEST";
 export const FETCH_APPLICATIONS_SUCCESS = "FETCH_APPLICATIONS_SUCCESS";
 export const FETCH_APPLICATIONS_FAILURE = "FETCH_APPLICATIONS_FAILURE";
 
+export const GIVE_FEEDBACK_REQUEST = "GIVE_FEEDBACK_REQUEST";
+export const GIVE_FEEDBACK_SUCCESS = "GIVE_FEEDBACK_SUCCESS";
+export const GIVE_FEEDBACK_FAILURE = "GIVE_FEEDBACK_FAILURE";
+
 export const FETCH_INDIVIDUAL_APPLICATION_REQUEST =
   "FETCH_INDIVIDUAL_APPLICATION_REQUEST";
 export const FETCH_INDIVIDUAL_APPLICATION_SUCCESS =
@@ -27,7 +31,6 @@ export const fetchApplications = () => async (dispatch) => {
   }
 };
 
-// Fetch Individual Application
 export const fetchIndividualApplication = (userId) => async (dispatch) => {
   dispatch({ type: FETCH_INDIVIDUAL_APPLICATION_REQUEST });
   try {
@@ -46,7 +49,6 @@ export const fetchIndividualApplication = (userId) => async (dispatch) => {
   }
 };
 
-// Update Application Status
 export const updateApplicationStatus =
   (userId, status, feedback = "") =>
   async (dispatch) => {
@@ -63,5 +65,26 @@ export const updateApplicationStatus =
       dispatch(fetchApplications());
     } catch (error) {
       console.error("Error updating status", error);
+    }
+  };
+
+export const giveFeedback =
+  (userId, description, createdBy) => async (dispatch) => {
+    dispatch({ type: GIVE_FEEDBACK_REQUEST });
+    try {
+      const response = await axios.put(
+        `${BASED_URI}/hr/hiring/applications/${userId}/feedback`,
+        {
+          description,
+          createdBy,
+        }
+      );
+      dispatch({ type: GIVE_FEEDBACK_SUCCESS, payload: response.data });
+      dispatch(fetchIndividualApplication(userId));
+    } catch (error) {
+      dispatch({
+        type: GIVE_FEEDBACK_FAILURE,
+        payload: error.response?.data || "Error giving feedback",
+      });
     }
   };
