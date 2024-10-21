@@ -15,7 +15,6 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       {/* <App /> */}
       {/* <EmployeeSummaryView /> */}
-      <OnBoarding></OnBoarding>
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
       {/* <OnBoarding /> */}
