@@ -13,21 +13,17 @@ const DocumentRouter = require("./routers/DocumentRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
 const hrHiringRoutes = require("./routers/hrHiringRoutes");
 const hrHousingRoutes = require("./routers/hrHousingRoutes");
-<<<<<<< HEAD
-const userStatusController = require("./routers/userStatusRoutes.js")
-
-=======
+const userStatusController = require("./routers/userStatusRoutes.js");
 const userHouseRoutes = require("./routers/userHouseRoutes.js");
 const userReportRoutes = require("./routers/userReportRoutes.js");
 const userStatusRoutes = require("./routers/userStatusRoutes.js");
->>>>>>> main
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // third-party tools
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
+  origin: "http://localhost:5173", // Allow requests from this origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // Specify the allowed HTTP methods
   credentials: true, // Enable cookies and authorization headers
 };
 
@@ -35,7 +31,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(fileUpload());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
 app.use(
@@ -52,14 +48,9 @@ app.use("/document", DocumentRouter);
 app.use("/employee", employeeRouter);
 app.use("/hr/hiring", hrHiringRoutes);
 app.use("/hr/housing", hrHousingRoutes);
-<<<<<<< HEAD
-app.use("/users/", userStatusController);
-
-=======
 app.use("/users", userHouseRoutes);
 app.use("/users", userReportRoutes);
 app.use("/users", userStatusRoutes);
->>>>>>> main
 //
 app.get("/", (req, res) => {
   res.send("Server is running!");
