@@ -13,9 +13,9 @@ exports.getVisaStatus = async (req, res) => {
     const latestDocument = await Doc.findOne({
       user: userId,
       documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
-    })
-      .sort({ uploadedAt: -1 })
-      .limit(1);
+
+    }).sort({ uploadedAt: -1 });
+
 
     if (!latestDocument) {
       return res
