@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const host = 'http://localhost:3000';
 
-// Async action to validate registration token
 export const validateRegister = createAsyncThunk(
   'auth/validateRegister',
   async (token, { rejectWithValue }) => {
@@ -19,12 +18,11 @@ export const validateRegister = createAsyncThunk(
   }
 );
 
-// Async action for registering a user
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async ({ token, userData }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${host}/user/register/${token}`, userData);
+      const response = await axios.post(`${host}/user/register/${token}`, userData, { withCredentials: true });
       return response.data;  // Assumes the API returns a success message
     } catch (error) {
       let message = error.response?.data?.message || 'Registration failed';
@@ -33,12 +31,11 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// Async action for user login
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${host}/user/login`, { username, password });
+      const response = await axios.post(`${host}/user/login`, { username, password },{ withCredentials: true });
       return response.data;  // Assumes the API returns a success message and possibly user info
     } catch (error) {
       let message = error.response?.data?.message || 'Login failed';

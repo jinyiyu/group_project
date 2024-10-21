@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, CircularProgress } from '@mui/material';
+import { TextField, Button, Typography, CircularProgress, Container, Snackbar, Alert } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../redux/authSlice';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await dispatch(loginUser({ username, password }));
+    const resultAction = await dispatch(loginUser({ username, password }));
+    
+    if (loginUser.fulfilled.match(resultAction)) {
+      setSnackbarMessage('Login successful!'); 
+      setOpenSnackbar(true); 
+    }
   };
 
   return (
-    <div>
+    <Container maxWidth="xs">
       <Typography variant="h4">Login</Typography>
       <form onSubmit={handleLogin}>
         <TextField
@@ -41,7 +48,16 @@ const Login = () => {
         </Button>
         {error && <Typography color="error">{error}</Typography>}
       </form>
-    </div>
+      <Snackbar 
+          open={openSnackbar} 
+          autoHideDuration={6000} 
+          onClose={() => setOpenSnackbar(false)}
+      >
+          <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+              {snackbarMessage}
+          </Alert>
+      </Snackbar>
+    </Container>
   );
 };
 
