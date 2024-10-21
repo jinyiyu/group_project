@@ -20,7 +20,7 @@ const I20 = ({ status, feedback, onFileUploadComplete }) => {
         <>
           <p>HR Feedback: {feedback}</p>
           <UploadForm
-            documentType="I-20"
+            documentType="I_20"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />

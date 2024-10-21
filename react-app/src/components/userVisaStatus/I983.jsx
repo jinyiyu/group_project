@@ -20,7 +20,7 @@ const I983 = ({ status, feedback, onFileUploadComplete }) => {
         <div>
           <p>Please send the I-983 to your school and upload the new I-20.</p>
           <UploadForm
-            documentType="I-20"
+            documentType="I_20"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />
@@ -30,7 +30,7 @@ const I983 = ({ status, feedback, onFileUploadComplete }) => {
         <>
           <p>HR Feedback: {feedback}</p>
           <UploadForm
-            documentType="I-983"
+            documentType="I_983"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />

@@ -22,7 +22,7 @@ const OPTReceipt = ({ status, feedback, onFileUploadComplete }) => {
         <>
           <p>Please upload a copy of your OPT EAD.</p>
           <UploadForm
-            documentType="OPT-EAD"
+            documentType="OPT_EAD"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />
@@ -32,7 +32,7 @@ const OPTReceipt = ({ status, feedback, onFileUploadComplete }) => {
         <>
           <p>HR Feedback: {feedback}</p>
           <UploadForm
-            documentType="OPT-receipt"
+            documentType="OPT_receipt"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />

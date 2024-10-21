@@ -21,7 +21,7 @@ const OPTEAD = ({ status, feedback, onFileUploadComplete }) => {
           <p>Please download and fill out the I-983 form.</p>
           <Template />
           <UploadForm
-            documentType="I-983"
+            documentType="I_983"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />
@@ -32,7 +32,7 @@ const OPTEAD = ({ status, feedback, onFileUploadComplete }) => {
           <p>HR Feedback: {feedback}</p>
 
           <UploadForm
-            documentType="OPT-EAD"
+            documentType="OPT_EAD"
             onUploadStart={handleUploadStart}
             onUploadSuccess={handleUploadSuccess}
           />
