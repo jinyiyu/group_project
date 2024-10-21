@@ -2,16 +2,18 @@ const User = require("../models/userSchema.js");
 const Document = require("../models/documentSchema.js");
 const {uploadFile, downloadFile} = require('../utils/aws-s3.js');
 
+
 const baseUrl = "https://bfgp.s3.amazonaws.com"
+
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
-  const userId = "6711ed1baa0764012569e17d";
+  const userId = "67147b5445846b9bac51d17f";
   const { type } = req.query;
   const file = req.files.file;
 
   try {
-    // await uploadFile(`${userId}/${type}`, file.data); 
+    await uploadFile(`${userId}/${type}`, file.data); 
     let updated;
 
     // for profile
@@ -48,15 +50,24 @@ const updateFile = async(req, res) => {
 
 const fetchFileUrls = async (req, res) => {
   // const { userId } = req.body;
-  const userId = "6711ed1baa0764012569e17d";
-  const files = {};
+  const userId = "67147b5445846b9bac51d17f";
+  const files = {
+    profilePicture: "",
+    licenseCopy: "",
+    OPT_receipt: "",
+    OPT_EAD: "",
+    I_983: "",
+    I_20: "",
+  };
 
   try {
     const user = await User.findById(userId).lean().exec();
     if (user.userProfile.profilePicture) {
       files["profilePicture"] = user.userProfile.profilePicture;
     }
-    // files["driverLicense"] = user.car.url; // TODO-ldl
+    if (user.driverLicense.licenseCopy) {
+      files["licenseCopy"] = user.driverLicense.licenseCopy;
+    }
 
     const optFiles = await Document.find({ user: userId }).lean().exec();
     optFiles.map((file) => {

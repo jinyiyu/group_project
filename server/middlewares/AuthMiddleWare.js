@@ -5,7 +5,7 @@ const accessValidation = (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token || validator.isEmpty(token)) {
-        return res.status(403).json({ message: "Token is required" });
+        return res.status(401).json({ message: "Token is required" });
     }
 
     try {
@@ -38,7 +38,7 @@ const inviteUrlValidation = (req, res, next) => {
     //     const decoded = jwt.verify(token, process.env.INVITE_TOKEN_SECRET);
     //     req.body.email = decoded.email;
     // } catch (error) {
-    //     return res.status(401).json({ message: "Invalid token or token expired." });
+    //     return res.status(401).json({ message: "Invalid url or url expired." });
     // }
 
     next();

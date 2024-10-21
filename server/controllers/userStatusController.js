@@ -9,11 +9,13 @@ exports.getVisaStatus = async (req, res) => {
     const userId = req.cookies.user_id;
 
     // Get one newest uploaded document from documentSchema by userId,
-    // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I-983", "I-20"
+    // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"
     const latestDocument = await Doc.findOne({
       user: userId,
       documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
+
     }).sort({ uploadedAt: -1 });
+
 
     if (!latestDocument) {
       return res
