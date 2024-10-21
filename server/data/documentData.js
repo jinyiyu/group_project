@@ -1,7 +1,7 @@
 // const seedDocument = [
 //   {
 //     user: "644191c7ed47a8c70b158fdc",
-//     documentType: "OPT EAD",
+//     documentType: "OPT_EAD",
 //     fileUrl: "/uploads/user_id_123.pdf",
 //     status: "Rejected",
 //     feedback: "The document is expired.",

@@ -195,7 +195,7 @@ const userSchema = new Schema({
   nextStep: {
     type: String,
   },
-  cars: [carSchema],
+  car: carSchema,
 });
 
 module.exports = mongoose.model("User", userSchema);

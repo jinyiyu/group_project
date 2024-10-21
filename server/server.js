@@ -13,11 +13,21 @@ const DocumentRouter = require("./routers/DocumentRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
 const hrHiringRoutes = require("./routers/hrHiringRoutes");
 const hrHousingRoutes = require("./routers/hrHousingRoutes");
-
+const userHouseRoutes = require("./routers/userHouseRoutes.js");
+const userReportRoutes = require("./routers/userReportRoutes.js");
+const userStatusRoutes = require("./routers/userStatusRoutes.js");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // third-party tools
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
+  credentials: true, // Enable cookies and authorization headers
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.json());
@@ -25,8 +35,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(":method :url :status :response-time ms"));
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow frontend to access this server
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"], // Allow frontend to access this server
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
+    credentials: true, // Allow cookies
   })
 );
 
@@ -36,6 +47,9 @@ app.use("/document", DocumentRouter);
 app.use("/employee", employeeRouter);
 app.use("/hr/hiring", hrHiringRoutes);
 app.use("/hr/housing", hrHousingRoutes);
+app.use("/users", userHouseRoutes);
+app.use("/users", userReportRoutes);
+app.use("/users", userStatusRoutes);
 //
 app.get("/", (req, res) => {
   res.send("Server is running!");

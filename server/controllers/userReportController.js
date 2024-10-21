@@ -31,7 +31,13 @@ exports.createReport = async (req, res) => {
 exports.getUserReports = async (req, res) => {
   try {
     const userId = req.cookies.user_id;
-    const userReports = await Report.find({ createdBy: userId });
+    const userReports = await Report.find({ createdBy: userId }).populate({
+      path: "comments",
+      populate: {
+        path: "createdBy",
+        select: "userName",
+      },
+    });
 
     if (userReports.length === 0) {
       return res.status(404).json({ message: "No reports found" });
@@ -69,7 +75,12 @@ exports.addComment = async (req, res) => {
     report.comments.push(newComment);
     await report.save();
 
-    res.status(200).json({ message: "Comment saved", report });
+    // Populate the createdBy field for the comments
+    const updatedReport = await Report.findById(reportId)
+      .populate("comments.createdBy", "userName") // Populate the userName field from createdBy
+      .exec();
+
+    res.status(200).json({ message: "Comment saved", report: updatedReport });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -98,7 +109,14 @@ exports.updateComment = async (req, res) => {
 
     await report.save();
 
-    res.status(200).json({ message: "Comment updated successfully", report });
+    // Populate the createdBy field for the comments
+    const updatedReport = await Report.findById(reportId)
+      .populate("comments.createdBy", "userName") // Populate the userName field from createdBy
+      .exec();
+
+    res
+      .status(200)
+      .json({ message: "Comment updated successfully", report: updatedReport });
   } catch (error) {
     res
       .status(500)
