@@ -261,9 +261,35 @@ const getVisaEmployees = async (req, res) => {
   }
 };
 
+const downloadFileFromS3 = async (req, res) => {
+  try {
+    const { fileName } = req.params;
+
+    const key = `documents/documentId/${fileName}`;
+    const downloadPath = path.join(__dirname, `../downloads/${fileName}`);
+
+    console.log(`Downloading file from S3 with key: ${key}`);
+
+    // Download the file from S3 to a local path
+    await downloadFile(key, downloadPath);
+
+    // Send the file as a response
+    res.download(downloadPath, fileName, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        res.status(500).send("Error downloading file");
+      }
+    });
+  } catch (error) {
+    console.error("Error downloading file from S3:", error);
+    res.status(500).json({ message: "Error downloading file from S3", error });
+  }
+};
+
 module.exports = {
   getProfile,
   getEmployeesPendingDocs,
   updateDocStatus,
   getVisaEmployees,
+  downloadFileFromS3,
 };
