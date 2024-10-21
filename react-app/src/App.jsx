@@ -12,7 +12,7 @@ function App() {
       {/* <EmailForm /> */}
 
       {/* testing component for personal info and onboard application page */}
-      <OnBoarding></OnBoarding>
+      {/* <OnBoarding></OnBoarding> */}
       <div>
         {/* component to send email from HR */}
         {/* <EmailForm /> */}
