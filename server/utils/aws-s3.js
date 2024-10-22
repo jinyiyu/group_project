@@ -8,6 +8,8 @@ const {
   CreateBucketCommand,
 } = require("@aws-sdk/client-s3");
 const fs = require("fs");
+
+//set up environment variables
 require("dotenv").config();
 
 //console log a value from .env file

@@ -1,6 +1,8 @@
 const User = require("../models/userSchema");
 const Document = require("../models/documentSchema");
+const { downloadFile } = require("../utils/aws-s3");
 const moment = require("moment");
+const path = require("path");
 
 // Get all employees' profiles - query is optional for search
 const getProfile = async (req, res) => {
@@ -261,28 +263,29 @@ const getVisaEmployees = async (req, res) => {
   }
 };
 
-const downloadFileFromS3 = async (req, res) => {
+const getDownloadDocument = async (req, res) => {
+  //Use this function to retrieve the PDF file from AWS S3. The file path is passed as a query parameter.
+  const filePath = req.query.filePath;
+  console.log(`Downloading file from S3 with key: ${filePath}`);
   try {
-    const { fileName } = req.params;
-
-    const key = `documents/documentId/${fileName}`;
-    const downloadPath = path.join(__dirname, `../downloads/${fileName}`);
+    const key = `documents/documentId/Group_Project.pdf`;
+    const downloadPath = path.join(__dirname, `../downloads/testFile.pdf`);
 
     console.log(`Downloading file from S3 with key: ${key}`);
 
-    // Download the file from S3 to a local path
+    // Download the file from S3 to the local path
     await downloadFile(key, downloadPath);
 
     // Send the file as a response
-    res.download(downloadPath, fileName, (err) => {
+    res.download(downloadPath, `testFile.pdf`, (err) => {
       if (err) {
         console.error("Error sending file:", err);
         res.status(500).send("Error downloading file");
       }
     });
   } catch (error) {
-    console.error("Error downloading file from S3:", error);
-    res.status(500).json({ message: "Error downloading file from S3", error });
+    console.error(error);
+    res.status(500).json({ message: "Error downloading document", error });
   }
 };
 
@@ -291,5 +294,5 @@ module.exports = {
   getEmployeesPendingDocs,
   updateDocStatus,
   getVisaEmployees,
-  downloadFileFromS3,
+  getDownloadDocument,
 };

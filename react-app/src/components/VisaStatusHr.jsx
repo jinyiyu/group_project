@@ -17,6 +17,8 @@ import {
 import axios from "axios";
 import moment from "moment";
 import emailjs from "@emailjs/browser";
+import { previewDocumentThunk } from "../store/employeeSlice/employee.thunk";
+import { useDispatch, useSelector } from "react-redux";
 
 const VisaStatusManagementPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -177,6 +179,10 @@ const VisaStatusManagementPage = () => {
       );
   };
 
+  const dispatch = useDispatch();
+  const handleDocumentDownload = (documentS3Path) => {
+    dispatch(previewDocumentThunk(documentS3Path));
+  };
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
       <Typography variant="h4" gutterBottom>
@@ -368,11 +374,11 @@ const VisaStatusManagementPage = () => {
                             Preview
                           </Button>
                           <Button
-                            href={doc.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             variant="contained"
                             color="primary"
+                            onClick={() => handleDocumentDownload(doc.fileUrl)}
                           >
                             Download
                           </Button>
