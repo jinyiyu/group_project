@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Application from '../components/Application';
+import UserForm from '../components/UserForm';
 
 function OnBoarding() {
   return (
     <>
-    <Application></Application>
+    <UserForm></UserForm>
     </>
   )
 }

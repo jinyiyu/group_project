@@ -4,6 +4,7 @@ import { fetchUserThunk } from '../store/userSlice/userThunks';
 import { fetchDocumentThunk } from '../store/documentSlice/documentThunk';
 import { updateDocument } from '../store/documentSlice/documentSlice';
 import { addEmergencyContact, updateField, deleteEmergencyContact} from '../store/userSlice/userSlice';
+import DocumentGallery from './Document';
     
 const UserForm = () => {
     const BASE_URL = "http://localhost:3000";
@@ -11,7 +12,7 @@ const UserForm = () => {
     const [optDoc, setOptDoc] = useState({documentType: "OPT_receipt", status: "Pending", input: 0});
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
-    const document = useSelector((state) => state.document);
+    const documents = useSelector((state) => state.document);
     const [showReference, setShowReference] = useState("no");
     const [showDriverLicense, setShowDriverLicense] = useState("no");
     const [other, setOther] = useState("");
@@ -24,6 +25,17 @@ const UserForm = () => {
         email: '',
         relationship: '',
     });
+
+    console.log(documents)
+    const disableAllInputs = ()=> {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.disabled = true;
+        });
+
+
+        document.querySelector('form button[type="submit"]').disabled = true; 
+    }
 
     const getVisaStatus = async() => {
         const res = await fetch(
@@ -49,6 +61,12 @@ const UserForm = () => {
         dispatch(fetchDocumentThunk());
         getVisaStatus();
     }, []);
+
+    useEffect(() => {
+        if (user.onboardStatus == "pending") {
+            disableAllInputs();
+        }
+    })
 
     useEffect(()=> {
         if (user.driverLicense.number=='' && user.driverLicense.expirationDate=='' && user.driverLicense.licenseCopy=='') {
@@ -133,7 +151,7 @@ const UserForm = () => {
                     'Content-Type': 'application/json'
                     },
                 body: JSON.stringify({
-                    base64File: document[docName],
+                    base64File: documents[docName],
                 })
             });
         if (!res.ok) {
@@ -183,8 +201,8 @@ const UserForm = () => {
                 })
             });
 
-        for (let docName in document) {
-            if (document[docName].startsWith("https://bfgp.s3.amazonaws.com")==false) {
+        for (let docName in documents) {
+            if (documents[docName].startsWith("https://bfgp.s3.amazonaws.com")==false) {
                 await uploadDocument(docName);
             }
         }
@@ -198,9 +216,24 @@ const UserForm = () => {
 
     return (
         <>
+        <h1>{`Status: ${user.onboardStatus}`}</h1>
         <form onSubmit={handleSubmit}>
-            <button onClick={uploadDocument}>test doc upload</button>
+            {user.onboardStatus=="rejected"? (
+                <>
+                <h1>Feedbacks: </h1>
+                {user.feedback.map((f, index) => (
+                    <div key={index}>
+                        <p>{f}</p>
+                    </div>
+                ))}
+                </>
+            ):(<></>)}
 
+            {user.onboardStatus=="pending"? (
+                <>
+                <h1>Please wait for HR to review your application</h1>
+                </>
+            ):(<></>)}
             <h1>section i</h1>
 
             <label htmlFor="userProfile.firstName">First Name</label>
@@ -217,9 +250,9 @@ const UserForm = () => {
 
             <h1>section ii</h1>
 
-            {(document.profilePicture!=="") ? 
+            {(documents.profilePicture!=="") ? 
             (<img
-                src={document.profilePicture} 
+                src={documents.profilePicture} 
                 alt="Profile"
                 style={{ width: '500px', height: '500px', objectFit: 'cover' }}
             />): 
@@ -296,7 +329,8 @@ const UserForm = () => {
                 Are you a citizen or permanent resident of the U.S?
                 <select
                 value={(user.employment.status=="citizen" || user.employment.status=="green_card")?"yes":"no"} 
-                onChange={(e) => handleStatusChange(e, "citizen")}>
+                onChange={(e) => handleStatusChange(e, "citizen")}
+                disabled={documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")}>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
@@ -309,7 +343,8 @@ const UserForm = () => {
                     <select
                     name="employment.status"
                     value={user.employment.status} 
-                    onChange={handleChange}>
+                    onChange={handleChange}
+                    disabled={documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")}>
                         <option value="citizen">Citizen</option>
                         <option value="green_card">Green Card</option>
                     </select>
@@ -322,7 +357,8 @@ const UserForm = () => {
                     <select
                     name="employment.status"
                     value={user.employment.status} 
-                    onChange={handleChange}>
+                    onChange={handleChange}
+                    disabled={documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")}>
                         <option value="h1b">H1-B</option>
                         <option value="l2">L2</option>
                         <option value="f1">{`F1(CPT/OPT)`}</option>
@@ -343,7 +379,7 @@ const UserForm = () => {
                     <div key={docName}>
                         <p>{docName}</p>
                         <img
-                        src={document[docName]} 
+                        src={documents[docName]} 
                         alt={docName}
                         style={{ width: '500px', height: '500px', objectFit: 'cover' }}
                         />
@@ -392,9 +428,9 @@ const UserForm = () => {
             <label htmlFor="driverLicense.expirationDate">Expiration Date</label>
             <input type="date" name="driverLicense.expirationDate" value={user.driverLicense.expirationDate?.split("T")[0]} onChange={handleChange} required/><br />
 
-            {(document.licenseCopy!=="") ? 
+            {(documents.licenseCopy!=="") ? 
             (<img
-                src={document.licenseCopy} 
+                src={documents.licenseCopy} 
                 alt="licenseCopy"
                 style={{ width: '50px', height: '50px', objectFit: 'cover' }}
             />): (<></>)}
@@ -405,7 +441,7 @@ const UserForm = () => {
                 name="driverLicense"
                 accept="image/*"
                 onChange={(e) => handleDocumentChange(e, "driverLicense.licenseCopy")}
-                required={document.licenseCopy==""}
+                required={documents.licenseCopy==""}
             /><br />
             </>):(<></>)}
 
@@ -463,67 +499,73 @@ const UserForm = () => {
         </form>
 
 
-        <form onSubmit={addContact}>
-            <label htmlFor="firstName">Emergency Contact First Name</label>
-            <input
-                type="text"
-                name="firstName"
-                value={contact.firstName}
-                onChange={handleContactChange}
-                required
-            />
-            <br />
+        {user.onboardStatus!=="pending"? (
+            <>
+            <form onSubmit={addContact}>
+                <label htmlFor="firstName">Emergency Contact First Name</label>
+                <input
+                    type="text"
+                    name="firstName"
+                    value={contact.firstName}
+                    onChange={handleContactChange}
+                    required
+                />
+                <br />
 
-            <label htmlFor="lastName">Emergency Contact Last Name</label>
-            <input
-                type="text"
-                name="lastName"
-                value={contact.lastName}
-                onChange={handleContactChange}
-                required
-            />
-            <br />
+                <label htmlFor="lastName">Emergency Contact Last Name</label>
+                <input
+                    type="text"
+                    name="lastName"
+                    value={contact.lastName}
+                    onChange={handleContactChange}
+                    required
+                />
+                <br />
 
-            <label htmlFor="middleName">Emergency Contact Middle Name</label>
-            <input
-                type="text"
-                name="middleName"
-                value={contact.middleName}
-                onChange={handleContactChange}
-            />
-            <br />
+                <label htmlFor="middleName">Emergency Contact Middle Name</label>
+                <input
+                    type="text"
+                    name="middleName"
+                    value={contact.middleName}
+                    onChange={handleContactChange}
+                />
+                <br />
 
-            <label htmlFor="phone">Emergency Contact Phone</label>
-            <input
-                type="tel"
-                name="phone"
-                value={contact.phone}
-                onChange={handleContactChange}
-                required
-            />
-            <br />
+                <label htmlFor="phone">Emergency Contact Phone</label>
+                <input
+                    type="tel"
+                    name="phone"
+                    value={contact.phone}
+                    onChange={handleContactChange}
+                    required
+                />
+                <br />
 
-            <label htmlFor="email">Emergency Contact Email</label>
-            <input
-                type="text"
-                name="email"
-                value={contact.email}
-                onChange={handleContactChange}
-                required
-            />
-            <br />
+                <label htmlFor="email">Emergency Contact Email</label>
+                <input
+                    type="text"
+                    name="email"
+                    value={contact.email}
+                    onChange={handleContactChange}
+                    required
+                />
+                <br />
 
-            <label htmlFor="relationship">Relationship</label>
-            <input
-                type="text"
-                name="relationship"
-                value={contact.relationship}
-                onChange={handleContactChange}
-                required
-            />
-            <br />
-            <button type="submit">Add Contact</button>
-        </form>
+                <label htmlFor="relationship">Relationship</label>
+                <input
+                    type="text"
+                    name="relationship"
+                    value={contact.relationship}
+                    onChange={handleContactChange}
+                    required
+                />
+                <br />
+                <button type="submit">Add Contact</button>
+            </form>
+            </>):
+            (<></>)}
+
+        <DocumentGallery></DocumentGallery>
         </>
     );
 };
