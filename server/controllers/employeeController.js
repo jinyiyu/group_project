@@ -218,10 +218,24 @@ const getVisaEmployees = async (req, res) => {
 
     const result = await Promise.all(
       visaEmployees.map(async (employee) => {
-        // Fetch the employee's uploaded documents
         const approvedDocuments = await Document.find({
           user: employee._id,
-        }).select("documentType fileUrl");
+        })
+          .select("documentType fileUrl uploadedAt status")
+          .sort({ uploadedAt: 1 });
+        // console.log(approveddocuments);
+        const latestDocument = approvedDocuments[approvedDocuments.length - 1];
+
+        let documentInfo;
+        if (!latestDocument) {
+          documentInfo = "Need to upload OPT-Receipts";
+        } else {
+          documentInfo = {
+            documentType: latestDocument.documentType,
+            status: latestDocument.status,
+            fileUrl: latestDocument.fileUrl,
+          };
+        }
 
         const endDate = employee.employment.end;
         const today = moment();
@@ -241,6 +255,7 @@ const getVisaEmployees = async (req, res) => {
             end: employee.employment.end,
           },
           daysRemaining: daysRemaining !== null ? daysRemaining : "N/A",
+          latestDocument: documentInfo,
           documents: approvedDocuments.map((doc) => ({
             documentType: doc.documentType,
             status: doc.status,

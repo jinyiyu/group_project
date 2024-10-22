@@ -37,8 +37,6 @@ const VisaStatusManagementPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [documentUrl, setDocumentUrl] = useState("");
   // const [preview, setPreview] = useState("");
-  const url =
-    "https://bfgp.s3.amazonaws.com/67147b5445846b9bac51d17f/profilePicture";
 
   const dispatch = useDispatch();
 
@@ -46,6 +44,9 @@ const VisaStatusManagementPage = () => {
   const visaEmployees = useSelector(selectVisaEmployees);
   const loading = useSelector(selectEmployeeLoading);
   const error = useSelector(selectEmployeeError);
+
+  console.log("employeesWithPendingDocs:", employeesWithPendingDocs);
+  console.log("visaEmployees: ", visaEmployees);
 
   useEffect(() => {
     dispatch(fetchPendingDocsThunk());
@@ -79,7 +80,7 @@ const VisaStatusManagementPage = () => {
   };
 
   const handleDownload = (url) => {
-    window.open(url, "_blank");
+    window.open(documentUrl, "_blank");
   };
 
   const handleTabChange = (event, newValue) => {
@@ -328,7 +329,9 @@ const VisaStatusManagementPage = () => {
                         <div>Days Remaining:{visaEmployee.daysRemaining} </div>
                       </div>
                     </TableCell>
-                    <TableCell>Next steps: random text</TableCell>
+                    <TableCell>
+                      Next steps: {determineNextStep(visaEmployee)}
+                    </TableCell>
                     <TableCell>
                       {visaEmployee.documents.map((doc, index) => (
                         <div key={index}>
@@ -357,7 +360,7 @@ const VisaStatusManagementPage = () => {
                             variant="contained"
                             color="primary"
                             // onClick={() => handleDocumentDownload(doc.fileUrl)}
-                            onClick={() => handleDownload(url)}
+                            onClick={() => handleDownload(documentUrl)}
                           >
                             Download
                           </Button>
@@ -391,14 +394,18 @@ const VisaStatusManagementPage = () => {
           <Typography variant="h6" id="document-preview">
             Document Preview for {selectedEmployee?.name}
           </Typography>
-          {url.endsWith(".pdf") ? (
+          {documentUrl.endsWith(".pdf") ? (
             <iframe
-              src={url}
+              src={documentUrl}
               title="File Preview"
               style={{ width: "100%", height: "500px" }}
             />
           ) : (
-            <img src={url} alt="File Preview" style={{ maxWidth: "100%" }} />
+            <img
+              src={documentUrl}
+              alt="File Preview"
+              style={{ maxWidth: "100%" }}
+            />
           )}
           <Button
             onClick={handleCloseModal}
