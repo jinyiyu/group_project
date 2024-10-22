@@ -7,7 +7,7 @@ const path = require("path");
 exports.getVisaStatus = async (req, res) => {
   try {
     // const userId = req.cookies.user_id;
-    const userId = "67147b5445846b9bac51d17f";
+    const userId = "6717d2d7cd4fb7e80481f370";
 
     // Get one newest uploaded document from documentSchema by userId,
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"

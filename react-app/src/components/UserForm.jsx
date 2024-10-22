@@ -39,29 +39,22 @@ const UserForm = () => {
     if (user.onboardStatus == "pending") {
       disableAllInputs();
     }
-  }, []);
+  });
 
   useEffect(() => {
-    if (
-      user.driverLicense.number == "" &&
-      user.driverLicense.expirationDate == "" &&
-      user.driverLicense.licenseCopy == ""
+    if (user.driverLicense.number !== "" || 
+      user.driverLicense.expirationDate !== "" ||
+      user.driverLicense.licenseCopy !== ""
     ) {
-      setShowDriverLicense("no");
-    } else {
       setShowDriverLicense("yes");
     }
   }, [user.driverLicense]);
 
   useEffect(() => {
-    if (
-      Object.values(user.reference).every(
-        (value) => value === "" || value === user.reference._id,
-      )
-    ) {
-      setShowReference("no");
-    } else {
-      setShowReference("yes");
+    for (let key in user.reference) {
+      if (key !== "_id" && user.reference[key] !== "") {
+        setShowReference("yes")
+      }
     }
   }, [user.reference]);
 
@@ -167,11 +160,13 @@ const UserForm = () => {
         updateField({ field: "driverLicense.expirationDate", value: "" }),
       );
       dispatch(updateField({ field: "driverLicense.licenseCopy", value: "" }));
+      dispatch(updateDocument({ type: "licenseCopy", url: "" }));
       setShowDriverLicense("no");
     } else {
       setShowDriverLicense("yes");
     }
   };
+  console.log(showReference, user.reference)
 
   const handleReferenceChange = (e) => {
     if (e.target.value == "no") {
@@ -205,6 +200,7 @@ const UserForm = () => {
         continue;
       }
       if (
+        documents[docName] !== "" &&
         documents[docName].startsWith("https://bfgp.s3.amazonaws.com") == false
       ) {
         await uploadDocument(docName);

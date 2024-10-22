@@ -8,7 +8,6 @@ const DocumentGallery = () => {
     Object.entries(documents).filter(([key, value]) => value !== ""),
   );
 
-
   const handleDownload = (url) => {
     window.open(url, "_blank");
   };
@@ -22,18 +21,19 @@ const DocumentGallery = () => {
           <button onClick={() => handleDownload(url)}>Download</button>
         </div>
       ))}
-      
+
       {preview !== "" ? (
         <>
-        <img
+          <img
             src={preview}
             alt="preview Doc"
             style={{ width: "400px", height: "400px", objectFit: "cover" }}
           />
-        <button onClick={() => setPreview("")}>Close</button>
+          <button onClick={() => setPreview("")}>Close</button>
         </>
-      ):
-      (<></>)}
+      ) : (
+        <></>
+      )}
     </>
   );
 };

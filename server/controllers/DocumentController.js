@@ -6,7 +6,7 @@ const baseUrl = "https://bfgp.s3.amazonaws.com"
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
-  const userId = "67147b5445846b9bac51d17f";
+  const userId = "6717d2d7cd4fb7e80481f370";
   const { type } = req.query;
   const {base64File} = req.body;
   const fileType = base64File.slice(0, 30).split(/[;/]/)[1]
@@ -36,17 +36,36 @@ const updateFile = async(req, res) => {
       ).lean().exec();
     }
     //for opt-related documents
+    //change onboard status to pending
+    //update document table
     else {
-      updated = await Document.findOneAndUpdate(
-        { user: userId, documentType: type },
-        {
-          $set: {
-            fileUrl: fileUrl,
-            uploadedAt: Date.now(),
-          },
-        },
-        { new: true, upsert: true }
+      const newUser = await User.findByIdAndUpdate(
+        userId,
+        { $set: { onboardStatus: "pending" } },
       ).lean().exec();
+
+      const document = await Document.find({user: userId, documentType: type}).lean().exec();
+      if (document.length!==0) {
+        updated = await Document.findOneAndUpdate(
+          { user: userId, documentType: type }, 
+          {
+            $set: {
+              fileUrl: fileUrl, 
+              uploadedAt: Date.now(),
+            },
+          },
+          { new: true }
+        ).lean().exec();
+      } else {
+        updated = await Document.create({
+          user: userId,
+          documentType: type,
+          fileUrl: fileUrl, 
+          status: "Pending",
+          feedback: "", 
+          uploadedAt: Date.now() 
+        });
+      }
     }
     return res.status(200).json({updated});
   }
@@ -57,7 +76,7 @@ const updateFile = async(req, res) => {
 
 const fetchFileUrls = async (req, res) => {
   // const { userId } = req.body;
-  const userId = "67147b5445846b9bac51d17f";
+  const userId = "6717d2d7cd4fb7e80481f370";
   const files = {
     profilePicture: "",
     licenseCopy: "",

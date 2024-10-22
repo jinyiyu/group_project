@@ -8,10 +8,11 @@ import VisaStatusManagementPage from "./components/VisaStatusHr.jsx";
 import ApplicationReview from "./components/Application.jsx";
 import UserVisaPage from "./pages/UserVisaPage.jsx";
 import PersonalInformation from "./pages/PersonalInformation.jsx";
+import OnBoarding from "./pages/onBoarding.jsx";
+
 import Modal from "react-modal";
 Modal.setAppElement("#root");
 import Housing from "./pages/Housing.jsx";
-import OnBoarding from "./pages/onBoarding.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -21,8 +22,8 @@ createRoot(document.getElementById("root")).render(
       {/* <VisaStatusManagementPage /> */}
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
-      {/* <OnBoarding /> */}
-      <PersonalInformation></PersonalInformation>
+      <OnBoarding />
+      {/* <PersonalInformation /> */}
     </Provider>
   </StrictMode>,
 );
