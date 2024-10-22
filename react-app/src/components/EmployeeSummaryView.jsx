@@ -5,38 +5,27 @@ import EmployeeProfileModel from "./employeeProfileModel.jsx";
 import Pagination from "@mui/material/Pagination";
 
 import {
-  setEmployees,
   setSearchQuery,
   setDropdownVisible,
   setDisplayedEmployees,
-} from "../redux/employeeSlice";
+} from "../store/employeeSlice/employeeSlice";
+import { fetchEmployees } from "../store/employeeSlice/employee.thunk";
+import {
+  selectAllEmployees,
+  selectSearchQuery,
+  selectDropdownVisible,
+  selectDisplayedEmployees,
+} from "../store/employeeSlice/employee.selectors";
 
 const EmployeeSummaryView = () => {
   const dispatch = useDispatch();
-  const employees = useSelector((state) => state.employees.allEmployees);
-  const searchQuery = useSelector((state) => state.employees.searchQuery);
-  const dropdownVisible = useSelector(
-    (state) => state.employees.dropdownVisible
-  );
-  const displayedEmployees = useSelector(
-    (state) => state.employees.displayedEmployees
-  );
+  const employees = useSelector(selectAllEmployees);
+  const searchQuery = useSelector(selectSearchQuery);
+  const dropdownVisible = useSelector(selectDropdownVisible);
+  const displayedEmployees = useSelector(selectDisplayedEmployees);
 
   useEffect(() => {
-    const fetchAndSetEmployees = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/employee/profile");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const employees = await response.json();
-        dispatch(setEmployees(employees));
-      } catch (error) {
-        console.error("Failed to fetch employees:", error);
-      }
-    };
-
-    fetchAndSetEmployees();
+    dispatch(fetchEmployees());
   }, [dispatch]);
 
   // Sort employees alphabetically by last name
