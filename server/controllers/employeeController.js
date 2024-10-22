@@ -264,7 +264,8 @@ const getVisaEmployees = async (req, res) => {
 };
 
 const getDownloadDocument = async (req, res) => {
-  //Use this function to retrieve the PDF file from AWS S3. The file path is passed as a query parameter.
+  //Use this function to retrieve the PDF file from AWS S3.
+  // The file path is passed as a query parameter.
   const filePath = req.query.filePath;
   console.log(`Downloading file from S3 with key: ${filePath}`);
   try {

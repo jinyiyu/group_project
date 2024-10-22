@@ -35,6 +35,10 @@ const VisaStatusManagementPage = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [documentUrl, setDocumentUrl] = useState("");
+  // const [preview, setPreview] = useState("");
+  const url =
+    "https://bfgp.s3.amazonaws.com/67147b5445846b9bac51d17f/profilePicture";
 
   const dispatch = useDispatch();
 
@@ -63,14 +67,19 @@ const VisaStatusManagementPage = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleOpenModal = (visaEmployees) => {
+  const handleOpenModal = (visaEmployees, fileurl) => {
     // setSelectedEmployee(employee);
+    setDocumentUrl(fileurl);
     setModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setSelectedEmployee(null);
     setModalOpen(false);
+  };
+
+  const handleDownload = (url) => {
+    window.open(url, "_blank");
   };
 
   const handleTabChange = (event, newValue) => {
@@ -347,7 +356,8 @@ const VisaStatusManagementPage = () => {
                             rel="noopener noreferrer"
                             variant="contained"
                             color="primary"
-                            onClick={() => handleDocumentDownload(doc.fileUrl)}
+                            // onClick={() => handleDocumentDownload(doc.fileUrl)}
+                            onClick={() => handleDownload(url)}
                           >
                             Download
                           </Button>
@@ -381,11 +391,15 @@ const VisaStatusManagementPage = () => {
           <Typography variant="h6" id="document-preview">
             Document Preview for {selectedEmployee?.name}
           </Typography>
-          <iframe
-            src={selectedEmployee?.nextStep.document}
-            style={{ width: "100%", height: "400px" }}
-            title="Document Preview"
-          ></iframe>
+          {url.endsWith(".pdf") ? (
+            <iframe
+              src={url}
+              title="File Preview"
+              style={{ width: "100%", height: "500px" }}
+            />
+          ) : (
+            <img src={url} alt="File Preview" style={{ maxWidth: "100%" }} />
+          )}
           <Button
             onClick={handleCloseModal}
             variant="contained"

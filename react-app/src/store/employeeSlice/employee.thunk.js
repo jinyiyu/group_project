@@ -23,7 +23,7 @@ export const previewDocumentThunk = createAsyncThunk(
       const response = await axios.get(
         `/download-document?filePath=documents/documentId/Group_Project.pdf`,
         {
-          responseType: "blob", // Make sure the response is handled as a file
+          responseType: "blob",
         }
       );
 
