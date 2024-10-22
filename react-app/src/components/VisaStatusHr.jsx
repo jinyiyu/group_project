@@ -105,7 +105,7 @@ const VisaStatusManagementPage = () => {
   const determineNextStep = (employee) => {
     const { documentType, status } = employee.latestDocument;
 
-    if (documentType === "OPT-receipt") {
+    if (documentType === "OPT_receipt") {
       if (status === "Pending") {
         return "OPT receipt submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -115,7 +115,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "OPT-EAD") {
+    if (documentType === "OPT_EAD") {
       if (status === "Pending") {
         return "OPT EAD submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -125,7 +125,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "I-983") {
+    if (documentType === "I_983") {
       if (status === "Pending") {
         return "I-983 submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -135,7 +135,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "I-20") {
+    if (documentType === "I_20") {
       if (status === "Pending") {
         return "I-20 submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {

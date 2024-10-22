@@ -76,7 +76,7 @@ const getEmployeesPendingDocs = async (req, res) => {
     const getLatestDocument = async (employee) => {
       const latestDocument = await Document.findOne({
         user: employee._id,
-        documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
+        documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
       }).sort({ uploadedAt: -1 });
 
       return latestDocument;
