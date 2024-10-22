@@ -134,8 +134,10 @@ const login = async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful",
-      username: user.userName,
-      role: user.role,
+      user: {
+        username: user.userName,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -157,8 +159,10 @@ const logout = async (req, res) => {
 const isLoggedIn = async (req, res) => {
   return res.status(200).json({
     message: "Logged in",
-    username: req.body.user.username,
-    role: req.body.user.role,
+    user: {
+      username: req.user.userName,
+      role: req.user.role,
+    },
   });
 };
 
