@@ -14,7 +14,7 @@ import OnBoarding from "./pages/onBoarding.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      {/* <App /> */}
+      <App />
       {/* <EmployeeSummaryView /> */}
       {/* <VisaStatusManagementPage /> */}
       {/* <Housing /> */}

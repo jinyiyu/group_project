@@ -4,6 +4,7 @@ const hrHousingController = require("../controllers/hrHousingController");
 router.get("/", hrHousingController.getAllHouses);
 router.post("/", hrHousingController.addHouse);
 router.get("/:houseId", hrHousingController.getHouseDetail);
+router.delete("/:houseId", hrHousingController.deleteHouse);
 router.post(
   "/reports/:reportId/comments",
   hrHousingController.addCommentToFacilityReport

@@ -12,7 +12,7 @@
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin: 0 5px;
+  margin: 0 2.5px;
 }
 
 .tabs button:hover {
@@ -77,4 +77,19 @@ ul li span {
 
 p[style*="color: red"] {
   color: red;
+}
+
+#feedback-button {
+  background-color: rgb(1, 148, 1);
+}
+
+#feedback-button:hover {
+  background-color: green;
+}
+
+.update-status-btn {
+  button {
+    margin-right: 2.5px;
+    margin-top: 2.5px;
+  }
 }

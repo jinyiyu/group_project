@@ -8,9 +8,7 @@ router.get(
   hrHiringController.getIndividualApplication
 );
 router.put("/applications/:userId", hrHiringController.updateApplicationStatus);
-
-// give feedback is put on hold
-// router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
+router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
 
 // For testing purposes
 router.get("/report", hrHiringController.getReport);

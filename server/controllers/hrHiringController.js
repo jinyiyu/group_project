@@ -250,7 +250,8 @@ exports.giveFeedback = async (req, res) => {
   try {
     // Find the user by ID
     const user = await User.findById(userId);
-    if (!user) {
+    const feedbackUser = await User.findById(createdBy);
+    if (!user || !feedbackUser) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });

@@ -1,5 +1,5 @@
 const House = require("../models/houseSchema");
-const Report = require("../models/reportSchema");
+const { Report } = require("../models/reportSchema");
 const User = require("../models/userSchema");
 
 // Get all existing houses
@@ -287,6 +287,34 @@ exports.addHouse = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to add new house.",
+      error,
+    });
+  }
+};
+
+// Delete house
+exports.deleteHouse = async (req, res) => {
+  const { houseId } = req.params;
+
+  try {
+    const house = await House.findByIdAndDelete(houseId);
+
+    if (!house) {
+      return res.status(404).json({
+        success: false,
+        message: "House not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "House deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting house:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete house.",
       error,
     });
   }

@@ -71,15 +71,18 @@ const ApplicationDetails = ({ application, onBack }) => {
               placeholder="Enter feedback"
               value={feedbackInput}
               onChange={(e) => setFeedbackInput(e.target.value)}
-            />
+            />{" "}
+            <br />
             {feedbackError && <p style={{ color: "red" }}>{feedbackError}</p>}
-            <button onClick={handleGiveFeedback}>Add Feedback</button>
+            <button onClick={handleGiveFeedback} id="feedback-button">
+              Add Feedback
+            </button>
           </div>
         )}
       </div>
       {/* Show Approve/Reject buttons only if status is "Pending" */}
       {application.onboardStatus.toLowerCase() === "pending" && (
-        <div>
+        <div className="update-status-btn">
           <button onClick={() => handleStatusUpdate("approved")}>
             Approve
           </button>
