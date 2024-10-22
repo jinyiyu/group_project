@@ -44,10 +44,10 @@ const EmployeeSummaryView = () => {
     a.name.lastName.localeCompare(b.name.lastName)
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-  const [selectedEmployee, setSelectedEmployee] = useState(null); // State for selected employee
-  const [currentPage, setCurrentPage] = useState(1); // State for current page
-  const employeesPerPage = 25;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const employeesPerPage = 20;
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(displayedEmployees.length / employeesPerPage);
@@ -201,7 +201,7 @@ const EmployeeSummaryView = () => {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }} // Center pagination
+        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
       />
 
       {/* Render the modal */}

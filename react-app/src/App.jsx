@@ -1,3 +1,6 @@
+import GenerateTokenForm from "./components/GenerateTokenForm";
+import Application from "./components/Application";
+import "./App.css";
 import EmailForm from "./utils/EmailJs";
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -14,6 +17,11 @@ function App() {
       {/* testing component for personal info and onboard application page */}
       {/* <OnBoarding></OnBoarding> */}
       <div>
+        {/* generate token  */}
+        <GenerateTokenForm /> <br />
+        {/* application component */}
+        <Application /> <br />
+        {/* Commented out for readability purposes */}
         {/* component to send email from HR */}
         {/* <EmailForm /> */}
         <Router>
