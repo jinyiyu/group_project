@@ -61,6 +61,33 @@ export const fetchPendingDocsThunk = createAsyncThunk(
   }
 );
 
+// Function to update document status
+export const updateWithFeedbackThunk = createAsyncThunk(
+  "employee/update",
+  async ({ _id, status, feedback = null }, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        "http://localhost:3000/employee/update",
+        {
+          _id,
+          status,
+          feedback,
+        }
+      );
+      if (response.data.success) {
+        return {
+          message: `Document status updated to ${status}`,
+          data: response.data,
+        };
+      } else {
+        return thunkAPI.rejectWithValue(response.data.message);
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 // Fetch Visa Employees
 export const fetchVisaEmployeesThunk = createAsyncThunk(
   "employee/fetchVisaEmployees",

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   fetchPendingDocsThunk,
   fetchVisaEmployeesThunk,
+  updateWithFeedbackThunk,
 } from "./employee.thunk";
 
 const employeeSlice = createSlice({
@@ -61,6 +62,34 @@ const employeeSlice = createSlice({
       .addCase(fetchVisaEmployeesThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      });
+
+    // Asynchronous action for updating employee feedback
+    builder
+      .addCase(updateWithFeedbackThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null; // Reset error
+        state.message = null; // Reset message
+      })
+      .addCase(updateWithFeedbackThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message; // Set success message
+
+        // Update employee data in state
+        const updatedData = action.payload.data; // Assuming this contains updated employee data
+        const index = state.allEmployees.findIndex(
+          (emp) => emp._id === updatedData._id
+        );
+        if (index !== -1) {
+          state.allEmployees[index] = {
+            ...state.allEmployees[index],
+            ...updatedData,
+          }; // Update the employee data
+        }
+      })
+      .addCase(updateWithFeedbackThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload; // Store error message
       });
   },
 });

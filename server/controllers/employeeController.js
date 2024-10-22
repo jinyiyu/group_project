@@ -107,6 +107,7 @@ const getEmployeesPendingDocs = async (req, res) => {
             documentType: latestDocument.documentType,
             status: latestDocument.status,
             fileUrl: latestDocument.fileUrl,
+            _id: latestDocument._id,
           };
         }
 
@@ -147,7 +148,7 @@ const getEmployeesPendingDocs = async (req, res) => {
 
 const updateDocStatus = async (req, res) => {
   const { _id, feedback, status } = req.body;
-
+  console.log("updateDocStatus ", status);
   if (!_id || !status) {
     return res.status(400).json({
       success: false,
@@ -183,7 +184,8 @@ const updateDocStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Visa status updated to ${status}.`,
+      message: `Document status updated to ${status}.`,
+      feedback: feedback ? `${feedback}` : "No feedback provided.",
     });
   } catch (error) {
     console.error(error);

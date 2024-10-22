@@ -20,7 +20,7 @@ import emailjs from "@emailjs/browser";
 import {
   fetchPendingDocsThunk,
   fetchVisaEmployeesThunk,
-  previewDocumentThunk,
+  updateWithFeedbackThunk,
 } from "../store/employeeSlice/employee.thunk";
 import {
   selectEmployeesWithPendingDocs,
@@ -36,7 +36,7 @@ const VisaStatusManagementPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [documentUrl, setDocumentUrl] = useState("");
-  // const [preview, setPreview] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const dispatch = useDispatch();
 
@@ -53,10 +53,6 @@ const VisaStatusManagementPage = () => {
     dispatch(fetchVisaEmployeesThunk());
   }, [dispatch]);
 
-  const handleDocumentDownload = (documentS3Path) => {
-    dispatch(previewDocumentThunk(documentS3Path));
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -69,7 +65,6 @@ const VisaStatusManagementPage = () => {
   };
 
   const handleOpenModal = (visaEmployees, fileurl) => {
-    // setSelectedEmployee(employee);
     setDocumentUrl(fileurl);
     setModalOpen(true);
   };
@@ -77,9 +72,10 @@ const VisaStatusManagementPage = () => {
   const handleCloseModal = () => {
     setSelectedEmployee(null);
     setModalOpen(false);
+    setDocumentUrl("");
   };
 
-  const handleDownload = (url) => {
+  const handleDownload = (documentUrl) => {
     window.open(documentUrl, "_blank");
   };
 
@@ -160,6 +156,39 @@ const VisaStatusManagementPage = () => {
           alert("Failed to send notification.");
         }
       );
+  };
+
+  // Approve button click handler
+  const handleApprove = async (_id) => {
+    console.log(_id);
+    try {
+      dispatch(updateWithFeedbackThunk({ _id, status: "Approved" })).unwrap();
+      alert("Document is approved");
+      window.location.reload();
+      useEffect(() => {}, [dispatch]);
+    } catch (error) {
+      console.error("Failed to approve document:", error);
+    }
+  };
+
+  // Reject button click handler
+  const handleReject = (_id) => {
+    const userFeedback = prompt("Please provide feedback for rejection:");
+    if (userFeedback) {
+      try {
+        dispatch(
+          updateWithFeedbackThunk({
+            _id,
+            status: "Rejected",
+            feedback: userFeedback,
+          })
+        ).unwrap();
+        alert("Document is rejected");
+        window.location.reload();
+      } catch (error) {
+        console.error("Failed to reject document:", error);
+      }
+    }
   };
 
   return (
@@ -264,10 +293,19 @@ const VisaStatusManagementPage = () => {
                           variant="contained"
                           color="success"
                           style={{ marginRight: "3px" }}
+                          onClick={() =>
+                            handleApprove(employee.latestDocument._id)
+                          }
                         >
                           Approve
                         </Button>
-                        <Button variant="contained" color="error">
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() =>
+                            handleReject(employee.latestDocument._id)
+                          }
+                        >
                           Reject
                         </Button>
                       </>
@@ -359,8 +397,7 @@ const VisaStatusManagementPage = () => {
                             rel="noopener noreferrer"
                             variant="contained"
                             color="primary"
-                            // onClick={() => handleDocumentDownload(doc.fileUrl)}
-                            onClick={() => handleDownload(documentUrl)}
+                            onClick={() => handleDownload(doc.fileUrl)}
                           >
                             Download
                           </Button>
