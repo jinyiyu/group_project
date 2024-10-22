@@ -16,6 +16,7 @@ const accessValidation = (req, res, next) => {
             username: decoded.username,
             role: decoded.role,
         };
+        
     } catch (error) {
         return res.status(401).json({ message: "Invalid token" });
     }
