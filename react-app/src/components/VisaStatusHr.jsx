@@ -17,7 +17,17 @@ import {
 import axios from "axios";
 import moment from "moment";
 import emailjs from "@emailjs/browser";
-import { previewDocumentThunk } from "../store/employeeSlice/employee.thunk";
+import {
+  fetchPendingDocsThunk,
+  fetchVisaEmployeesThunk,
+  previewDocumentThunk,
+} from "../store/employeeSlice/employee.thunk";
+import {
+  selectEmployeesWithPendingDocs,
+  selectVisaEmployees,
+  selectEmployeeLoading,
+  selectEmployeeError,
+} from "../store/employeeSlice/employee.selectors";
 import { useDispatch, useSelector } from "react-redux";
 
 const VisaStatusManagementPage = () => {
@@ -25,63 +35,26 @@ const VisaStatusManagementPage = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [employeesWithPendingDocs, setEmployeesWithPendingDocs] = useState([]);
-  const [visaEmployees, setVisaEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Fetch data from the pending-docs API
+  const dispatch = useDispatch();
+
+  const employeesWithPendingDocs = useSelector(selectEmployeesWithPendingDocs);
+  const visaEmployees = useSelector(selectVisaEmployees);
+  const loading = useSelector(selectEmployeeLoading);
+  const error = useSelector(selectEmployeeError);
+
   useEffect(() => {
-    const fetchPendingDocsData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/employee/pending-docs"
-        );
-        if (response.data.success) {
-          setEmployeesWithPendingDocs(response.data.data);
-          console.log(response.data.data);
-        } else {
-          setError("Failed to fetch pending documents.");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    dispatch(fetchPendingDocsThunk());
+    dispatch(fetchVisaEmployeesThunk());
+  }, [dispatch]);
 
-    fetchPendingDocsData();
-  }, []);
-
-  // Fetch data from the visa-employees API
-  useEffect(() => {
-    setLoading(true);
-    const fetchVisaEmployees = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/employee/visa-employees"
-        );
-        if (response.data.success) {
-          setVisaEmployees(response.data.data);
-          //   console.log(response.data.data);
-        } else {
-          setError("Failed to fetch visa employees.");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVisaEmployees();
-  }, []);
+  const handleDocumentDownload = (documentS3Path) => {
+    dispatch(previewDocumentThunk(documentS3Path));
+  };
 
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>{error}</div>;
   }
@@ -179,10 +152,6 @@ const VisaStatusManagementPage = () => {
       );
   };
 
-  const dispatch = useDispatch();
-  const handleDocumentDownload = (documentS3Path) => {
-    dispatch(previewDocumentThunk(documentS3Path));
-  };
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
       <Typography variant="h4" gutterBottom>

@@ -41,3 +41,41 @@ export const previewDocumentThunk = createAsyncThunk(
     }
   }
 );
+
+// Fetch Pending Documents
+export const fetchPendingDocsThunk = createAsyncThunk(
+  "employee/fetchPendingDocs",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/employee/pending-docs"
+      );
+      if (response.data.success) {
+        return response.data.data;
+      } else {
+        return rejectWithValue("Failed to fetch pending documents.");
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Fetch Visa Employees
+export const fetchVisaEmployeesThunk = createAsyncThunk(
+  "employee/fetchVisaEmployees",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/employee/visa-employees"
+      );
+      if (response.data.success) {
+        return response.data.data;
+      } else {
+        return rejectWithValue("Failed to fetch visa employees.");
+      }
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
