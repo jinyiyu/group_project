@@ -21,5 +21,5 @@ createRoot(document.getElementById("root")).render(
       {/* <UserVisaPage /> */}
       <OnBoarding />
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

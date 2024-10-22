@@ -34,7 +34,7 @@ const VisaStatusManagementPage = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:3000/employee/pending-docs"
+          "http://localhost:3000/employee/pending-docs",
         );
         if (response.data.success) {
           setEmployeesWithPendingDocs(response.data.data);
@@ -58,7 +58,7 @@ const VisaStatusManagementPage = () => {
     const fetchVisaEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/employee/visa-employees"
+          "http://localhost:3000/employee/visa-employees",
         );
         if (response.data.success) {
           setVisaEmployees(response.data.data);
@@ -154,7 +154,7 @@ const VisaStatusManagementPage = () => {
       message: `Dear ${employee.name.firstName} ${
         employee.name.lastName
       }, \n\nPlease be informed of your next step regarding your visa document: ${determineNextStep(
-        employee
+        employee,
       )}\n\nBest regards,\nVisa Management Team`,
     };
 
@@ -163,7 +163,7 @@ const VisaStatusManagementPage = () => {
         "service_qajtlhi",
         "template_dfpkctt",
         templateParams,
-        "SlwYI4G9g1yD3FUSt"
+        "SlwYI4G9g1yD3FUSt",
       )
       .then(
         (result) => {
@@ -173,7 +173,7 @@ const VisaStatusManagementPage = () => {
         (error) => {
           console.log("Failed to send email:", error.text);
           alert("Failed to send notification.");
-        }
+        },
       );
   };
 
@@ -225,13 +225,13 @@ const VisaStatusManagementPage = () => {
                       <div>
                         Start Date:{" "}
                         {moment(employee.workAuthorizationTitle.start).format(
-                          "MMMM Do YYYY"
+                          "MMMM Do YYYY",
                         )}
                       </div>
                       <div>
                         End Date:{" "}
                         {moment(employee.workAuthorizationTitle.end).format(
-                          "MMMM Do YYYY"
+                          "MMMM Do YYYY",
                         )}
                       </div>
                       <div>Days Remaining:{employee.daysRemaining} </div>
@@ -269,7 +269,7 @@ const VisaStatusManagementPage = () => {
                           onClick={() =>
                             handleOpenModal(
                               employee,
-                              employee.latestDocument.fileUrl
+                              employee.latestDocument.fileUrl,
                             )
                           }
                         >
@@ -332,13 +332,13 @@ const VisaStatusManagementPage = () => {
                         <div>
                           Start Date:{" "}
                           {moment(
-                            visaEmployee["Work Authorization Title"].start
+                            visaEmployee["Work Authorization Title"].start,
                           ).format("MMMM Do YYYY")}
                         </div>
                         <div>
                           End Date:{" "}
                           {moment(
-                            visaEmployee["Work Authorization Title"].end
+                            visaEmployee["Work Authorization Title"].end,
                           ).format("MMMM Do YYYY")}
                         </div>
                         <div>Days Remaining:{visaEmployee.daysRemaining} </div>

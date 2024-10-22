@@ -1,18 +1,27 @@
 // src/components/Register.js
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, CircularProgress, Alert } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { validateRegister, registerUser } from '../redux/authSlice';
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { validateRegister, registerUser } from "../redux/authSlice";
 
 const Register = () => {
-  const { token } = useParams();  // Get token from the URL
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { token } = useParams(); // Get token from the URL
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const dispatch = useDispatch();
-  const { loading, error, tokenValid, email, registerSuccess } = useSelector((state) => state.auth);
+  const { loading, error, tokenValid, email, registerSuccess } = useSelector(
+    (state) => state.auth,
+  );
 
   // Validate token on component load
   useEffect(() => {
@@ -23,7 +32,7 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      alert("Passwords do not match!");
       return;
     }
 
@@ -80,9 +89,7 @@ const Register = () => {
           value={email}
           // inputProps={{readOnly:true}}
           disabled
-
         />
-
 
         <TextField
           fullWidth
@@ -111,7 +118,7 @@ const Register = () => {
           style={{ marginTop: 20 }}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Register'}
+          {loading ? <CircularProgress size={24} /> : "Register"}
         </Button>
       </form>
     </Container>

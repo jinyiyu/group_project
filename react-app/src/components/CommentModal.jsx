@@ -40,7 +40,7 @@ const CommentModal = ({
   const totalPages = Math.ceil(totalComments / commentsPerPage);
   const currentComments = sortedComments.slice(
     (currentPage - 1) * commentsPerPage,
-    currentPage * commentsPerPage
+    currentPage * commentsPerPage,
   );
 
   const handlePageChange = (newPage) => {
