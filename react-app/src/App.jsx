@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import OnBoarding from "./pages/onBoarding";
+import HrHousingManagement from "./pages/HrHousing";
 
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
         {/* generate token  */}
         {/* <GenerateTokenForm /> <br /> */}
         {/* application component */}
-        <Application /> <br />
+        {/* <Application /> <br /> */}
+        <HrHousingManagement />
         {/* Commented out for readability purposes */}
         {/* component to send email from HR */}
         {/* <EmailForm /> */}

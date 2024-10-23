@@ -271,7 +271,7 @@ exports.addHouse = async (req, res) => {
         mattresse: facilityInfo.mattresse,
         table: facilityInfo.tables,
         chair: facilityInfo.chairs,
-        addr: facilityInfo.addr,
+        addr: address,
       },
     });
 

@@ -93,3 +93,7 @@ p[style*="color: red"] {
     margin-top: 2.5px;
   }
 }
+
+.add-housing-input {
+  margin-bottom: 10px;
+}

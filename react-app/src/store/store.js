@@ -9,6 +9,7 @@ import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
 import authReducer from "../store/reducers/auth.reducers";
 import applicationReducer from "./reducers/application.reducers";
+import hrHousingReducer from "./hrHousingSlice/hrHousing.slice";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     document: documentReducer,
     auth: authReducer,
     application: applicationReducer,
+    hrHousing: hrHousingReducer,
   },
   devTools: true,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
