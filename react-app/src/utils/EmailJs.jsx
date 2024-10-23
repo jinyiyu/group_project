@@ -32,7 +32,7 @@ const EmailForm = () => {
         "service_qajtlhi",
         "template_dfpkctt",
         templateParams,
-        "SlwYI4G9g1yD3FUSt"
+        "SlwYI4G9g1yD3FUSt",
       )
       .then(
         (result) => {
@@ -42,7 +42,7 @@ const EmailForm = () => {
         (error) => {
           console.log("Failed to send email:", error.text);
           alert("Failed to send email.");
-        }
+        },
       );
   };
 
