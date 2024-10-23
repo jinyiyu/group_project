@@ -1,27 +1,40 @@
 import React, { useCallback, useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
 import {
+  addEmergencyContact,
   updateField,
   deleteEmergencyContact,
 } from "../store/userSlice/userSlice";
 import InputField from "./InputField";
-import AddContactForm from "./AddContactForm";
 
 const UserForm = () => {
+  const BASE_URL = "http://localhost:3000";
+  const optDocOrder = ["OPT_receipt", "OPT_EAD", "I_983", "I_20"];
+  const [optDoc, setOptDoc] = useState({
+    documentType: "OPT_receipt",
+    status: "Pending",
+    input: 0,
+  });
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const documents = useSelector((state) => state.document);
   const [showReference, setShowReference] = useState("no");
   const [showDriverLicense, setShowDriverLicense] = useState("no");
   const [other, setOther] = useState("");
-  const BASE_URL = "http://localhost:3000";
+
+  const [contact, setContact] = useState({
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    phone: "",
+    email: "",
+    relationship: "",
+  });
+
+  useEffect(() => {
+    getVisaStatus();
+  }, []);
 
   useEffect(() => {
     if (user.onboardStatus == "pending") {
@@ -30,16 +43,10 @@ const UserForm = () => {
   });
 
   useEffect(() => {
-    if (user.employment.status !== "f1") {
-      dispatch(updateDocument({ type: "OPT_receipt", url: "" }));
-    }
-  }, [user.employment.status]);
-
-  useEffect(() => {
     if (
-      user.driverLicense.number ||
-      user.driverLicense.expirationDate ||
-      user.driverLicense.licenseCopy
+      user.driverLicense.number !== "" ||
+      user.driverLicense.expirationDate !== "" ||
+      user.driverLicense.licenseCopy !== ""
     ) {
       setShowDriverLicense("yes");
     }
@@ -54,18 +61,30 @@ const UserForm = () => {
     }
   }, [user.reference]);
 
-  function transformString(str) {
-    let result = str.replace(/[A-Z]/g, (match) => ` ${match}`);
-    result = result.charAt(0).toUpperCase() + result.slice(1);
-    return result;
-  }
-
   const disableAllInputs = useCallback(() => {
     const inputs = document.querySelectorAll("input, select");
     inputs.forEach((input) => {
       input.disabled = true;
     });
+    document.querySelector('form button[type="submit"]').disabled = true;
   });
+
+  const getVisaStatus = useCallback(async () => {
+    const res = await fetch(`${BASE_URL}/users/status`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const { documentType, status } = await res.json();
+      let input = optDocOrder.indexOf(documentType);
+      if (status == "Approved") {
+        input += 1;
+      }
+
+      setOptDoc({ documentType: documentType, status: status, input: input });
+    }
+  }, [BASE_URL, setOptDoc]);
 
   const handleStatusChange = useCallback((e) => {
     if (e.target.value == "yes") {
@@ -79,6 +98,31 @@ const UserForm = () => {
     const { name, value } = e.target;
     dispatch(updateField({ field: name, value: value }));
   });
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContact((prevContact) => ({
+      ...prevContact,
+      [name]: value,
+    }));
+  };
+
+  const addContact = useCallback(
+    (e) => {
+      e.preventDefault();
+      const copy = contact;
+      dispatch(addEmergencyContact(copy));
+      setContact({
+        firstName: "",
+        lastName: "",
+        middleName: "",
+        phone: "",
+        email: "",
+        relationship: "",
+      });
+    },
+    [dispatch, addEmergencyContact, setContact],
+  );
 
   const handleDocumentChange = async (e, type) => {
     const file = e.target.files[0];
@@ -128,6 +172,7 @@ const UserForm = () => {
       setShowDriverLicense("yes");
     }
   };
+  console.log(showReference, user.reference);
 
   const handleReferenceChange = (e) => {
     if (e.target.value == "no") {
@@ -143,8 +188,6 @@ const UserForm = () => {
     }
   };
 
-  console.log(user.employment);
-
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     const userRes = await fetch(`${BASE_URL}/user/update`, {
@@ -159,6 +202,9 @@ const UserForm = () => {
     });
 
     for (let docName in documents) {
+      if (optDocOrder.includes(docName) && user.employment.status !== "f1") {
+        continue;
+      }
       if (
         documents[docName] !== "" &&
         documents[docName].startsWith("https://bfgp.s3.amazonaws.com") == false
@@ -178,33 +224,43 @@ const UserForm = () => {
       <form onSubmit={handleSubmit}>
         <h1>section i</h1>
 
-        <InputField
+        <label htmlFor="userProfile.firstName">First Name</label>
+        <input
+          type="text"
           name="userProfile.firstName"
-          label="First Name"
+          value={user.userProfile.firstName}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="userProfile.lastName">Last Name</label>
+        <input
+          type="text"
           name="userProfile.lastName"
-          label="Last Name"
+          value={user.userProfile.lastName}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="userProfile.middleName">Middle Name</label>
+        <input
+          type="text"
           name="userProfile.middleName"
-          label="Middle Name"
+          value={user.userProfile.middleName}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="userProfile.preferredName">Preferred Name</label>
+        <input
+          type="text"
           name="userProfile.preferredName"
-          label="Preffered Name"
+          value={user.userProfile.preferredName}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
         <h1>section ii</h1>
 
@@ -230,144 +286,170 @@ const UserForm = () => {
 
         <h1>section iii</h1>
 
-        <InputField
+        <label htmlFor="address.apt">Apartment #</label>
+        <input
+          type="text"
           name="address.apt"
-          label="Building/Apt #"
+          value={user.address.apt}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="address.strName">Street Name</label>
+        <input
+          type="text"
           name="address.strName"
-          label="Street Name"
+          value={user.address.strName}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="address.city">City</label>
+        <input
+          type="text"
           name="address.city"
-          label="City"
+          value={user.address.city}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="address.state">State</label>
+        <input
+          type="text"
           name="address.state"
-          label="State"
+          value={user.address.state}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="address.zip">Zip Code</label>
+        <input
+          type="text"
           name="address.zip"
-          label="ZIP Code"
+          value={user.address.zip}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
         <h1>section iv</h1>
 
-        <InputField
+        <label htmlFor="contactInfo.cellPhone">Cell Phone</label>
+        <input
+          type="tel"
           name="contactInfo.cellPhone"
-          type="tel"
-          label="Cell Phone"
+          value={user.contactInfo.cellPhone}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <InputField
-          name="contactInfo.workPhone"
+        <label htmlFor="contactInfo.workPhone">Work Phone</label>
+        <input
           type="tel"
-          label="Work Phone"
+          name="contactInfo.workPhone"
+          value={user.contactInfo.workPhone}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
         <h1>section v</h1>
 
-        <InputField
+        <label htmlFor="car.model">Car Model</label>
+        <input
+          type="text"
           name="car.model"
-          label="Car Model"
+          value={user.car.model}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="car.color">Car Color</label>
+        <input
+          type="text"
           name="car.color"
-          label="Car Color"
+          value={user.car.color}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
-        <InputField
+        <label htmlFor="car.make">Car Make</label>
+        <input
+          type="text"
           name="car.make"
-          label="Car Make"
+          value={user.car.make}
           onChange={handleChange}
-          required={false}
-        ></InputField>
+        />
+        <br />
 
         <h1>section vi</h1>
 
-        <TextField
-          size="small"
-          variant="outlined"
-          label="Email"
+        <label htmlFor="userProfile.email">Email</label>
+        <input
           type="email"
           name="userProfile.email"
           value={user.userProfile.email}
           readOnly
-          required
-        ></TextField>
+        />
+        <br />
 
         <h1>section vii</h1>
 
-        <InputField
+        <label htmlFor="userProfile.SSN">SSN</label>
+        <input
+          type="text"
           name="userProfile.SSN"
-          label="SSN"
+          value={user.userProfile.SSN}
           onChange={handleChange}
-          required={true}
-        ></InputField>
+          required
+        />
+        <br />
 
-        <TextField
-          size="small"
-          variant="outlined"
-          label="Date of Birth"
+        <label htmlFor="userProfile.DoB">Date of Birth</label>
+        <input
           type="date"
           name="userProfile.DoB"
           value={user.userProfile.DoB?.split("T")[0]}
           onChange={handleChange}
           required
-        ></TextField>
+        />
+        <br />
 
-        <Select
-          value={user.userProfile.gender}
-          label="Gender"
-          onChange={handleChange}
+        <label htmlFor="userProfile.gender">Gender</label>
+        <select
           name="userProfile.gender"
+          value={user.userProfile.gender}
+          onChange={handleChange}
         >
-          <MenuItem value="">Select Gender</MenuItem>
-          <MenuItem value="Male">Male</MenuItem>
-          <MenuItem value="Female">Female</MenuItem>
-          <MenuItem value="Other">I do not wish to answer</MenuItem>
-        </Select>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">I do not wish to answer</option>
+        </select>
+        <br />
 
         <h1>section viii</h1>
-        <Select
-          value={
-            user.employment.status == "citizen" ||
-            user.employment.status == "green_card"
-              ? "yes"
-              : "no"
-          }
-          label="Are you a citizen or permanent resident of the U.S?"
-          onChange={handleStatusChange}
-          disabled={documents["OPT_receipt"].startsWith(
-            "https://bfgp.s3.amazonaws.com",
-          )}
-        >
-          <MenuItem value="yes">Yes</MenuItem>
-          <MenuItem value="no">No</MenuItem>
-        </Select>
+        <label>
+          Are you a citizen or permanent resident of the U.S?
+          <select
+            value={
+              user.employment.status == "citizen" ||
+              user.employment.status == "green_card"
+                ? "yes"
+                : "no"
+            }
+            onChange={handleStatusChange}
+            disabled={documents["OPT_receipt"].startsWith(
+              "https://bfgp.s3.amazonaws.com",
+            )}
+          >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </label>
 
         {user.employment.status == "citizen" ||
         user.employment.status == "green_card" ? (
@@ -406,54 +488,55 @@ const UserForm = () => {
               </select>
             </label>
 
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Start Date"
+            <label htmlFor="employment.start">Start Date: </label>
+            <input
               type="date"
               name="employment.start"
               value={user.employment.start?.split("T")[0]}
               onChange={handleChange}
               required
-            ></TextField>
+            />
+            <br />
 
-            <TextField
-              size="small"
-              variant="outlined"
-              label="End Date"
+            <label htmlFor="employment.end">End Date: </label>
+            <input
               type="date"
               name="employment.end"
               value={user.employment.end?.split("T")[0]}
               onChange={handleChange}
               required
-            ></TextField>
+            />
+            <br />
           </>
         )}
 
-        {/* button to visa status page only if user have uploaded opt receipt on last submission */}
-        {user.employment.status == "f1" &&
-        documents["OPT_receipt"] !== "" &&
-        documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") &&
-        user.onboardStatus !== "pending" ? (
-          <>
-            <button> TODO: to visa status page </button>
-          </>
+        {user.employment.status == "f1" ? (
+          optDocOrder.slice(0, optDoc.input).map((docName, index) => (
+            <div key={docName}>
+              <p>{docName}</p>
+              <img
+                src={documents[docName]}
+                alt={docName}
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+            </div>
+          ))
         ) : (
           <></>
         )}
 
-        {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
-        {user.employment.status == "f1" &&
-        (documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") ==
-          false ||
-          documents["OPT_receipt"] == "") ? (
+        {user.employment.status == "f1" && optDoc.input < 4 ? (
           <>
-            <label htmlFor="OPT_receipt">{`Upload your OPT receipt`}</label>
+            <label
+              htmlFor={optDocOrder[optDoc.input]}
+            >{`Upload your ${optDocOrder[optDoc.input]}`}</label>
             <input
               type="file"
-              name="OPT_receipt"
+              name={optDocOrder[optDoc.input]}
               accept="image/*"
-              onChange={(e) => handleDocumentChange(e, "OPT_receipt")}
+              onChange={(e) =>
+                handleDocumentChange(e, optDocOrder[optDoc.input])
+              }
               required
             />
             <br />
@@ -464,10 +547,8 @@ const UserForm = () => {
 
         {user.employment.status == "other" ? (
           <>
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Please specify"
+            <label htmlFor="employment.status">Please specify: </label>
+            <input
               type="text"
               name="employment.status"
               value={other}
@@ -475,7 +556,8 @@ const UserForm = () => {
                 setOther(e.target.value);
               }}
               required
-            ></TextField>
+            />
+            <br />
           </>
         ) : (
           <></>
@@ -493,23 +575,27 @@ const UserForm = () => {
 
         {showDriverLicense == "yes" ? (
           <>
-            <InputField
+            <label htmlFor="driverLicense.number">Plate Number #</label>
+            <input
+              type="text"
               name="driverLicense.number"
-              label="Plate Number #"
+              value={user.driverLicense.number}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
 
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Expiration Date"
+            <label htmlFor="driverLicense.expirationDate">
+              Expiration Date
+            </label>
+            <input
               type="date"
               name="driverLicense.expirationDate"
               value={user.driverLicense.expirationDate?.split("T")[0]}
               onChange={handleChange}
               required
-            ></TextField>
+            />
+            <br />
 
             {documents.licenseCopy !== "" ? (
               <img
@@ -548,49 +634,64 @@ const UserForm = () => {
 
         {showReference == "yes" ? (
           <>
-            <InputField
+            <label htmlFor="reference.firstName">First Name</label>
+            <input
+              type="text"
               name="reference.firstName"
-              label="First Name"
+              value={user.reference.firstName}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
 
-            <InputField
+            <label htmlFor="reference.lastName">Last Name</label>
+            <input
+              type="text"
               name="reference.lastName"
-              label="Last Name"
+              value={user.reference.lastName}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
 
-            <InputField
+            <label htmlFor="reference.middleName">Middle Name</label>
+            <input
+              type="text"
               name="reference.middleName"
-              label="Middle Name"
+              value={user.reference.middleName}
               onChange={handleChange}
-              required={false}
-            ></InputField>
+            />
+            <br />
 
-            <InputField
-              name="reference.phone"
+            <label htmlFor="reference.phone">Phone</label>
+            <input
               type="tel"
-              label="Phone"
+              name="reference.phone"
+              value={user.reference.phone}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
 
-            <InputField
-              name="reference.email"
+            <label htmlFor="reference.email">Email</label>
+            <input
               type="email"
-              label="Email"
+              name="reference.email"
+              value={user.reference.email}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
 
-            <InputField
+            <label htmlFor="reference.relationship">Relationship</label>
+            <input
+              type="text"
               name="reference.relationship"
-              label="Relationship"
+              value={user.reference.relationship}
               onChange={handleChange}
-              required={true}
-            ></InputField>
+              required
+            />
+            <br />
           </>
         ) : (
           <></>
@@ -600,44 +701,96 @@ const UserForm = () => {
 
         {user.emergencyContact.map((contact, index) => (
           <div key={contact.email}>
-            <h3>{`Emergency Contact: ${contact.firstName} ${contact.lastName}`}</h3>
-            {Object.entries(contact)
-              .filter(([field, _]) => field != "_id")
-              .map(([field, value]) => (
-                <div key={`${contact.email}-${field}`}>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    label={`${transformString(field)}`}
-                    type="text"
-                    name={`emergencyContact.${field}`}
-                    value={value}
-                    readOnly
-                  ></TextField>
-                </div>
-              ))}
-            {user.onboardStatus !== "pending" ? (
-              <button
-                onClick={() => dispatch(deleteEmergencyContact(contact.email))}
-                disabled={user.emergencyContact.length === 1}
-              >
-                Delete
-              </button>
-            ) : (
-              <></>
-            )}
+            {Object.entries(contact).map(([field, value]) => (
+              <div key={`${contact.email}-${field}`}>
+                <label
+                  htmlFor={`emergencyContact.${field}`}
+                >{`Emergency Contact ${field}`}</label>
+                <input
+                  type="text"
+                  name={`emergencyContact.${field}`}
+                  value={value}
+                  readOnly
+                />
+                <br />
+              </div>
+            ))}
+            <button
+              onClick={() => dispatch(deleteEmergencyContact(contact.email))}
+              disabled={user.emergencyContact.length === 1}
+            >
+              Delete
+            </button>
           </div>
         ))}
 
-        {user.onboardStatus !== "pending" ? (
-          <button type="submit">Submit</button>
-        ) : (
-          <></>
-        )}
+        <button type="submit">Submit</button>
       </form>
 
       {user.onboardStatus !== "pending" ? (
-        <AddContactForm></AddContactForm>
+        <>
+          <form onSubmit={addContact}>
+            <label htmlFor="firstName">Emergency Contact First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={contact.firstName}
+              onChange={handleContactChange}
+              required
+            />
+            <br />
+
+            <label htmlFor="lastName">Emergency Contact Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={contact.lastName}
+              onChange={handleContactChange}
+              required
+            />
+            <br />
+
+            <label htmlFor="middleName">Emergency Contact Middle Name</label>
+            <input
+              type="text"
+              name="middleName"
+              value={contact.middleName}
+              onChange={handleContactChange}
+            />
+            <br />
+
+            <label htmlFor="phone">Emergency Contact Phone</label>
+            <input
+              type="tel"
+              name="phone"
+              value={contact.phone}
+              onChange={handleContactChange}
+              required
+            />
+            <br />
+
+            <label htmlFor="email">Emergency Contact Email</label>
+            <input
+              type="text"
+              name="email"
+              value={contact.email}
+              onChange={handleContactChange}
+              required
+            />
+            <br />
+
+            <label htmlFor="relationship">Relationship</label>
+            <input
+              type="text"
+              name="relationship"
+              value={contact.relationship}
+              onChange={handleContactChange}
+              required
+            />
+            <br />
+            <button type="submit">Add Contact</button>
+          </form>
+        </>
       ) : (
         <></>
       )}

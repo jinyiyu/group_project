@@ -21,7 +21,7 @@ const SearchBar = () => {
     const filteredEmployees = employees.filter((employee) =>
       `${employee.name.firstName} ${employee.name.lastName}`
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+        .includes(searchQuery.toLowerCase()),
     );
     dispatch(setDisplayedEmployees(filteredEmployees));
     dispatch(setDropdownVisible(false));
@@ -78,7 +78,7 @@ const SearchBar = () => {
             .filter((employee) =>
               `${employee.name.firstName} ${employee.name.lastName}`
                 .toLowerCase()
-                .includes(searchQuery.toLowerCase())
+                .includes(searchQuery.toLowerCase()),
             )
             .map((employee, index) => (
               <li
@@ -90,13 +90,13 @@ const SearchBar = () => {
                 }}
                 onClick={() =>
                   handleDropdownClick(
-                    `${employee.name.firstName} ${employee.name.lastName}`
+                    `${employee.name.firstName} ${employee.name.lastName}`,
                   )
                 }
               >
                 {highlightSearchTerm(
                   `${employee.name.firstName} ${employee.name.lastName}`,
-                  searchQuery
+                  searchQuery,
                 )}
               </li>
             ))}

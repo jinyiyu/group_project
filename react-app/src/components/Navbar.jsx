@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { useSelector } from 'react-redux';
+
 const Navbar = () => {
   const { loginSuccess, user } = useSelector((state) => state.userAuth);
 
