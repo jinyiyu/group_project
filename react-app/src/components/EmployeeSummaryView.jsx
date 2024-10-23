@@ -16,10 +16,10 @@ const EmployeeSummaryView = () => {
   const employees = useSelector((state) => state.employees.allEmployees);
   const searchQuery = useSelector((state) => state.employees.searchQuery);
   const dropdownVisible = useSelector(
-    (state) => state.employees.dropdownVisible
+    (state) => state.employees.dropdownVisible,
   );
   const displayedEmployees = useSelector(
-    (state) => state.employees.displayedEmployees
+    (state) => state.employees.displayedEmployees,
   );
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const EmployeeSummaryView = () => {
 
   // Sort employees alphabetically by last name
   const sortedEmployees = [...displayedEmployees].sort((a, b) =>
-    a.name.lastName.localeCompare(b.name.lastName)
+    a.name.lastName.localeCompare(b.name.lastName),
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,7 +57,7 @@ const EmployeeSummaryView = () => {
   const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
   const currentEmployees = sortedEmployees.slice(
     indexOfFirstEmployee,
-    indexOfLastEmployee
+    indexOfLastEmployee,
   );
 
   // Handle page change
@@ -69,7 +69,7 @@ const EmployeeSummaryView = () => {
     const filteredEmployees = employees.filter((employee) =>
       `${employee.name.firstName} ${employee.name.lastName}`
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+        .includes(searchQuery.toLowerCase()),
     );
     dispatch(setDisplayedEmployees(filteredEmployees));
     dispatch(setDropdownVisible(false));
@@ -136,7 +136,7 @@ const EmployeeSummaryView = () => {
             .filter((employee) =>
               `${employee.name.firstName} ${employee.name.lastName}`
                 .toLowerCase()
-                .includes(searchQuery.toLowerCase())
+                .includes(searchQuery.toLowerCase()),
             )
             .map((employee, index) => (
               <li
@@ -148,13 +148,13 @@ const EmployeeSummaryView = () => {
                 }}
                 onClick={() =>
                   handleDropdownClick(
-                    `${employee.name.firstName} ${employee.name.lastName}`
+                    `${employee.name.firstName} ${employee.name.lastName}`,
                   )
                 }
               >
                 {highlightSearchTerm(
                   `${employee.name.firstName} ${employee.name.lastName}`,
-                  searchQuery
+                  searchQuery,
                 )}
               </li>
             ))}

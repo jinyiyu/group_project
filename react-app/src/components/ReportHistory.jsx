@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchReportsThunk,
-  createReportThunk,
   addCommentThunk,
   updateCommentThunk,
 } from "../store/reportSlice/report.thunk";
 import { selectReports } from "../store/reportSlice/report.selectors";
 import CommentModal from "../components/CommentModal";
-import ReportPagination from "../components/ReportPagination";
 import SortReport from "../components/SortReport";
+import {
+  Typography,
+  Button,
+  Box,
+  Pagination,
+  Card,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 
-const ReportPage = () => {
+const ReportHistory = () => {
   const dispatch = useDispatch();
   const reports = useSelector(selectReports);
   const [selectedReport, setSelectedReport] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [commentIdToUpdate, setCommentIdToUpdate] = useState(null);
-  const [newReportTitle, setNewReportTitle] = useState("");
-  const [newReportDesc, setNewReportDesc] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("latest");
   const reportsPerPage = 5;
@@ -41,11 +46,11 @@ const ReportPage = () => {
   const totalPages = Math.ceil(totalReports / reportsPerPage);
   const currentReports = sortedReports.slice(
     (currentPage - 1) * reportsPerPage,
-    currentPage * reportsPerPage,
+    currentPage * reportsPerPage
   );
 
   // Handler for set new page status
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
   };
 
@@ -68,7 +73,6 @@ const ReportPage = () => {
   // Function for adding a new comment on a report
   const addComment = (reportId, commentDesc) => {
     dispatch(addCommentThunk({ reportId, comment: commentDesc }))
-      // Make sure the newly added comment is showing right after it's been added
       .unwrap()
       .then((updatedReport) => {
         setSelectedReport((prevReport) => ({
@@ -81,7 +85,6 @@ const ReportPage = () => {
   // Handle updating an existing comment
   const updateComment = (reportId, commentId, newCommentDesc) => {
     dispatch(updateCommentThunk({ reportId, commentId, desc: newCommentDesc }))
-      // Make sure the newly updated comment is showing right after it's been updated
       .unwrap()
       .then((updatedReport) => {
         setSelectedReport((prevReport) => ({
@@ -101,77 +104,80 @@ const ReportPage = () => {
     setNewComment(commentDesc);
   };
 
-  // Handler for creating a new report
-  const handleCreateReport = (e) => {
-    e.preventDefault();
-    const newReport = {
-      title: newReportTitle,
-      desc: newReportDesc,
-    };
-    dispatch(createReportThunk(newReport));
-    setNewReportTitle("");
-    setNewReportDesc("");
-  };
-
   return (
-    <div>
-      <h2>Facility Reports</h2>
-      <h3>Create a New Report</h3>
-      <form onSubmit={handleCreateReport}>
-        <div>
-          <label>Title: </label>
-          <input
-            type="text"
-            value={newReportTitle}
-            onChange={(e) => setNewReportTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Description: </label>
-          <textarea
-            value={newReportDesc}
-            onChange={(e) => setNewReportDesc(e.target.value)}
-            required
-          ></textarea>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+    <Box>
+      <Typography variant="h5" mb={2}>
+        Facility Reports
+      </Typography>
+
+      {/* Sort Dropdown */}
       <SortReport sortOption={sortOption} setSortOption={setSortOption} />
-      <ul>
+
+      {/* Report List */}
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+          mt: 4,
+        }}
+      >
         {currentReports.map((report) => (
-          <li key={report._id}>
-            <h4>{report.title}</h4>
-            <p>{report.desc}</p>
-            <button onClick={() => openCommentModal(report)}>
-              View Comments
-            </button>
-          </li>
+          <Card
+            key={report._id}
+            variant="outlined"
+            sx={{
+              mb: 2,
+              display: "flex",
+              flexDirection: "column",
+              width: "400px",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h6">{report.title}</Typography>
+              <Typography>{report.desc}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="outlined"
+                sx={{ mt: 1 }}
+                onClick={() => openCommentModal(report)}
+              >
+                View Comments
+              </Button>
+            </CardActions>
+          </Card>
         ))}
-      </ul>
-
-      <ReportPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-
-      {selectedReport && (
-        <CommentModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          comments={selectedReport.comments}
-          reportId={selectedReport._id}
-          addComment={addComment}
-          updateComment={updateComment}
-          isUpdating={isUpdating}
-          commentIdToUpdate={commentIdToUpdate}
-          triggerUpdateComment={triggerUpdateComment}
-          currentUserId={selectedReport.createdBy}
+      </Box>
+      <Box mt={2} display="flex" justifyContent="center">
+        <Pagination
+          count={totalPages}
+          onChange={handlePageChange}
+          color="primary"
         />
+      </Box>
+
+      {/* Comment Modal */}
+      {selectedReport && (
+        <Box sx={{ overflowY: "auto" }}>
+          <CommentModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            comments={selectedReport.comments}
+            reportId={selectedReport._id}
+            addComment={addComment}
+            updateComment={updateComment}
+            isUpdating={isUpdating}
+            commentIdToUpdate={commentIdToUpdate}
+            triggerUpdateComment={triggerUpdateComment}
+            currentUserId={selectedReport.createdBy}
+          />
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 
-export default ReportPage;
+export default ReportHistory;

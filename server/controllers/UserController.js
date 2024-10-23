@@ -2,35 +2,34 @@ const User = require("../models/userSchema.js");
 const House = require("../models/houseSchema.js");
 const argon2 = require("argon2");
 // const generateToken = require("../utils/generateToken.js");
-const {genAccessToken} = require("../utils/genJwtToken.js");
+const { genAccessToken } = require("../utils/genJwtToken.js");
 
 // fetch user data(nested object)
 // will return specific fields if given in the query string
-const fetchUserData = async(req, res) => {
+const fetchUserData = async (req, res) => {
   // const { userId } = req.body;
-  const userId = "67147b5445846b9bac51d17f";
+  const userId = "6717d2d7cd4fb7e80481f379";
   const { fields } = req.query;
 
   try {
-    let filter = ''; //TODO_ldl: needs a middleware before this function to validate the filter
+    let filter = ""; //TODO_ldl: needs a middleware before this function to validate the filter
     if (fields) {
-      filter = fields.split(';').join(' ');
+      filter = fields.split(";").join(" ");
     }
 
     const user = await User.findById(userId).select(filter).lean().exec();
-    return res.status(200).json({user});
-  }
-  catch (error) {
+    return res.status(200).json({ user });
+  } catch (error) {
     res.status(500).json({ message: `${error}` });
   }
-}
+};
 
 // update user data
 // data can be nested object, should follow the data model, can be partial
-const updateUserData = async(req, res) => {
+const updateUserData = async (req, res) => {
   // const { userId, data } = req.body;
   const { data } = req.body;//TODO_ldl: might need middleware before this function to verify the data is in correct structure
-  const userId = "67147b5445846b9bac51d17f";
+  const userId = "6717d2d7cd4fb7e80481f379";
 
   try {
     // Use $set to update nested fields
@@ -38,34 +37,40 @@ const updateUserData = async(req, res) => {
       userId,
       { $set: data },
       { new: true }
-    ).lean().exec();
+    )
+      .lean()
+      .exec();
 
     if (!updatedUser) {
-      return res.status(500).json({ message: `DB update error for ${userId, data}` });
+      return res
+        .status(500)
+        .json({ message: `DB update error for ${(userId, data)}` });
     }
 
-    return res.status(200).json({updatedUser});
-  }
-  catch (error) {
+    return res.status(200).json({ updatedUser });
+  } catch (error) {
     res.status(500).json({ message: `${error}` });
   }
-}
+};
 
-
-// regisiter 
-const register = async(req, res) => {
-  const {username, password} = req.body;
+// regisiter
+const register = async (req, res) => {
+  const { username, password } = req.body;
   const email = req.body.email;
-  try{
+  try {
     // check duplicate username
-    const dupUsername = await User.findOne({userName:username}).lean().exec();
-    if(dupUsername){
+    const dupUsername = await User.findOne({ userName: username })
+      .lean()
+      .exec();
+    if (dupUsername) {
       return res.status(409).json({ message: "Username already exists" });
     }
     console.log("email::", email);
     // check duplicate email
-    const dupEmail = await User.findOne({'userProfile.email':email}).lean().exec();
-    if(dupEmail){
+    const dupEmail = await User.findOne({ "userProfile.email": email })
+      .lean()
+      .exec();
+    if (dupEmail) {
       return res.status(409).json({ message: "Email already exists" });
     }
     // hash password
@@ -80,61 +85,67 @@ const register = async(req, res) => {
       email,
       role: "employee",
       house: randomHouse[0]._id,
-    }
+    };
     console.log(user_query);
     const newUser = await User.create(user_query);
-    const accessToken = genAccessToken(newUser._id, newUser.userName, newUser.role);
+    const accessToken = genAccessToken(
+      newUser._id,
+      newUser.userName,
+      newUser.role
+    );
     res.cookie("token", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "Strict",
-  });
-  return res.status(201).json({ message: `${username} registered successfully` });
-
-  }catch(error){
+    });
+    return res
+      .status(201)
+      .json({ message: `${username} registered successfully` });
+  } catch (error) {
     console.log(error);
     res.status(500).json({ message: `${error}` });
   }
-
-}
+};
 
 // login
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
-      // check if user exists
-      const user = await User.findOne({userName:username}).lean().exec();
-      if (!user) {
-          return res
-              .status(401)
-              .json({ message: "Invalid username or password" });
-      }
+    // check if user exists
+    const user = await User.findOne({ userName: username }).lean().exec();
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
 
-      // check if password is correct
-      const isPasswordCorrect = await argon2.verify(user.password, password);
-      if (!isPasswordCorrect) {
-          return res
-              .status(401)
-              .json({ message: "Invalid user or password" });
-      }
+    // check if password is correct
+    const isPasswordCorrect = await argon2.verify(user.password, password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Invalid user or password" });
+    }
 
-      // generate access token
-      const token = genAccessToken(user._id, user.username, user.role);
+    // generate access token
+    const token = genAccessToken(user._id, user.userName, user.role);
 
-      res.cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "Strict",
-      });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
 
-      return res.status(200).json({ message: "Login successful" });
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        username: user.userName,
+        role: user.role,
+      },
+    });
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: error.message });
+    console.error(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// logout 
+// logout
 const logout = async (req, res) => {
   try {
     res.clearCookie("token");
@@ -144,21 +155,27 @@ const logout = async (req, res) => {
   }
 };
 
-
 // is logged in
 const isLoggedIn = async (req, res) => {
-  return res.status(200).json({ message: "Logged in" });
+  return res.status(200).json({
+    message: "Logged in",
+    user: {
+      username: req.user.userName,
+      role: req.user.role,
+    },
+  });
 };
-
 
 // validate register URL
 const validRegisterURL = async (req, res) => {
-  return res.status(200).json({ message: "Valid register URL", email: req.body.email });
+  return res
+    .status(200)
+    .json({ message: "Valid register URL", email: req.body.email });
 };
 
 exports.fetchUserData = fetchUserData;
 exports.updateUserData = updateUserData;
-exports.register = register;  
+exports.register = register;
 exports.login = login;
 exports.validRegisterURL = validRegisterURL;
 exports.logout = logout;

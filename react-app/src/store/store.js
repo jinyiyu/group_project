@@ -3,7 +3,7 @@ import housingReducer from "./housingSlice/housing.slice";
 import reportReducer from "./reportSlice/report.slice";
 import statusReducer from "./statusSlice/status.slice";
 import fileReducer from "./statusSlice/file.slice";
-import employeeReducer from "../redux/employeeSlice";
+import employeeReducer from "./employeeSlice/employeeSlice.js";
 import userAuthReducer from "../redux/authSlice.js";
 import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
@@ -17,7 +17,7 @@ const store = configureStore({
     report: reportReducer,
     userStatus: statusReducer,
     fileUpload: fileReducer,
-    userAuth: userAuthReducer,
+    userAuth: userAuthReducer, // User login authentication
     employees: employeeReducer,
     user: userReducer,
     document: documentReducer,

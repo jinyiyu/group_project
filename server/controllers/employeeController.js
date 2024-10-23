@@ -1,6 +1,8 @@
 const User = require("../models/userSchema");
 const Document = require("../models/documentSchema");
+const { downloadFile } = require("../utils/aws-s3");
 const moment = require("moment");
+const path = require("path");
 
 // Get all employees' profiles - query is optional for search
 const getProfile = async (req, res) => {
@@ -76,7 +78,7 @@ const getEmployeesPendingDocs = async (req, res) => {
     const getLatestDocument = async (employee) => {
       const latestDocument = await Document.findOne({
         user: employee._id,
-        documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
+        documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
       }).sort({ uploadedAt: -1 });
 
       return latestDocument;
@@ -105,6 +107,7 @@ const getEmployeesPendingDocs = async (req, res) => {
             documentType: latestDocument.documentType,
             status: latestDocument.status,
             fileUrl: latestDocument.fileUrl,
+            _id: latestDocument._id,
           };
         }
 
@@ -145,7 +148,7 @@ const getEmployeesPendingDocs = async (req, res) => {
 
 const updateDocStatus = async (req, res) => {
   const { _id, feedback, status } = req.body;
-
+  console.log("updateDocStatus ", status);
   if (!_id || !status) {
     return res.status(400).json({
       success: false,
@@ -181,7 +184,8 @@ const updateDocStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Visa status updated to ${status}.`,
+      message: `Document status updated to ${status}.`,
+      feedback: feedback ? `${feedback}` : "No feedback provided.",
     });
   } catch (error) {
     console.error(error);
@@ -216,10 +220,24 @@ const getVisaEmployees = async (req, res) => {
 
     const result = await Promise.all(
       visaEmployees.map(async (employee) => {
-        // Fetch the employee's uploaded documents
         const approvedDocuments = await Document.find({
           user: employee._id,
-        }).select("documentType fileUrl");
+        })
+          .select("documentType fileUrl uploadedAt status")
+          .sort({ uploadedAt: 1 });
+        // console.log(approveddocuments);
+        const latestDocument = approvedDocuments[approvedDocuments.length - 1];
+
+        let documentInfo;
+        if (!latestDocument) {
+          documentInfo = "Need to upload OPT-Receipts";
+        } else {
+          documentInfo = {
+            documentType: latestDocument.documentType,
+            status: latestDocument.status,
+            fileUrl: latestDocument.fileUrl,
+          };
+        }
 
         const endDate = employee.employment.end;
         const today = moment();
@@ -239,6 +257,7 @@ const getVisaEmployees = async (req, res) => {
             end: employee.employment.end,
           },
           daysRemaining: daysRemaining !== null ? daysRemaining : "N/A",
+          latestDocument: documentInfo,
           documents: approvedDocuments.map((doc) => ({
             documentType: doc.documentType,
             status: doc.status,
@@ -261,28 +280,30 @@ const getVisaEmployees = async (req, res) => {
   }
 };
 
-const downloadFileFromS3 = async (req, res) => {
+const getDownloadDocument = async (req, res) => {
+  //Use this function to retrieve the PDF file from AWS S3.
+  // The file path is passed as a query parameter.
+  const filePath = req.query.filePath;
+  console.log(`Downloading file from S3 with key: ${filePath}`);
   try {
-    const { fileName } = req.params;
-
-    const key = `documents/documentId/${fileName}`;
-    const downloadPath = path.join(__dirname, `../downloads/${fileName}`);
+    const key = `documents/documentId/Group_Project.pdf`;
+    const downloadPath = path.join(__dirname, `../downloads/testFile.pdf`);
 
     console.log(`Downloading file from S3 with key: ${key}`);
 
-    // Download the file from S3 to a local path
+    // Download the file from S3 to the local path
     await downloadFile(key, downloadPath);
 
     // Send the file as a response
-    res.download(downloadPath, fileName, (err) => {
+    res.download(downloadPath, `testFile.pdf`, (err) => {
       if (err) {
         console.error("Error sending file:", err);
         res.status(500).send("Error downloading file");
       }
     });
   } catch (error) {
-    console.error("Error downloading file from S3:", error);
-    res.status(500).json({ message: "Error downloading file from S3", error });
+    console.error(error);
+    res.status(500).json({ message: "Error downloading document", error });
   }
 };
 
@@ -291,5 +312,5 @@ module.exports = {
   getEmployeesPendingDocs,
   updateDocStatus,
   getVisaEmployees,
-  downloadFileFromS3,
+  getDownloadDocument,
 };

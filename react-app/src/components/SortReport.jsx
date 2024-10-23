@@ -1,16 +1,23 @@
+import { Typography, Switch, Box, FormControlLabel } from "@mui/material";
+
 const SortReport = ({ sortOption, setSortOption }) => {
   const handleSortChange = (e) => {
-    setSortOption(e.target.value);
+    setSortOption(sortOption === "latest" ? "oldest" : "latest");
   };
 
   return (
-    <div>
-      <label>Sort by: </label>
-      <select value={sortOption} onChange={handleSortChange}>
-        <option value="latest">Latest</option>
-        <option value="oldest">Oldest</option>
-      </select>
-    </div>
+    <Box>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={sortOption === "latest"}
+            onChange={handleSortChange}
+            inputProps={{ "aria-label": "Sort by latest or oldest" }}
+          />
+        }
+        label="Latest"
+      />
+    </Box>
   );
 };
 

@@ -12,7 +12,7 @@ const ApplicationDetails = ({ application, onBack }) => {
 
   const handleStatusUpdate = (status) => {
     dispatch(
-      updateApplicationStatus(application.user, status, application.feedback)
+      updateApplicationStatus(application.user, status, application.feedback),
     );
   };
 

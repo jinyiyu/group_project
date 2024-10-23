@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 // Added 4 more users - Hieu Tran
 const seedUsers = [
   {
+    _id: "67147b5445846b9bac51d17f",
     userName: "john_doe",
     password: "securePassword123",
     role: "employee",
