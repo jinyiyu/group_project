@@ -212,7 +212,7 @@ exports.getEmployees = async (req, res) => {
 
   try {
     const employees = await User.find({ house: houseId }).select(
-      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email cars"
+      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email car"
     );
 
     if (!employees || employees.length === 0) {
@@ -226,14 +226,7 @@ exports.getEmployees = async (req, res) => {
       fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
       phone: employee.contactInfo.cellPhone,
       email: employee.userProfile.email,
-      cars:
-        employee.cars.length > 0
-          ? {
-              make: employee.cars[0].make,
-              model: employee.cars[0].model,
-              color: employee.cars[0].color,
-            }
-          : null,
+      car: employee.car,
     }));
 
     // Send the response

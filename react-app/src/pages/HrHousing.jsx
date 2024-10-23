@@ -22,6 +22,7 @@ const HrHousingManagement = () => {
 
   const [inputError, setInputError] = useState("");
   const [selectedHouseId, setSelectedHouseId] = useState(null);
+  const [activeTab, setActiveTab] = useState("facility");
 
   const [newHouse, setNewHouse] = useState({
     address: "",
@@ -99,6 +100,7 @@ const HrHousingManagement = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {inputError && <p style={{ color: "red" }}>{inputError}</p>}
 
+      {/* Add New House Feature */}
       <div>
         <h2>Add New House</h2>
         <div className="add-housing-input">
@@ -173,9 +175,10 @@ const HrHousingManagement = () => {
         <button onClick={handleAddHouse}>Add House</button>
       </div>
 
+      {/* List of existing houses */}
       <h2>Existing Houses</h2>
       {houses.map((house, index) => (
-        <div key={house.id || index}>
+        <div className="existing-house" key={house.id || index}>
           <h3>{house.address}</h3>
           <p>Landlord: {house.landlord?.name ? house.landlord.name : "N/A"}</p>
           <p>Phone: {house.landlord?.phone || "N/A"}</p>
@@ -183,43 +186,95 @@ const HrHousingManagement = () => {
           <p>Number of Residents: {house.numOfResidents}</p>
           <button onClick={() => handleSummaryView(house.id)}>Summary</button>
           <button onClick={() => handleDeleteHouse(house.id)}>Delete</button>
-
+          <br />
+          {/* House Summary */}
           {selectedHouseId === house.id && houseDetails && (
-            <div>
-              <h4>Facility Information:</h4>
-              <p>Beds: {houseDetails.facilityInfo.beds}</p>
-              <p>Mattresses: {houseDetails.facilityInfo.mattresses}</p>
-              <p>Tables: {houseDetails.facilityInfo.tables}</p>
-              <p>Chairs: {houseDetails.facilityInfo.chairs}</p>
+            <div className="house-summary">
+              <button
+                className="close-summary-button"
+                onClick={() => setSelectedHouseId(null)}
+              >
+                Close Summary
+              </button>
+              {/* Tab navigation */}
+              <div className="house-summary-tabs">
+                <button
+                  className={`house-tab ${
+                    activeTab === "facility" ? "active-tab" : ""
+                  }`}
+                  onClick={() => setActiveTab("facility")}
+                >
+                  Facility Information
+                </button>
+                <button
+                  className={`house-tab ${
+                    activeTab === "employee" ? "active-tab" : ""
+                  }`}
+                  onClick={() => setActiveTab("employee")}
+                >
+                  Employee Information
+                </button>
+              </div>
 
-              <h4>Facility Reports:</h4>
-              {houseDetails.facilityReports.slice(0, 5).map((report) => (
-                <div id="facility-div" key={report.id}>
-                  <h4>{report.title}</h4>
-                  <p>Description: {report.description}</p>
-                  <p>Status: {report.status}</p>
-                  <p>Created by: {report.createdBy}</p>
-                  <p>Date: {new Date(report.timestamp).toLocaleString()}</p>
+              {/* Tab content */}
+              <div className="house-summary-tab-content">
+                {activeTab === "facility" && (
+                  <div className="house-facility-info">
+                    <h4>Facility Information:</h4>
+                    <p>Beds: {houseDetails.facilityInfo.beds}</p>
+                    <p>Mattresses: {houseDetails.facilityInfo.mattresses}</p>
+                    <p>Tables: {houseDetails.facilityInfo.tables}</p>
+                    <p>Chairs: {houseDetails.facilityInfo.chairs}</p>
 
-                  <h4>Comments:</h4>
-                  {report.comments.map((comment) => (
-                    <div key={comment.id}>
-                      <p>{comment.description}</p>
-                      <p>By: {comment.createdBy}</p>
-                      <p>At: {new Date(comment.timestamp).toLocaleString()}</p>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    <h4>Facility Reports:</h4>
+                    {houseDetails.facilityReports.slice(0, 5).map((report) => (
+                      <div className="facility-report" key={report.id}>
+                        <h4>{report.title}</h4>
+                        <p>Description: {report.description}</p>
+                        <p>Status: {report.status}</p>
+                        <p>Created by: {report.createdBy}</p>
+                        <p>
+                          Date: {new Date(report.timestamp).toLocaleString()}
+                        </p>
 
-              <h4>Employee Information:</h4>
-              {houseDetails.employees.map((employee) => (
-                <div id="employee-div" key={employee.email}>
-                  <p>Name: {employee.fullName}</p>
-                  <p>Phone: {employee.phone}</p>
-                  <p>Email: {employee.email}</p>
-                </div>
-              ))}
+                        <h4>Comments:</h4>
+                        {report.comments.map((comment) => (
+                          <div className="facility-comment" key={comment.id}>
+                            <p>{comment.description}</p>
+                            <p>By: {comment.createdBy}</p>
+                            <p>
+                              At: {new Date(comment.timestamp).toLocaleString()}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === "employee" && (
+                  <div className="house-employee-info">
+                    <h4>Employee Information:</h4>
+                    {houseDetails.employees.map((employee) => (
+                      <div className="employee-info" key={employee.email}>
+                        <p>Name: {employee.fullName}</p>
+                        <p>Phone: {employee.phone}</p>
+                        <p>Email: {employee.email}</p>
+                        <p>
+                          Car:{" "}
+                          {employee.car ? (
+                            <span>
+                              {employee.car.model} - {employee.car.color}
+                            </span>
+                          ) : (
+                            "N/A"
+                          )}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

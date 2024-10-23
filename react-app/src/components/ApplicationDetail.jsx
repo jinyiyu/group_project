@@ -18,13 +18,7 @@ const ApplicationDetails = ({ application, onBack }) => {
 
   const handleGiveFeedback = () => {
     if (feedbackInput.trim()) {
-      dispatch(
-        giveFeedback(
-          application.user,
-          feedbackInput,
-          "6718477f9cb098f6d90da3f0"
-        )
-      ); //  using a sample userId
+      dispatch(giveFeedback(application.user, feedbackInput));
       setFeedbackInput("");
       setFeedbackError("");
     } else {
@@ -57,11 +51,7 @@ const ApplicationDetails = ({ application, onBack }) => {
       <div>
         <h3>Feedback</h3>
         {Array.isArray(application.feedback) ? (
-          application.feedback.map((f, index) => (
-            <p key={index}>
-              "{f.desc}" - {f.createdBy}
-            </p>
-          ))
+          application.feedback.map((f, index) => <p key={index}>"{f}"</p>)
         ) : (
           <p>{application.feedback}</p>
         )}

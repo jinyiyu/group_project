@@ -58,9 +58,9 @@ const seedUsers = [
     feedback: [],
     nextStep: "Awaiting documents",
     car: {
-        model: "Honda Civic",
-        color: "Red",
-        make: "Honda",
+      model: "Honda Civic",
+      color: "Red",
+      make: "Honda",
     },
   },
   {
@@ -119,9 +119,9 @@ const seedUsers = [
     feedback: [],
     nextStep: "Awaiting documents",
     car: {
-        model: "Toyota Camry",
-        color: "Blue",
-        make: "Toyota",
+      model: "Toyota Camry",
+      color: "Blue",
+      make: "Toyota",
     },
   },
   {
@@ -179,13 +179,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Submit background check",
-    cars: [
-      {
-        model: "Ford Focus",
-        color: "White",
-        make: "Ford",
-      },
-    ],
+    car: {
+      model: "Ford Focus",
+      color: "White",
+      make: "Ford",
+    },
   },
   {
     userName: "michael_johnson",
@@ -242,13 +240,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Submit visa documents",
-    cars: [
-      {
-        model: "Chevrolet Malibu",
-        color: "Black",
-        make: "Chevrolet",
-      },
-    ],
+    car: {
+      model: "Chevrolet Malibu",
+      color: "Black",
+      make: "Chevrolet",
+    },
   },
   {
     userName: "robert_williams",
@@ -305,13 +301,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Completed",
-    cars: [
-      {
-        model: "Tesla Model S",
-        color: "Blue",
-        make: "Tesla",
-      },
-    ],
+    car: {
+      model: "Tesla Model S",
+      color: "Blue",
+      make: "Tesla",
+    },
   },
   {
     userName: "emma_jones",
@@ -368,13 +362,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Submit new documents",
-    cars: [
-      {
-        model: "Toyota Corolla",
-        color: "Silver",
-        make: "Toyota",
-      },
-    ],
+    car: {
+      model: "Toyota Corolla",
+      color: "Silver",
+      make: "Toyota",
+    },
   },
   {
     userName: "olivia_clark",
@@ -431,13 +423,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Completed",
-    cars: [
-      {
-        model: "Honda Accord",
-        color: "Black",
-        make: "Honda",
-      },
-    ],
+    car: {
+      model: "Honda Accord",
+      color: "Black",
+      make: "Honda",
+    },
   },
   {
     userName: "liam_smith",
@@ -494,13 +484,11 @@ const seedUsers = [
     house: new mongoose.Types.ObjectId(),
     feedback: [],
     nextStep: "Submit documents",
-    cars: [
-      {
-        model: "Ford Escape",
-        color: "Green",
-        make: "Ford",
-      },
-    ],
+    car: {
+      model: "Ford Escape",
+      color: "Green",
+      make: "Ford",
+    },
   },
 ];
 

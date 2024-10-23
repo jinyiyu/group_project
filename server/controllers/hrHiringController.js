@@ -165,37 +165,25 @@ exports.getIndividualApplication = async (req, res) => {
 // Give feedback - Having problem with Comment Schema
 exports.giveFeedback = async (req, res) => {
   const { userId } = req.params;
-  const { description, createdBy } = req.body;
+  const { description } = req.body;
 
   try {
     // Find the user by ID
     const user = await User.findById(userId);
-    const feedbackUser = await User.findById(createdBy);
-    if (!user || !feedbackUser) {
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    if (!user.feedback) {
-      user.feedback = [];
-    }
-
-    const newComment = new Comment({
-      desc: description,
-      createdBy,
-    });
-
-    await newComment.save();
-
-    user.feedback.push(newComment._id);
+    user.feedback.push(description);
 
     await user.save();
 
     res.status(200).json({
       success: true,
       message: "Feedback added successfully",
-      feedback: newComment,
+      feedback: description,
     });
   } catch (error) {
     console.error("Error giving feedback:", error);
