@@ -10,14 +10,11 @@ import UserVisaPage from "./pages/UserVisaPage.jsx";
 import Housing from "./pages/Housing.jsx";
 import OnBoarding from "./pages/onBoarding.jsx";
 import PersonalInformation from "./pages/PersonalInformation.jsx";
-
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-// import Housing from "./pages/Housing.jsx";
-// import OnBoarding from "./pages/onBoarding.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <App />
       {/* <EmployeeSummaryView /> */}
@@ -27,5 +24,5 @@ createRoot(document.getElementById("root")).render(
       {/* <OnBoarding /> */}
       {/* <PersonalInformation /> */}
     </Provider>
-  </StrictMode>
+  // </StrictMode>
 );
