@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 // Added 4 more users - Hieu Tran
 const seedUsers = [
   {
+    _id: "67147b5445846b9bac51d17f",
     userName: "john_doe",
     password: "securePassword123",
     role: "employee",
@@ -58,9 +59,9 @@ const seedUsers = [
     feedback: [],
     nextStep: "Awaiting documents",
     car: {
-        model: "Honda Civic",
-        color: "Red",
-        make: "Honda",
+      model: "Honda Civic",
+      color: "Red",
+      make: "Honda",
     },
   },
   {
@@ -119,9 +120,9 @@ const seedUsers = [
     feedback: [],
     nextStep: "Awaiting documents",
     car: {
-        model: "Toyota Camry",
-        color: "Blue",
-        make: "Toyota",
+      model: "Toyota Camry",
+      color: "Blue",
+      make: "Toyota",
     },
   },
   {
