@@ -13,4 +13,7 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ["chunk-VEK4GLPZ.js"], // Add the problematic file or module here
+  },
 });

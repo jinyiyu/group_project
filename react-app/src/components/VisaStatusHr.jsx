@@ -17,95 +17,80 @@ import {
 import axios from "axios";
 import moment from "moment";
 import emailjs from "@emailjs/browser";
+import {
+  fetchPendingDocsThunk,
+  fetchVisaEmployeesThunk,
+  updateWithFeedbackThunk,
+} from "../store/employeeSlice/employee.thunk";
+import {
+  setSearchQuery,
+  setDropdownVisible,
+  setDisplayedEmployees,
+} from "../store/employeeSlice/employeeSlice";
+import {
+  selectEmployeesWithPendingDocs,
+  selectVisaEmployees,
+  selectEmployeeLoading,
+  selectEmployeeError,
+  selectSearchQuery,
+  selectDisplayedEmployees,
+  selectDropdownVisible,
+} from "../store/employeeSlice/employee.selectors";
+import { useDispatch, useSelector } from "react-redux";
 
 const VisaStatusManagementPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [employeesWithPendingDocs, setEmployeesWithPendingDocs] = useState([]);
-  const [visaEmployees, setVisaEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [documentUrl, setDocumentUrl] = useState("");
 
-  // Fetch data from the pending-docs API
+  const dispatch = useDispatch();
+  const employeesWithPendingDocs = useSelector(selectEmployeesWithPendingDocs);
+  const visaEmployees = useSelector(selectVisaEmployees);
+  const loading = useSelector(selectEmployeeLoading);
+  const error = useSelector(selectEmployeeError);
+
+  const searchQuery = useSelector(selectSearchQuery);
+  const displayedEmployees = useSelector(selectDisplayedEmployees);
+  const dropdownVisible = useSelector(selectDropdownVisible);
+
+  // console.log("employeesWithPendingDocs:", employeesWithPendingDocs);
+  // console.log("visaEmployees: ", visaEmployees);
+
   useEffect(() => {
-    const fetchPendingDocsData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/employee/pending-docs"
-        );
-        if (response.data.success) {
-          setEmployeesWithPendingDocs(response.data.data);
-          console.log(response.data.data);
-        } else {
-          setError("Failed to fetch pending documents.");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPendingDocsData();
-  }, []);
-
-  // Fetch data from the visa-employees API
-  useEffect(() => {
-    setLoading(true);
-    const fetchVisaEmployees = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/employee/visa-employees"
-        );
-        if (response.data.success) {
-          setVisaEmployees(response.data.data);
-          //   console.log(response.data.data);
-        } else {
-          setError("Failed to fetch visa employees.");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVisaEmployees();
-  }, []);
+    dispatch(fetchPendingDocsThunk());
+    dispatch(fetchVisaEmployeesThunk());
+  }, [dispatch]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>{error}</div>;
   }
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleOpenModal = (visaEmployees) => {
-    // setSelectedEmployee(employee);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedEmployee(null);
-    setModalOpen(false);
-  };
-
+  //handle tab change for In Progress and All
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+  };
+
+  //modal open and close handlers for document preview
+  const handleOpenModal = (fileurl) => {
+    setDocumentUrl(fileurl);
+    setModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setDocumentUrl("");
+  };
+
+  const handleDownload = (documentUrl) => {
+    window.open(documentUrl, "_blank");
   };
 
   const determineNextStep = (employee) => {
     const { documentType, status } = employee.latestDocument;
 
-    if (documentType === "OPT-receipt") {
+    if (documentType === "OPT_receipt") {
       if (status === "Pending") {
         return "OPT receipt submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -115,7 +100,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "OPT-EAD") {
+    if (documentType === "OPT_EAD") {
       if (status === "Pending") {
         return "OPT EAD submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -125,7 +110,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "I-983") {
+    if (documentType === "I_983") {
       if (status === "Pending") {
         return "I-983 submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -135,7 +120,7 @@ const VisaStatusManagementPage = () => {
       }
     }
 
-    if (documentType === "I-20") {
+    if (documentType === "I_20") {
       if (status === "Pending") {
         return "I-20 submitted, next step is to wait for HR approval.";
       } else if (status === "Approved") {
@@ -148,6 +133,7 @@ const VisaStatusManagementPage = () => {
     return "No document submitted, next step is to submit OPT receipt.";
   };
 
+  //send Email button click handler
   const sendEmail = (employee) => {
     const templateParams = {
       to_email: employee.name.email,
@@ -177,20 +163,73 @@ const VisaStatusManagementPage = () => {
       );
   };
 
+  // Approve button click handler
+  const handleApprove = async (_id) => {
+    console.log(_id);
+    try {
+      dispatch(updateWithFeedbackThunk({ _id, status: "Approved" })).unwrap();
+      alert("Document is approved");
+      window.location.reload();
+      useEffect(() => {}, [dispatch]);
+    } catch (error) {
+      console.error("Failed to approve document:", error);
+    }
+  };
+  // Reject button click handler
+  const handleReject = (_id) => {
+    const userFeedback = prompt("Please provide feedback for rejection:");
+    if (userFeedback) {
+      try {
+        dispatch(
+          updateWithFeedbackThunk({
+            _id,
+            status: "Rejected",
+            feedback: userFeedback,
+          })
+        ).unwrap();
+        alert("Document is rejected");
+        window.location.reload();
+      } catch (error) {
+        console.error("Failed to reject document:", error);
+      }
+    }
+  };
+
+  const handleSearch = () => {
+    const filteredEmployees = visaEmployees.filter((employee) =>
+      `${employee.name.firstName} ${employee.name.lastName}`
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
+    dispatch(setDisplayedEmployees(filteredEmployees));
+    dispatch(setDropdownVisible(false));
+  };
+
+  const handleDropdownClick = (name) => {
+    dispatch(setSearchQuery(name));
+    dispatch(setDropdownVisible(false));
+  };
+
+  const highlightSearchTerm = (fullName, searchTerm) => {
+    const index = fullName.toLowerCase().indexOf(searchTerm.toLowerCase());
+    if (index === -1) return fullName;
+    const beforeMatch = fullName.slice(0, index);
+    const match = fullName.slice(index, index + searchTerm.length);
+    const afterMatch = fullName.slice(index + searchTerm.length);
+    return (
+      <>
+        {beforeMatch}
+        <strong style={{ backgroundColor: "yellow" }}>{match}</strong>
+        {afterMatch}
+      </>
+    );
+  };
+
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
       <Typography variant="h4" gutterBottom>
         Visa Status Management
       </Typography>
-
-      {/* Search Bar */}
-      <TextField
-        label="Search Employee"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        style={{ marginBottom: "20px" }}
-      />
 
       {/* tabs to switch In Progress and All */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -267,10 +306,7 @@ const VisaStatusManagementPage = () => {
                           color="primary"
                           style={{ marginRight: "3px" }}
                           onClick={() =>
-                            handleOpenModal(
-                              employee,
-                              employee.latestDocument.fileUrl
-                            )
+                            handleOpenModal(employee.latestDocument.fileUrl)
                           }
                         >
                           Preview Document
@@ -279,10 +315,19 @@ const VisaStatusManagementPage = () => {
                           variant="contained"
                           color="success"
                           style={{ marginRight: "3px" }}
+                          onClick={() =>
+                            handleApprove(employee.latestDocument._id)
+                          }
                         >
                           Approve
                         </Button>
-                        <Button variant="contained" color="error">
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() =>
+                            handleReject(employee.latestDocument._id)
+                          }
+                        >
                           Reject
                         </Button>
                       </>
@@ -307,83 +352,150 @@ const VisaStatusManagementPage = () => {
       {/* All Tab Content */}
       {activeTab === 1 && (
         <>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Work Authorization</TableCell>
-                  <TableCell>Next Steps</TableCell>
-                  <TableCell>All Uploaded Documents</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {visaEmployees.map((visaEmployee, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      {visaEmployee.name.firstName} {visaEmployee.name.lastName}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <strong>
-                          {visaEmployee["Work Authorization Title"].title}
-                        </strong>
-                        <div>
-                          Start Date:{" "}
-                          {moment(
-                            visaEmployee["Work Authorization Title"].start
-                          ).format("MMMM Do YYYY")}
-                        </div>
-                        <div>
-                          End Date:{" "}
-                          {moment(
-                            visaEmployee["Work Authorization Title"].end
-                          ).format("MMMM Do YYYY")}
-                        </div>
-                        <div>Days Remaining:{visaEmployee.daysRemaining} </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>Next steps: random text</TableCell>
-                    <TableCell>
-                      {visaEmployee.documents.map((doc, index) => (
-                        <div key={index}>
-                          <span>
-                            document{doc.index}: {doc.documentType}
-                          </span>
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                      {visaEmployee.documents.map((doc, index) => (
-                        <div key={index} style={{ marginBottom: "10px" }}>
-                          <Button
-                            onClick={() =>
-                              handleOpenModal(visaEmployee, doc.fileUrl)
-                            }
-                            variant="contained"
-                            color="blue"
-                            style={{ marginRight: "5px" }}
-                          >
-                            Preview
-                          </Button>
-                          <Button
-                            href={doc.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            variant="contained"
-                            color="primary"
-                          >
-                            Download
-                          </Button>
-                        </div>
-                      ))}
-                    </TableCell>
+          <div>
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={searchQuery}
+              onChange={(e) => {
+                dispatch(setSearchQuery(e.target.value));
+                dispatch(setDropdownVisible(true));
+              }}
+              style={{ position: "relative", zIndex: 1 }}
+            />
+            <button onClick={handleSearch}>Search</button>
+
+            {dropdownVisible && searchQuery && (
+              <ul
+                style={{
+                  listStyleType: "none",
+                  padding: 0,
+                  border: "1px solid #000",
+                  maxHeight: "150px",
+                  overflowY: "auto",
+                  position: "absolute",
+                  backgroundColor: "#fff",
+                  zIndex: 2,
+                }}
+              >
+                {visaEmployees
+                  .filter((employee) =>
+                    `${employee.name.firstName} ${employee.name.lastName}`
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  )
+                  .map((employee, index) => (
+                    <li
+                      key={index}
+                      style={{
+                        padding: "5px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid #ccc",
+                      }}
+                      onClick={() =>
+                        handleDropdownClick(
+                          `${employee.name.firstName} ${employee.name.lastName}`
+                        )
+                      }
+                    >
+                      {highlightSearchTerm(
+                        `${employee.name.firstName} ${employee.name.lastName}`,
+                        searchQuery
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </div>
+          {displayedEmployees.length === 0 && searchQuery ? (
+            <Typography variant="h6" style={{ marginTop: "20px" }}>
+              No records found.
+            </Typography>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Work Authorization</TableCell>
+                    <TableCell>Next Steps</TableCell>
+                    <TableCell>All Uploaded Documents</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {(displayedEmployees.length === 0 && !searchQuery
+                    ? visaEmployees
+                    : displayedEmployees
+                  ).map((visaEmployee, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        {visaEmployee.name.firstName}{" "}
+                        {visaEmployee.name.lastName}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <strong>
+                            {visaEmployee["Work Authorization Title"].title}
+                          </strong>
+                          <div>
+                            Start Date:{" "}
+                            {moment(
+                              visaEmployee["Work Authorization Title"].start
+                            ).format("MMMM Do YYYY")}
+                          </div>
+                          <div>
+                            End Date:{" "}
+                            {moment(
+                              visaEmployee["Work Authorization Title"].end
+                            ).format("MMMM Do YYYY")}
+                          </div>
+                          <div>
+                            Days Remaining:{visaEmployee.daysRemaining}{" "}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        Next steps: {determineNextStep(visaEmployee)}
+                      </TableCell>
+                      <TableCell>
+                        {visaEmployee.documents.map((doc, index) => (
+                          <div key={index}>
+                            <span>
+                              document{doc.index}: {doc.documentType}
+                            </span>
+                          </div>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {visaEmployee.documents.map((doc, index) => (
+                          <div key={index} style={{ marginBottom: "10px" }}>
+                            <Button
+                              onClick={() => handleOpenModal(doc.fileUrl)}
+                              variant="contained"
+                              color="blue"
+                              style={{ marginRight: "5px" }}
+                            >
+                              Preview
+                            </Button>
+                            <Button
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleDownload(doc.fileUrl)}
+                            >
+                              Download
+                            </Button>
+                          </div>
+                        ))}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </>
       )}
 
@@ -404,13 +516,21 @@ const VisaStatusManagementPage = () => {
           }}
         >
           <Typography variant="h6" id="document-preview">
-            Document Preview for {selectedEmployee?.name}
+            Document Preview
           </Typography>
-          <iframe
-            src={selectedEmployee?.nextStep.document}
-            style={{ width: "100%", height: "400px" }}
-            title="Document Preview"
-          ></iframe>
+          {documentUrl.endsWith(".pdf") ? (
+            <iframe
+              src={documentUrl}
+              title="File Preview"
+              style={{ width: "100%", height: "500px" }}
+            />
+          ) : (
+            <img
+              src={documentUrl}
+              alt="File Preview"
+              style={{ maxWidth: "100%" }}
+            />
+          )}
           <Button
             onClick={handleCloseModal}
             variant="contained"
