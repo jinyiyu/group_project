@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
+import { Box, Chip, Typography, Button, Input } from '@mui/material';
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -18,6 +18,7 @@ const UserForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const documents = useSelector((state) => state.document);
+  const [MUIDisabled, setMUIDisabled] = useState(false);
   const [showReference, setShowReference] = useState("no");
   const [showDriverLicense, setShowDriverLicense] = useState("no");
   const [other, setOther] = useState("");
@@ -65,6 +66,8 @@ const UserForm = () => {
     inputs.forEach((input) => {
       input.disabled = true;
     });
+
+    setMUIDisabled(true);
   });
 
   const handleStatusChange = useCallback((e) => {
@@ -142,8 +145,6 @@ const UserForm = () => {
       setShowReference("yes");
     }
   };
-
-  console.log(user.employment);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -340,6 +341,7 @@ const UserForm = () => {
         ></TextField>
 
         <Select
+          disabled={MUIDisabled}
           value={user.userProfile.gender}
           label="Gender"
           onChange={handleChange}
@@ -372,39 +374,41 @@ const UserForm = () => {
         {user.employment.status == "citizen" ||
         user.employment.status == "green_card" ? (
           <>
-            <label>
-              Citizen or Green Card Holders?
-              <select
-                name="employment.status"
-                value={user.employment.status}
-                onChange={handleChange}
-                disabled={documents["OPT_receipt"].startsWith(
+            <Select
+              disabled={
+                MUIDisabled ||
+                documents["OPT_receipt"].startsWith(
                   "https://bfgp.s3.amazonaws.com",
-                )}
-              >
-                <option value="citizen">Citizen</option>
-                <option value="green_card">Green Card</option>
-              </select>
-            </label>
+                )
+              }
+              value={user.employment.status}
+              label="Citizen or Green Card Holders?"
+              onChange={handleChange}
+              name="employment.status"
+            >
+              <MenuItem value="citizen">Citizen</MenuItem>
+              <MenuItem value="green_card">Green Card</MenuItem>
+            </Select>
           </>
         ) : (
           <>
-            <label>
-              What is your work authorization?
-              <select
-                name="employment.status"
-                value={user.employment.status}
-                onChange={handleChange}
-                disabled={documents["OPT_receipt"].startsWith(
+            <Select
+              disabled={
+                MUIDisabled ||
+                documents["OPT_receipt"].startsWith(
                   "https://bfgp.s3.amazonaws.com",
-                )}
-              >
-                <option value="h1b">H1-B</option>
-                <option value="l2">L2</option>
-                <option value="f1">{`F1(CPT/OPT)`}</option>
-                <option value="other">Other</option>
-              </select>
-            </label>
+                )
+              }
+              value={user.employment.status}
+              label="Work Authorization"
+              onChange={handleChange}
+              name="employment.status"
+            >
+              <MenuItem value="h1b">H1-B</MenuItem>
+              <MenuItem value="l2">L2</MenuItem>
+              <MenuItem value="f1">{`F1(CPT/OPT)`}</MenuItem>
+              <MenuItem value="other">Other</MenuItem>
+            </Select>
 
             <TextField
               size="small"
@@ -482,14 +486,19 @@ const UserForm = () => {
         )}
 
         <h1>section ix</h1>
-
-        <label>
-          Do you have a driver’s license?
-          <select value={showDriverLicense} onChange={handleLicenseChange}>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </label>
+        <Select
+          disabled={
+            MUIDisabled ||
+            documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")
+          }
+          value={showDriverLicense}
+          label="Do you have a driver’s license?"
+          onChange={handleLicenseChange}
+          name="employment.status"
+        >
+          <MenuItem value="yes">Yes</MenuItem>
+          <MenuItem value="no">No</MenuItem>
+        </Select>
 
         {showDriverLicense == "yes" ? (
           <>
@@ -538,13 +547,17 @@ const UserForm = () => {
         )}
 
         <h1>section x</h1>
-        <label>
-          Are you referred by anyone?
-          <select value={showReference} onChange={handleReferenceChange}>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </label>
+
+        <Select
+          disabled={MUIDisabled}
+          value={showReference}
+          label="Are you referred by anyone?"
+          onChange={handleReferenceChange}
+          name="userProfile.gender"
+        >
+          <MenuItem value="yes">Yes</MenuItem>
+          <MenuItem value="no">No</MenuItem>
+        </Select>
 
         {showReference == "yes" ? (
           <>

@@ -7,6 +7,7 @@ import EmployeeSummaryView from "./pages/EmployeeSummaryView.jsx";
 import VisaStatusManagementPage from "./components/VisaStatusHr.jsx";
 import ApplicationReview from "./components/Application.jsx";
 import UserVisaPage from "./pages/UserVisaPage.jsx";
+import OnBoarding from "./pages/onBoarding.jsx";
 
 import Modal from "react-modal";
 Modal.setAppElement("#root");
@@ -16,9 +17,9 @@ Modal.setAppElement("#root");
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      {/* <App /> */}
       {/* <EmployeeSummaryView /> */}
-      <VisaStatusManagementPage />
+      {/* <VisaStatusManagementPage /> */}
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
       <OnBoarding />
