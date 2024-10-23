@@ -36,10 +36,10 @@ exports.getHouseDetail = async (req, res) => {
     // 2. A list of users that has same house with current user
     res.status(200).json({
       houseAddress: house.address,
-      roommates: roommates.map((roommate) => {
-        firstName: roommate.userProfile.firstName;
-        lastName: roommate.userProfile.lastName;
-      }),
+      roommates: roommates.map((roommate) => ({
+        firstName: roommate.userProfile.firstName,
+        lastName: roommate.userProfile.lastName,
+      })),
     });
   } catch (error) {
     res.status(500).json({
