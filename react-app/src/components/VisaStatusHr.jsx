@@ -60,11 +60,10 @@ const VisaStatusManagementPage = () => {
     setActiveTab(newValue);
   };
 
-  const handleOpenModal = (visaEmployees, fileurl) => {
+  const handleOpenModal = (fileurl) => {
     setDocumentUrl(fileurl);
     setModalOpen(true);
   };
-
   const handleCloseModal = () => {
     setModalOpen(false);
     setDocumentUrl("");
@@ -264,10 +263,7 @@ const VisaStatusManagementPage = () => {
                           color="primary"
                           style={{ marginRight: "3px" }}
                           onClick={() =>
-                            handleOpenModal(
-                              employee,
-                              employee.latestDocument.fileUrl
-                            )
+                            handleOpenModal(employee.latestDocument.fileUrl)
                           }
                         >
                           Preview Document
@@ -366,9 +362,7 @@ const VisaStatusManagementPage = () => {
                       {visaEmployee.documents.map((doc, index) => (
                         <div key={index} style={{ marginBottom: "10px" }}>
                           <Button
-                            onClick={() =>
-                              handleOpenModal(visaEmployee, doc.fileUrl)
-                            }
+                            onClick={() => handleOpenModal(doc.fileUrl)}
                             variant="contained"
                             color="blue"
                             style={{ marginRight: "5px" }}
