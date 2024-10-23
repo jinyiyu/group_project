@@ -16,7 +16,7 @@ const store = configureStore({
     report: reportReducer,
     userStatus: statusReducer,
     fileUpload: fileReducer,
-    userAuth: userAuthReducer,
+    userAuth: userAuthReducer, // User login authentication
     employees: employeeReducer,
     user: userReducer,
     document: documentReducer,

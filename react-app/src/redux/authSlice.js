@@ -54,6 +54,7 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
 export const checkLoginStatus = createAsyncThunk(
   "auth/checkLoginStatus",
   async (_, { rejectWithValue }) => {
@@ -87,12 +88,14 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     email: null, // Stores email if token is valid
-    accessTokenValid: false, // Tracks if token is valid
+    accessTokenValid: false, // Tracks if url token for register is valid
+    registerSuccess: false, // Tracks if registration is successful
+
     loading: false, // Loading state for token validation, registration, and login
     error: null, // Error message if something goes wrong
-    registerSuccess: false, // Tracks if registration is successful
-    user: null, // Stores user information after login
-    loginSuccess: false, // Tracks if login is successful
+
+    user: {role:"employee", username:"test"}, // Stores user information after login
+    loginSuccess: true, // Tracks if login is successful
   },
   reducers: {},
   extraReducers: (builder) => {

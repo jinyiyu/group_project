@@ -7,13 +7,14 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Navbar from "./components/navBar";
-import OnBoarding from "./pages/onBoarding";
-
+import VisaStatusManagementPage from "./components/VisaStatusHr.jsx";
+import EmployeeSummaryView from "./pages/EmployeeSummaryView.jsx";
+import UserVisaPage from "./pages/UserVisaPage.jsx";
+import OnBoarding from "./pages/onBoarding.jsx";
+import Housing from "./pages/Housing.jsx";
 function App() {
   return (
     <>
-      {/* component to send email from HR */}
-      {/* <EmailForm /> */}
 
       {/* testing component for personal info and onboard application page */}
       {/* <OnBoarding></OnBoarding> */}
@@ -23,17 +24,27 @@ function App() {
         {/* application component */}
         {/* <Application /> <br /> */}
         {/* Commented out for readability purposes */}
-        {/* component to send email from HR */}
-        {/* <EmailForm /> */}
         <Router>
           <Navbar />
           <Routes>
             {/* Register page with token validation */}
+            <Route path="/" element={<p>Welcome</p>} />
             <Route path="user/register/:token" element={<Register />} />
             <Route path="user/login" element={<Login />} />
             <Route path="onboarding" element={<OnBoarding />} />
+            <Route path="application" element={<Application />} />
+            <Route path="generateTokenForm" element={<GenerateTokenForm />} />
+            <Route path="visaStatus" element={<VisaStatusManagementPage />} />
+
+            {/* <EmployeeSummaryView /> */}
+            <Route path="employeeSummaryView" element={<EmployeeSummaryView />} />
+            {/* <Housing /> */}
+            <Route path={"housing"} element={<Housing />} />
+            {/* <UserVisaPage /> */}
+            <Route path="userVisaPage" element={<UserVisaPage />} />
+            {/* <OnBoarding /> */}
           </Routes>
-          
+
         </Router>
       </div>
     </>
