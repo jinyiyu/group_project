@@ -31,22 +31,18 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 const VisaStatusManagementPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [documentUrl, setDocumentUrl] = useState("");
-  const [feedback, setFeedback] = useState("");
 
   const dispatch = useDispatch();
-
   const employeesWithPendingDocs = useSelector(selectEmployeesWithPendingDocs);
   const visaEmployees = useSelector(selectVisaEmployees);
   const loading = useSelector(selectEmployeeLoading);
   const error = useSelector(selectEmployeeError);
 
-  console.log("employeesWithPendingDocs:", employeesWithPendingDocs);
-  console.log("visaEmployees: ", visaEmployees);
+  // console.log("employeesWithPendingDocs:", employeesWithPendingDocs);
+  // console.log("visaEmployees: ", visaEmployees);
 
   useEffect(() => {
     dispatch(fetchPendingDocsThunk());
@@ -60,8 +56,8 @@ const VisaStatusManagementPage = () => {
     return <div>{error}</div>;
   }
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   const handleOpenModal = (visaEmployees, fileurl) => {
@@ -70,17 +66,12 @@ const VisaStatusManagementPage = () => {
   };
 
   const handleCloseModal = () => {
-    setSelectedEmployee(null);
     setModalOpen(false);
     setDocumentUrl("");
   };
 
   const handleDownload = (documentUrl) => {
     window.open(documentUrl, "_blank");
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
   };
 
   const determineNextStep = (employee) => {
@@ -129,6 +120,7 @@ const VisaStatusManagementPage = () => {
     return "No document submitted, next step is to submit OPT receipt.";
   };
 
+  //send Email button click handler
   const sendEmail = (employee) => {
     const templateParams = {
       to_email: employee.name.email,
@@ -196,15 +188,6 @@ const VisaStatusManagementPage = () => {
       <Typography variant="h4" gutterBottom>
         Visa Status Management
       </Typography>
-
-      {/* Search Bar */}
-      <TextField
-        label="Search Employee"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        style={{ marginBottom: "20px" }}
-      />
 
       {/* tabs to switch In Progress and All */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -429,7 +412,7 @@ const VisaStatusManagementPage = () => {
           }}
         >
           <Typography variant="h6" id="document-preview">
-            Document Preview for {selectedEmployee?.name}
+            Document Preview
           </Typography>
           {documentUrl.endsWith(".pdf") ? (
             <iframe
