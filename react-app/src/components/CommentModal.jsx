@@ -1,7 +1,16 @@
-import Modal from "react-modal";
-import { useState, useEffect } from "react";
-import ReportPagination from "./ReportPagination";
+// import Modal from "react-modal";
+import React, { useState, useEffect } from "react";
+
 import SortReport from "../components/SortReport";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Pagination,
+  Divider,
+} from "@mui/material";
 
 const CommentModal = ({
   isOpen,
@@ -17,7 +26,7 @@ const CommentModal = ({
   const [commentIdToUpdate, setCommentIdToUpdate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("latest");
-  const commentsPerPage = 5;
+  const commentsPerPage = 4;
 
   useEffect(() => {
     if (!isOpen) {
@@ -43,7 +52,7 @@ const CommentModal = ({
     currentPage * commentsPerPage,
   );
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
   };
 
@@ -71,46 +80,108 @@ const CommentModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose}>
-      <h2>Comments</h2>
-      <SortReport sortOption={sortOption} setSortOption={setSortOption} />
-      <ul>
-        {currentComments.map((comment) => (
-          <li key={comment._id}>
-            <p>{comment.desc}</p>
-            <small>By: {comment.createdBy.userName}</small>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="comments-modal-title"
+      aria-describedby="comments-modal-description"
+      // sx={{ overflowY: "auto", maxHeight: "300px" }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "600px",
+          bgcolor: "background.paper",
+          // border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+          overflowY: "auto",
+          maxHeight: "800px",
+        }}
+      >
+        <Typography
+          id="comments-modal-title"
+          variant="h6"
+          component="h2"
+          mb={2}
+        >
+          Comments
+        </Typography>
 
-            <small>{new Date(comment.timestamp).toLocaleDateString()}</small>
+        <SortReport sortOption={sortOption} setSortOption={setSortOption} />
+        <Divider sx={{ mt: 2 }} />
 
-            {comment.createdBy._id === currentUserId && (
-              <button
-                onClick={() => handleUpdateClick(comment._id, comment.desc)}
-              >
-                Update
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+        <Box
+          component="ul"
+          sx={{ mt: 3, listStyle: "none", p: 0, overflowY: "auto" }}
+        >
+          {currentComments.map((comment) => (
+            <Box component="li" key={comment._id} sx={{ mb: 2 }}>
+              <Typography variant="body1">
+                {comment.desc.split("\n").map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
+              </Typography>
+              <Typography variant="caption" display="block" mt={2}>
+                <Box component="span" sx={{ mr: 1 }}>
+                  By: {comment.createdBy.userName}
+                </Box>
+                <Box component="span" sx={{ ml: 1 }}>
+                  At: {new Date(comment.timestamp).toLocaleDateString()}
+                </Box>
+              </Typography>
 
-      <ReportPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+              {comment.createdBy._id === currentUserId && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ mt: 1 }}
+                  onClick={() => handleUpdateClick(comment._id, comment.desc)}
+                >
+                  Update
+                </Button>
+              )}
+              <Divider component="li" sx={{ mt: 2 }} />
+            </Box>
+          ))}
+        </Box>
 
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder={isUpdating ? "Update your comment" : "Add a comment"}
-          required
-        ></textarea>
-        <button type="submit">
-          {isUpdating ? "Update Comment" : "Add Comment"}
-        </button>
-      </form>
-      <button onClick={onClose}>Close</button>
+        <Box mt={2} display="flex" justifyContent="center">
+          <Pagination
+            count={totalPages}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder={isUpdating ? "Update your comment" : "Add a comment"}
+            required
+            sx={{ mb: 2 }}
+          />
+          <Button type="submit" variant="contained">
+            {isUpdating ? "Update Comment" : "Add Comment"}
+          </Button>
+        </Box>
+
+        <Box mt={2} display="flex" justifyContent="flex-end">
+          <Button onClick={onClose} variant="text">
+            Close
+          </Button>
+        </Box>
+      </Box>
     </Modal>
   );
 };
