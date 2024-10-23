@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateToken } from "../store/actions/auth.actions";
+import TokenHistory from "./TokenHistory";
 
 const GenerateTokenForm = () => {
   const dispatch = useDispatch();
@@ -60,12 +61,12 @@ const GenerateTokenForm = () => {
           {tokenLoading ? "Generating..." : "Generate Token"}
         </button>
       </form>
-
       {/* Display success or error messages based on the state, hidden after 3 seconds */}
       {showMessage && success && <p>Registration token sent to {email}!</p>}
       {showMessage && tokenError && (
         <p style={{ color: "red" }}>{tokenError}</p>
       )}
+      <TokenHistory />
     </div>
   );
 };
