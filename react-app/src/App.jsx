@@ -15,7 +15,6 @@ import Housing from "./pages/Housing.jsx";
 function App() {
   return (
     <>
-
       {/* testing component for personal info and onboard application page */}
       {/* <OnBoarding></OnBoarding> */}
       <div>
@@ -37,7 +36,10 @@ function App() {
             <Route path="visaStatus" element={<VisaStatusManagementPage />} />
 
             {/* <EmployeeSummaryView /> */}
-            <Route path="employeeSummaryView" element={<EmployeeSummaryView />} />
+            <Route
+              path="employeeSummaryView"
+              element={<EmployeeSummaryView />}
+            />
             {/* <Housing /> */}
             <Route path={"housing"} element={<Housing />} />
             {/* <UserVisaPage /> */}

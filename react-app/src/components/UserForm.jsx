@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Box, Chip, Typography, Button, Input } from '@mui/material';
-import InputLabel from "@mui/material/InputLabel";
+import { Box, Chip, Divider, InputLabel } from "@mui/material";
+import { Avatar, Button, FormControl, Typography } from "@mui/material";
+
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
@@ -13,6 +13,7 @@ import {
 } from "../store/userSlice/userSlice";
 import InputField from "./InputField";
 import AddContactForm from "./AddContactForm";
+import "../assets/styles/onBoarding.css";
 
 const UserForm = () => {
   const dispatch = useDispatch();
@@ -103,6 +104,7 @@ const UserForm = () => {
   });
 
   const uploadDocument = async (docName) => {
+    console.log(documents[docName]);
     const res = await fetch(`${BASE_URL}/document/upload?type=${docName}`, {
       method: "PUT",
       credentials: "include",
@@ -156,6 +158,7 @@ const UserForm = () => {
       },
       body: JSON.stringify({
         data: user,
+        fromOnBoard: true,
       }),
     });
 
@@ -170,490 +173,846 @@ const UserForm = () => {
     if (!userRes.ok) {
       throw new Error("Network response was not ok");
     } else {
-      //redirect to main page
+      window.location.reload();
     }
   });
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <h1>section i</h1>
-
-        <InputField
-          name="userProfile.firstName"
-          label="First Name"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="userProfile.lastName"
-          label="Last Name"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="userProfile.middleName"
-          label="Middle Name"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <InputField
-          name="userProfile.preferredName"
-          label="Preffered Name"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <h1>section ii</h1>
-
-        {documents.profilePicture !== "" ? (
-          <img
-            src={documents.profilePicture}
-            alt="Profile"
-            style={{ width: "100px", height: "100px", objectFit: "cover" }}
-          />
-        ) : (
-          <></>
-        )}
-        <label htmlFor="profilePicture">Upload a new profile picture</label>
-        <input
-          type="file"
-          name="profilePicture"
-          accept="image/*"
-          onChange={(e) =>
-            handleDocumentChange(e, "userProfile.profilePicture")
-          }
-        />
-        <br />
-
-        <h1>section iii</h1>
-
-        <InputField
-          name="address.apt"
-          label="Building/Apt #"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="address.strName"
-          label="Street Name"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="address.city"
-          label="City"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="address.state"
-          label="State"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="address.zip"
-          label="ZIP Code"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <h1>section iv</h1>
-
-        <InputField
-          name="contactInfo.cellPhone"
-          type="tel"
-          label="Cell Phone"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <InputField
-          name="contactInfo.workPhone"
-          type="tel"
-          label="Work Phone"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <h1>section v</h1>
-
-        <InputField
-          name="car.model"
-          label="Car Model"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <InputField
-          name="car.color"
-          label="Car Color"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <InputField
-          name="car.make"
-          label="Car Make"
-          onChange={handleChange}
-          required={false}
-        ></InputField>
-
-        <h1>section vi</h1>
-
-        <TextField
-          size="small"
-          variant="outlined"
-          label="Email"
-          type="email"
-          name="userProfile.email"
-          value={user.userProfile.email}
-          readOnly
-          required
-        ></TextField>
-
-        <h1>section vii</h1>
-
-        <InputField
-          name="userProfile.SSN"
-          label="SSN"
-          onChange={handleChange}
-          required={true}
-        ></InputField>
-
-        <TextField
-          size="small"
-          variant="outlined"
-          label="Date of Birth"
-          type="date"
-          name="userProfile.DoB"
-          value={user.userProfile.DoB?.split("T")[0]}
-          onChange={handleChange}
-          required
-        ></TextField>
-
-        <Select
-          disabled={MUIDisabled}
-          value={user.userProfile.gender}
-          label="Gender"
-          onChange={handleChange}
-          name="userProfile.gender"
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
         >
-          <MenuItem value="">Select Gender</MenuItem>
-          <MenuItem value="Male">Male</MenuItem>
-          <MenuItem value="Female">Female</MenuItem>
-          <MenuItem value="Other">I do not wish to answer</MenuItem>
-        </Select>
+          <Chip variant="outlined" label="Name" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <InputField
+            name="userProfile.firstName"
+            label="First Name"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
 
-        <h1>section viii</h1>
-        <Select
-          value={
-            user.employment.status == "citizen" ||
-            user.employment.status == "green_card"
-              ? "yes"
-              : "no"
-          }
-          label="Are you a citizen or permanent resident of the U.S?"
-          onChange={handleStatusChange}
-          disabled={documents["OPT_receipt"].startsWith(
-            "https://bfgp.s3.amazonaws.com",
+          <InputField
+            name="userProfile.lastName"
+            label="Last Name"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <InputField
+            name="userProfile.middleName"
+            label="Middle Name"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+
+          <InputField
+            name="userProfile.preferredName"
+            label="Preffered Name"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Profile Picture" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2vh",
+          }}
+        >
+          {documents.profilePicture !== "" ? (
+            <Avatar
+              src={documents.profilePicture}
+              alt="Profile"
+              sx={{ width: "8vw", height: "8vw", objectFit: "cover" }} // Using Avatar for better styling
+            />
+          ) : (
+            <Avatar sx={{ width: 100, height: 100, bgcolor: "grey.300" }} /> // Placeholder avatar if no picture
           )}
+          <input
+            type="file"
+            name="profilePicture"
+            accept="image/*"
+            onChange={(e) =>
+              handleDocumentChange(e, "userProfile.profilePicture")
+            }
+            id="upload-profile-picture"
+          />
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
         >
-          <MenuItem value="yes">Yes</MenuItem>
-          <MenuItem value="no">No</MenuItem>
-        </Select>
+          <Chip variant="outlined" label="Address" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <InputField
+            name="address.apt"
+            label="Building/Apt #"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
 
-        {user.employment.status == "citizen" ||
-        user.employment.status == "green_card" ? (
-          <>
+          <InputField
+            name="address.strName"
+            label="Street Name"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <InputField
+            name="address.city"
+            label="City"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <InputField
+            name="address.state"
+            label="State"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <InputField
+            name="address.zip"
+            label="ZIP Code"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Phone" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <InputField
+            name="contactInfo.cellPhone"
+            type="tel"
+            label="Cell Phone"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <InputField
+            name="contactInfo.workPhone"
+            type="tel"
+            label="Work Phone"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Car" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <InputField
+            name="car.model"
+            label="Car Model"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+
+          <InputField
+            name="car.color"
+            label="Car Color"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+
+          <InputField
+            name="car.make"
+            label="Car Make"
+            onChange={handleChange}
+            required={false}
+          ></InputField>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Email" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <TextField
+            size="small"
+            sx={{
+              width: "18vw",
+            }}
+            variant="outlined"
+            label="Email"
+            type="email"
+            name="userProfile.email"
+            value={user.userProfile.email}
+            readOnly
+            required
+          ></TextField>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Others" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            mx: "auto",
+            spacing: "2vw",
+          }}
+        >
+          <InputField
+            name="userProfile.SSN"
+            label="SSN"
+            onChange={handleChange}
+            required={true}
+          ></InputField>
+
+          <TextField
+            size="small"
+            variant="outlined"
+            label="Date of Birth"
+            type="date"
+            name="userProfile.DoB"
+            value={user.userProfile.DoB?.split("T")[0]}
+            onChange={handleChange}
+            required
+          ></TextField>
+
+          <FormControl
+            sx={{ width: "8vw" }}
+            variant="outlined"
+            disabled={MUIDisabled}
+          >
+            <InputLabel id="gender-label">Gender</InputLabel>
             <Select
-              disabled={
-                MUIDisabled ||
-                documents["OPT_receipt"].startsWith(
-                  "https://bfgp.s3.amazonaws.com",
-                )
-              }
-              value={user.employment.status}
-              label="Citizen or Green Card Holders?"
+              sx={{ height: "4vh" }}
+              labelId="gender-label"
+              value={user.userProfile.gender}
               onChange={handleChange}
-              name="employment.status"
+              name="userProfile.gender"
+              label="Gender" // This label is for accessibility purposes
             >
-              <MenuItem value="citizen">Citizen</MenuItem>
-              <MenuItem value="green_card">Green Card</MenuItem>
+              <MenuItem value="">Select Gender</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Other">I do not wish to answer</MenuItem>
             </Select>
-          </>
-        ) : (
-          <>
+          </FormControl>
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Visa Status" color="info" />
+        </Divider>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3vh",
+            maxWidth: "50vw",
+            justifyContent: "center",
+            ml: "25vw",
+          }}
+        >
+          <div>
+            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              Are you a citizen or permanent resident of the U.S.?
+            </Typography>
             <Select
-              disabled={
-                MUIDisabled ||
-                documents["OPT_receipt"].startsWith(
-                  "https://bfgp.s3.amazonaws.com",
-                )
+              fullWidth
+              sx={{ height: "4.5vh" }}
+              value={
+                user.employment.status == "citizen" ||
+                user.employment.status == "green_card"
+                  ? "yes"
+                  : "no"
               }
-              value={user.employment.status}
-              label="Work Authorization"
-              onChange={handleChange}
-              name="employment.status"
+              label="Are you a citizen or permanent resident of the U.S?"
+              onChange={handleStatusChange}
+              disabled={documents["OPT_receipt"].startsWith(
+                "https://bfgp.s3.amazonaws.com",
+              )}
             >
-              <MenuItem value="h1b">H1-B</MenuItem>
-              <MenuItem value="l2">L2</MenuItem>
-              <MenuItem value="f1">{`F1(CPT/OPT)`}</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
+              <MenuItem value="yes">Yes</MenuItem>
+              <MenuItem value="no">No</MenuItem>
             </Select>
-
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Start Date"
-              type="date"
-              name="employment.start"
-              value={user.employment.start?.split("T")[0]}
-              onChange={handleChange}
-              required
-            ></TextField>
-
-            <TextField
-              size="small"
-              variant="outlined"
-              label="End Date"
-              type="date"
-              name="employment.end"
-              value={user.employment.end?.split("T")[0]}
-              onChange={handleChange}
-              required
-            ></TextField>
-          </>
-        )}
-
-        {/* button to visa status page only if user have uploaded opt receipt on last submission */}
-        {user.employment.status == "f1" &&
-        documents["OPT_receipt"] !== "" &&
-        documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") &&
-        user.onboardStatus !== "pending" ? (
-          <>
-            <button> TODO: to visa status page </button>
-          </>
-        ) : (
-          <></>
-        )}
-
-        {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
-        {user.employment.status == "f1" &&
-        (documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") ==
-          false ||
-          documents["OPT_receipt"] == "") ? (
-          <>
-            <label htmlFor="OPT_receipt">{`Upload your OPT receipt`}</label>
-            <input
-              type="file"
-              name="OPT_receipt"
-              accept="image/*"
-              onChange={(e) => handleDocumentChange(e, "OPT_receipt")}
-              required
-            />
-            <br />
-          </>
-        ) : (
-          <></>
-        )}
-
-        {user.employment.status == "other" ? (
-          <>
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Please specify"
-              type="text"
-              name="employment.status"
-              value={other}
-              onChange={(e) => {
-                setOther(e.target.value);
-              }}
-              required
-            ></TextField>
-          </>
-        ) : (
-          <></>
-        )}
-
-        <h1>section ix</h1>
-        <Select
-          disabled={
-            MUIDisabled ||
-            documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")
-          }
-          value={showDriverLicense}
-          label="Do you have a driver’s license?"
-          onChange={handleLicenseChange}
-          name="employment.status"
-        >
-          <MenuItem value="yes">Yes</MenuItem>
-          <MenuItem value="no">No</MenuItem>
-        </Select>
-
-        {showDriverLicense == "yes" ? (
-          <>
-            <InputField
-              name="driverLicense.number"
-              label="Plate Number #"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-
-            <TextField
-              size="small"
-              variant="outlined"
-              label="Expiration Date"
-              type="date"
-              name="driverLicense.expirationDate"
-              value={user.driverLicense.expirationDate?.split("T")[0]}
-              onChange={handleChange}
-              required
-            ></TextField>
-
-            {documents.licenseCopy !== "" ? (
-              <img
-                src={documents.licenseCopy}
-                alt="licenseCopy"
-                style={{ width: "50px", height: "50px", objectFit: "cover" }}
-              />
-            ) : (
-              <></>
-            )}
-
-            <label htmlFor="driverLicense">Upload a new license copy</label>
-            <input
-              type="file"
-              name="driverLicense"
-              accept="image/*"
-              onChange={(e) =>
-                handleDocumentChange(e, "driverLicense.licenseCopy")
-              }
-              required={documents.licenseCopy == ""}
-            />
-            <br />
-          </>
-        ) : (
-          <></>
-        )}
-
-        <h1>section x</h1>
-
-        <Select
-          disabled={MUIDisabled}
-          value={showReference}
-          label="Are you referred by anyone?"
-          onChange={handleReferenceChange}
-          name="userProfile.gender"
-        >
-          <MenuItem value="yes">Yes</MenuItem>
-          <MenuItem value="no">No</MenuItem>
-        </Select>
-
-        {showReference == "yes" ? (
-          <>
-            <InputField
-              name="reference.firstName"
-              label="First Name"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-
-            <InputField
-              name="reference.lastName"
-              label="Last Name"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-
-            <InputField
-              name="reference.middleName"
-              label="Middle Name"
-              onChange={handleChange}
-              required={false}
-            ></InputField>
-
-            <InputField
-              name="reference.phone"
-              type="tel"
-              label="Phone"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-
-            <InputField
-              name="reference.email"
-              type="email"
-              label="Email"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-
-            <InputField
-              name="reference.relationship"
-              label="Relationship"
-              onChange={handleChange}
-              required={true}
-            ></InputField>
-          </>
-        ) : (
-          <></>
-        )}
-
-        <h1>section xi</h1>
-
-        {user.emergencyContact.map((contact, index) => (
-          <div key={contact.email}>
-            <h3>{`Emergency Contact: ${contact.firstName} ${contact.lastName}`}</h3>
-            {Object.entries(contact)
-              .filter(([field, _]) => field != "_id")
-              .map(([field, value]) => (
-                <div key={`${contact.email}-${field}`}>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    label={`${transformString(field)}`}
-                    type="text"
-                    name={`emergencyContact.${field}`}
-                    value={value}
-                    readOnly
-                  ></TextField>
-                </div>
-              ))}
-            {user.onboardStatus !== "pending" ? (
-              <button
-                onClick={() => dispatch(deleteEmergencyContact(contact.email))}
-                disabled={user.emergencyContact.length === 1}
-              >
-                Delete
-              </button>
-            ) : (
-              <></>
-            )}
           </div>
-        ))}
 
+          {user.employment.status == "citizen" ||
+          user.employment.status == "green_card" ? (
+            <>
+              <div>
+                <Typography variant="subtitle1" sx={{ marginLeft: 1 }}>
+                  Citizen or Green Card Holders?
+                </Typography>
+                <Select
+                  fullWidth
+                  sx={{ height: "4.5vh" }}
+                  disabled={
+                    MUIDisabled ||
+                    documents["OPT_receipt"].startsWith(
+                      "https://bfgp.s3.amazonaws.com",
+                    )
+                  }
+                  value={user.employment.status}
+                  label="Citizen or Green Card Holders?"
+                  onChange={handleChange}
+                  name="employment.status"
+                >
+                  <MenuItem value="citizen">Citizen</MenuItem>
+                  <MenuItem value="green_card">Green Card</MenuItem>
+                </Select>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Typography variant="subtitle1" sx={{ marginLeft: 1 }}>
+                  What is your visa status?
+                </Typography>
+                <Select
+                  fullWidth
+                  sx={{ height: "4.5vh" }}
+                  disabled={
+                    MUIDisabled ||
+                    documents["OPT_receipt"].startsWith(
+                      "https://bfgp.s3.amazonaws.com",
+                    )
+                  }
+                  value={user.employment.status}
+                  label="Work Authorization"
+                  onChange={handleChange}
+                  name="employment.status"
+                >
+                  <MenuItem value="h1b">H1-B</MenuItem>
+                  <MenuItem value="l2">L2</MenuItem>
+                  <MenuItem value="f1">{`F1(CPT/OPT)`}</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </Select>
+              </div>
+
+              <TextField
+                size="small"
+                variant="outlined"
+                label="Start Date"
+                type="date"
+                name="employment.start"
+                value={user.employment.start?.split("T")[0]}
+                onChange={handleChange}
+                required
+              ></TextField>
+
+              <TextField
+                size="small"
+                variant="outlined"
+                label="End Date"
+                type="date"
+                name="employment.end"
+                value={user.employment.end?.split("T")[0]}
+                onChange={handleChange}
+                required
+              ></TextField>
+            </>
+          )}
+
+          {/* button to visa status page only if user have uploaded opt receipt on last submission */}
+          {user.employment.status == "f1" &&
+          documents["OPT_receipt"] !== "" &&
+          documents["OPT_receipt"].startsWith(
+            "https://bfgp.s3.amazonaws.com",
+          ) ? (
+            <>
+              <Button variant="outlined" color="info">
+                track your visa status
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+
+          {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
+          {user.employment.status == "f1" &&
+          (documents["OPT_receipt"].startsWith(
+            "https://bfgp.s3.amazonaws.com",
+          ) == false ||
+            documents["OPT_receipt"] == "") ? (
+            <>
+              {documents.OPT_receipt !== "" ? (
+                <img src={documents.OPT_receipt} alt="Profile" />
+              ) : (
+                <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                  uploaded image will be displayed here
+                </Typography>
+              )}
+
+              <input
+                type="file"
+                name="OPT_receipt"
+                accept="image/*"
+                onChange={(e) => handleDocumentChange(e, "OPT_receipt")}
+                required
+                id="upload-opt-receipt"
+              />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {user.employment.status == "other" ? (
+            <>
+              <TextField
+                size="small"
+                variant="outlined"
+                label="Please specify"
+                type="text"
+                name="employment.status"
+                value={other}
+                onChange={(e) => {
+                  setOther(e.target.value);
+                }}
+                required
+              ></TextField>
+            </>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Driver License" color="info" />
+        </Divider>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3vh",
+            maxWidth: "50vw",
+            justifyContent: "center",
+            ml: "25vw",
+          }}
+        >
+          <div>
+            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              Do you have a driver’s license?
+            </Typography>
+
+            <Select
+              fullWidth
+              sx={{ height: "4.5vh" }}
+              disabled={
+                MUIDisabled ||
+                documents["OPT_receipt"].startsWith(
+                  "https://bfgp.s3.amazonaws.com",
+                )
+              }
+              value={showDriverLicense}
+              label="Do you have a driver’s license?"
+              onChange={handleLicenseChange}
+              name="employment.status"
+            >
+              <MenuItem value="yes">Yes</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </Select>
+          </div>
+
+          {showDriverLicense == "yes" ? (
+            <>
+              <InputField
+                name="driverLicense.number"
+                label="Plate Number #"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+
+              <TextField
+                size="small"
+                variant="outlined"
+                label="Expiration Date"
+                type="date"
+                name="driverLicense.expirationDate"
+                defaultValue={"2024-10-26"}
+                value={user.driverLicense.expirationDate?.split("T")[0]}
+                onChange={handleChange}
+                required
+              ></TextField>
+
+              {documents.licenseCopy !== "" ? (
+                <img src={documents.licenseCopy} alt="License Copy" />
+              ) : (
+                <Typography variant="subtitle1" sx={{ ml: 1 }}>
+                  uploaded image will be displayed here
+                </Typography>
+              )}
+
+              <input
+                type="file"
+                name="licenseCopy"
+                accept="image/*"
+                onChange={(e) =>
+                  handleDocumentChange(e, "driverLicense.licenseCopy")
+                }
+                required={
+                  user.driverLicense.number !== "" &&
+                  documents.licenseCopy == ""
+                }
+                id="upload-license-copy"
+              />
+            </>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Reference" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3vh",
+            maxWidth: "50vw",
+            justifyContent: "center",
+            ml: "25vw",
+          }}
+        >
+          <div>
+            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              Are you referred by anyone?
+            </Typography>
+            <Select
+              fullWidth
+              sx={{ height: "4.5vh" }}
+              disabled={MUIDisabled}
+              value={showReference}
+              label="Are you referred by anyone?"
+              onChange={handleReferenceChange}
+              name="userProfile.gender"
+            >
+              <MenuItem value="yes">Yes</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </Select>
+          </div>
+
+          {showReference == "yes" ? (
+            <>
+              <InputField
+                name="reference.firstName"
+                label="First Name"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+
+              <InputField
+                name="reference.lastName"
+                label="Last Name"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+
+              <InputField
+                name="reference.middleName"
+                label="Middle Name"
+                onChange={handleChange}
+                required={false}
+              ></InputField>
+
+              <InputField
+                name="reference.phone"
+                type="tel"
+                label="Phone"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+
+              <InputField
+                name="reference.email"
+                type="email"
+                label="Email"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+
+              <InputField
+                name="reference.relationship"
+                label="Relationship"
+                onChange={handleChange}
+                required={true}
+              ></InputField>
+            </>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Divider
+          sx={{
+            "&::before, &::after": {
+              borderColor: "rgb(179,223,252)",
+              borderWidth: "3px",
+              borderRadius: "5px",
+            },
+            mt: "5vh",
+            mb: "3vh",
+          }}
+        >
+          <Chip variant="outlined" label="Emergency Contact" color="info" />
+        </Divider>{" "}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3vh",
+            maxWidth: "50vw",
+            justifyContent: "center",
+            ml: "25vw",
+          }}
+        >
+          {user.emergencyContact.map((contact, index) => (
+            <div key={contact.email}>
+              <h3>{`Emergency Contact: ${contact.firstName} ${contact.lastName}`}</h3>
+              {Object.entries(contact)
+                .filter(([field, _]) => field != "_id")
+                .map(([field, value]) => (
+                  <div key={`${contact.email}-${field}`}>
+                    <TextField
+                      fullWidth
+                      sx={{ mt: "2vh" }}
+                      size="small"
+                      variant="outlined"
+                      label={`${transformString(field)}`}
+                      type="text"
+                      name={`emergencyContact.${field}`}
+                      value={value}
+                      readOnly
+                    ></TextField>
+                  </div>
+                ))}
+              {user.onboardStatus !== "pending" ? (
+                <Button
+                  variant="outlined"
+                  color="info"
+                  sx={{ width: "100%", mt: "2vh" }}
+                  onClick={() =>
+                    dispatch(deleteEmergencyContact(contact.email))
+                  }
+                  disabled={user.emergencyContact.length === 1}
+                >
+                  Delete
+                </Button>
+              ) : (
+                <></>
+              )}
+            </div>
+          ))}
+        </Box>
         {user.onboardStatus !== "pending" ? (
-          <button type="submit">Submit</button>
+          <>
+            <Divider
+              sx={{
+                "&::before, &::after": {
+                  borderColor: "rgb(179,223,252)",
+                  borderWidth: "3px",
+                  borderRadius: "5px",
+                },
+                mt: "5vh",
+                mb: "3vh",
+              }}
+            >
+              <Chip
+                variant="outlined"
+                label="End of the Application"
+                color="info"
+              />
+            </Divider>
+            <Button
+              variant="contained"
+              color="info"
+              type="submit"
+              sx={{ display: "block", margin: "0 auto", width: "50vw" }}
+            >
+              Submit Onboarding Form
+            </Button>
+          </>
         ) : (
           <></>
-        )}
+        )}{" "}
       </form>
 
       {user.onboardStatus !== "pending" ? (
-        <AddContactForm></AddContactForm>
+        <>
+          <Divider
+            sx={{
+              "&::before, &::after": {
+                borderColor: "rgb(179,223,252)",
+                borderWidth: "3px",
+                borderRadius: "5px",
+              },
+              mt: "5vh",
+              mb: "3vh",
+            }}
+          >
+            <Chip
+              variant="outlined"
+              label="Add Emergency Contact"
+              color="info"
+            />
+          </Divider>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "3vh",
+              maxWidth: "50vw",
+              justifyContent: "center",
+              ml: "25vw",
+            }}
+          >
+            <AddContactForm></AddContactForm>
+          </Box>
+        </>
       ) : (
         <></>
       )}
+
+      <Divider
+        sx={{
+          "&::before, &::after": {
+            borderColor: "rgb(179,223,252)",
+            borderWidth: "3px",
+            borderRadius: "5px",
+          },
+          mt: "5vh",
+          mb: "3vh",
+        }}
+      >
+        <Chip variant="outlined" label="Uploaded Documents" color="info" />
+      </Divider>
     </>
   );
 };

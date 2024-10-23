@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addEmergencyContact } from "../store/userSlice/userSlice";
 import TextField from "@mui/material/TextField";
+import { Avatar, Button, FormControl, Typography } from "@mui/material";
 
 function AddContactForm() {
   const contactFields = [
@@ -56,11 +57,11 @@ function AddContactForm() {
   return (
     <>
       <form className="addContact" onSubmit={addContact}>
-        <h2>New Emergency Contact</h2>
         {contactFields.map(({ name, type = "text", required }) => (
           <div key={name}>
             <TextField
-              id="outlined-basic"
+              fullWidth
+              sx={{ mb: "2vh" }}
               size="small"
               variant="outlined"
               label={transformString(name)}
@@ -72,9 +73,15 @@ function AddContactForm() {
             ></TextField>
           </div>
         ))}
-        <button className="addContact" type="submit">
+        <Button
+          variant="outlined"
+          color="info"
+          className="addContact"
+          type="submit"
+          fullWidth
+        >
           Add Contact
-        </button>
+        </Button>
       </form>
     </>
   );
