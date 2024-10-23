@@ -12,7 +12,7 @@ const ApplicationDetails = ({ application, onBack }) => {
 
   const handleStatusUpdate = (status) => {
     dispatch(
-      updateApplicationStatus(application.user, status, application.feedback)
+      updateApplicationStatus(application.user, status, application.feedback),
     );
   };
 
@@ -22,8 +22,8 @@ const ApplicationDetails = ({ application, onBack }) => {
         giveFeedback(
           application.user,
           feedbackInput,
-          "671600ba18cf70faee977ec3"
-        )
+          "671600ba18cf70faee977ec3",
+        ),
       ); //  using a sample userId
       setFeedbackInput("");
       setFeedbackError("");

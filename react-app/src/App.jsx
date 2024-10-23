@@ -33,7 +33,6 @@ function App() {
             <Route path="user/login" element={<Login />} />
             <Route path="onboarding" element={<OnBoarding />} />
           </Routes>
-          
         </Router>
       </div>
     </>

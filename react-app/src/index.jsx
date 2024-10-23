@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import store from "./store/store.js";
 import EmployeeSummaryView from "./pages/EmployeeSummaryView.jsx";
 import VisaStatusManagementPage from "./components/VisaStatusHr.jsx";
+import ApplicationReview from "./components/Application.jsx";
 import UserVisaPage from "./pages/UserVisaPage.jsx";
 
 import Modal from "react-modal";
@@ -20,7 +21,8 @@ createRoot(document.getElementById("root")).render(
       <VisaStatusManagementPage />
       {/* <Housing /> */}
       {/* <UserVisaPage /> */}
-      {/* <OnBoarding /> */}
+      <OnBoarding />
+      {/* <PersonalInformation /> */}
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

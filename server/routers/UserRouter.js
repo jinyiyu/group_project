@@ -14,7 +14,7 @@ const {
 const {
     register,
     login,
-    validRegisterURL,
+    validRegisterURL, 
     logout,
     isLoggedIn,
 } = require("../controllers/UserController.js");
