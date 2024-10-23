@@ -22,7 +22,7 @@ const ApplicationDetails = ({ application, onBack }) => {
         giveFeedback(
           application.user,
           feedbackInput,
-          "6717827349ed975bcca47a84"
+          "6718477f9cb098f6d90da3f0"
         )
       ); //  using a sample userId
       setFeedbackInput("");

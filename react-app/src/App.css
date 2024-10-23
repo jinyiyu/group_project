@@ -97,3 +97,16 @@ p[style*="color: red"] {
 .add-housing-input {
   margin-bottom: 10px;
 }
+
+#employee-div,
+#facility-div {
+  border: 1px solid black;
+}
+
+#employee-div {
+  margin-bottom: 10px;
+}
+
+label {
+  margin-right: 5px;
+}

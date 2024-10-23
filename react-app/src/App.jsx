@@ -19,9 +19,9 @@ function App() {
       {/* <OnBoarding></OnBoarding> */}
       <div>
         {/* generate token  */}
-        {/* <GenerateTokenForm /> <br /> */}
+        <GenerateTokenForm /> <br />
         {/* application component */}
-        {/* <Application /> <br /> */}
+        <Application /> <br />
         <HrHousingManagement />
         {/* Commented out for readability purposes */}
         {/* component to send email from HR */}
@@ -29,8 +29,8 @@ function App() {
         <Router>
           <Routes>
             {/* Register page with token validation */}
-            {/* <Route path="user/register/:token" element={<Register />} /> */}
-            {/* <Route path="user/login" element={<Login />} /> */}
+            {/* <Route path="user/register/:token" element={<Register />} />
+            <Route path="user/login" element={<Login />} /> */}
           </Routes>
         </Router>
       </div>

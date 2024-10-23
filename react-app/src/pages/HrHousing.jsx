@@ -94,7 +94,7 @@ const HrHousingManagement = () => {
 
   return (
     <div>
-      <h1>Housing Management</h1>
+      <h2>Housing Management (HR)</h2>
       {loading && <p>Loading houses...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {inputError && <p style={{ color: "red" }}>{inputError}</p>}
@@ -194,7 +194,7 @@ const HrHousingManagement = () => {
 
               <h4>Facility Reports:</h4>
               {houseDetails.facilityReports.slice(0, 5).map((report) => (
-                <div key={report.id}>
+                <div id="facility-div" key={report.id}>
                   <h4>{report.title}</h4>
                   <p>Description: {report.description}</p>
                   <p>Status: {report.status}</p>
@@ -214,7 +214,7 @@ const HrHousingManagement = () => {
 
               <h4>Employee Information:</h4>
               {houseDetails.employees.map((employee) => (
-                <div key={employee.email}>
+                <div id="employee-div" key={employee.email}>
                   <p>Name: {employee.fullName}</p>
                   <p>Phone: {employee.phone}</p>
                   <p>Email: {employee.email}</p>

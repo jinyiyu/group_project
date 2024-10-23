@@ -43,14 +43,17 @@ exports.getHouseDetail = async (req, res) => {
       });
     }
 
-    const employees = await User.find({ house: houseId }).select(
-      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email"
-    );
+    const employees = await User.find({ house: houseId });
+    // .select(
+    //   "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email"
+    // );
 
     // Find facility reports related to the house
     const facilityReports = await Report.find({
       createdBy: { $in: employees.map((emp) => emp._id) },
-    }).populate("createdBy", "userName");
+    })
+      .populate("createdBy", "userName")
+      .populate("comments.createdBy", "userName");
 
     const houseDetails = {
       id: house._id,
@@ -76,7 +79,7 @@ exports.getHouseDetail = async (req, res) => {
         status: report.status,
         comments: report.comments.map((comment) => ({
           id: comment._id,
-          createdBy: comment.createdBy,
+          createdBy: comment.createdBy.userName,
           description: comment.desc,
           timestamp: comment.timestamp,
         })),
@@ -85,6 +88,7 @@ exports.getHouseDetail = async (req, res) => {
         fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
         phone: employee.contactInfo.cellPhone,
         email: employee.userProfile.email,
+        car: employee.car,
       })),
     };
 
