@@ -5,12 +5,17 @@ const fileUploadSlice = createSlice({
   name: "fileUpload",
   initialState: {
     document: null,
+    isLoading: false,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(uploadFileThunk.fulfilled, (state, action) => {
-      state.document = action.payload;
-    });
+    builder
+      .addCase(uploadFileThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadFileThunk.fulfilled, (state, action) => {
+        state.document = action.payload;
+      });
   },
 });
 

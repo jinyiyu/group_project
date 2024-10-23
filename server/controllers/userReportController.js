@@ -1,4 +1,4 @@
-const Report = require("../models/reportSchema");
+const { Report } = require("../models/reportSchema");
 
 // Create a report that points to current user by userId
 // Request: {title, desc}, Response: {message, report object}

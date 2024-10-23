@@ -6,14 +6,14 @@ const path = require("path");
 // Take in a userId, return user's visa status
 exports.getVisaStatus = async (req, res) => {
   try {
-    // const userId = req.cookies.user_id;
-    const userId = "67147b5445846b9bac51d17f";
+    const userId = req.cookies.user_id;
+    // const userId = "67147b5445846b9bac51d17f";
 
     // Get one newest uploaded document from documentSchema by userId,
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"
     const latestDocument = await Doc.findOne({
       user: userId,
-      documentType: { $in: ["OPT-receipt", "OPT-EAD", "I-983", "I-20"] },
+      documentType: { $in: ["OPT_receipt", "OPT_EAD", "I_983", "I_20"] },
     })
       .sort({ uploadedAt: -1 })
       .limit(1);
@@ -59,6 +59,7 @@ exports.uploadDocument = async (req, res) => {
         $set: {
           fileUrl: fileUrl,
           uploadedAt: Date.now(),
+
           status: "Pending", // Reset status to "Pending" on file re-upload
         },
       },
