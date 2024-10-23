@@ -1,5 +1,7 @@
-import React, { memo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 
 const Feedback = () => {
   const user = useSelector((state) => state.user);
@@ -10,12 +12,14 @@ const Feedback = () => {
 
       {user.onboardStatus == "rejected" ? (
         <>
-          <h1>Feedbacks: </h1>
-          {user.feedback.map((f, index) => (
-            <div key={index}>
-              <p>{f}</p>
-            </div>
-          ))}
+          <Stack sx={{ width: "100%" }} spacing={1}>
+            <h1>Feedbacks: </h1>
+            {user.feedback.map((f, index) => (
+              <Alert key={index} variant="filled" severity="info">
+                {f}
+              </Alert>
+            ))}
+          </Stack>
         </>
       ) : (
         <></>

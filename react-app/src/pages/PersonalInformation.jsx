@@ -9,31 +9,16 @@ import {
 } from "../store/userSlice/userSlice";
 import DocumentGallery from "../components/DocumentGallery";
 import InformationSection from "../components/InformationSection";
+import AddContactForm from "../components/AddContactForm";
 
 function PersonalInformation() {
   const BASE_URL = "http://localhost:3000";
-  const contactFields = [
-    { name: "firstName", required: true },
-    { name: "lastName", required: true },
-    { name: "middleName", required: false },
-    { name: "phone", type: "tel", required: true },
-    { name: "email", type: "email", required: true },
-    { name: "relationship", required: true },
-  ];
   const [modeContact, setModeContact] = useState("view");
   const [modeName, setModeName] = useState("view");
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const documents = useSelector((state) => state.document);
-  const [contact, setContact] = useState({
-    firstName: "",
-    lastName: "",
-    middleName: "",
-    phone: "",
-    email: "",
-    relationship: "",
-  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,28 +50,6 @@ function PersonalInformation() {
     const base64File = await fileToBase64(file);
     let fileType = e.target.name;
     dispatch(updateDocument({ type: fileType, url: base64File }));
-  };
-
-  const addContact = (e) => {
-    e.preventDefault();
-    const copy = contact;
-    dispatch(addEmergencyContact(copy));
-    setContact({
-      firstName: "",
-      lastName: "",
-      middleName: "",
-      phone: "",
-      email: "",
-      relationship: "",
-    });
-  };
-
-  const handleContactChange = (e) => {
-    const { name, value } = e.target;
-    setContact((prevContact) => ({
-      ...prevContact,
-      [name]: value,
-    }));
   };
 
   const handleSaveContact = useCallback(
@@ -129,7 +92,9 @@ function PersonalInformation() {
 
       if (
         documents["profilePicture"] !== "" &&
-        documents["profilePicture"].startsWith("https://bfgp.s3.amazonaws.com") == false
+        documents["profilePicture"].startsWith(
+          "https://bfgp.s3.amazonaws.com",
+        ) == false
       ) {
         const res = await fetch(
           `${BASE_URL}/document/upload?type=profilePicture`,
@@ -348,26 +313,7 @@ function PersonalInformation() {
             Cancel
           </button>
 
-          <form className="addContact" onSubmit={addContact}>
-            <h2>Add New Emergency Contact</h2>
-            {contactFields.map(({ name, type = "text", required }) => (
-              <div key={name}>
-                <label htmlFor={name}>{transformString(name)}</label>
-                <input
-                  className="addContact"
-                  type={type}
-                  name={name}
-                  value={contact[name] || ""}
-                  onChange={handleContactChange}
-                  required={required}
-                />
-                <br />
-              </div>
-            ))}
-            <button className="addContact" type="submit">
-              Add Contact
-            </button>
-          </form>
+          <AddContactForm></AddContactForm>
         </>
       ) : (
         <>

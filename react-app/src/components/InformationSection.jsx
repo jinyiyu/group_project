@@ -2,8 +2,6 @@ import { useEffect, useCallback, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { updateField } from "../store/userSlice/userSlice";
-import { updateDocument } from "../store/documentSlice/documentSlice";
-import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 
 function InformationSection({ sectionName }) {
   const BASE_URL = "http://localhost:3000";
