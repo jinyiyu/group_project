@@ -11,7 +11,4 @@ router.get(
 router.put("/applications/:userId", hrHiringController.updateApplicationStatus);
 router.put("/applications/:userId/feedback", hrHiringController.giveFeedback);
 
-// For testing purposes
-router.get("/report", hrHiringController.getReport);
-
 module.exports = router;

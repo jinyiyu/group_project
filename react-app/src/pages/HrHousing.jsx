@@ -5,6 +5,8 @@ import {
   addHouse,
   deleteHouse,
   fetchHouseDetail,
+  addCommentToFacilityReport,
+  updateCommentToFacilityReport,
 } from "../store/hrHousingSlice/hrHousing.thunk";
 import {
   selectHouses,
@@ -23,6 +25,11 @@ const HrHousingManagement = () => {
   const [inputError, setInputError] = useState("");
   const [selectedHouseId, setSelectedHouseId] = useState(null);
   const [activeTab, setActiveTab] = useState("facility");
+
+  const [commentInput, setCommentInput] = useState("");
+  const [editingComment, setEditingComment] = useState(null);
+
+  const currentUserId = "6719779eb1546e50e551261f"; // just for testing purpose, get logged in userId by verifying login feature
 
   const [newHouse, setNewHouse] = useState({
     address: "",
@@ -90,7 +97,43 @@ const HrHousingManagement = () => {
 
   const handleSummaryView = (houseId) => {
     setSelectedHouseId(houseId);
+    setActiveTab("facility");
     dispatch(fetchHouseDetail(houseId));
+  };
+
+  const handleAddComment = async (reportId, houseId) => {
+    if (!commentInput) {
+      setInputError("Comment cannot be empty.");
+      return;
+    }
+
+    await dispatch(
+      addCommentToFacilityReport({
+        reportId,
+        description: commentInput,
+        userId: currentUserId,
+      })
+    );
+    dispatch(fetchHouseDetail(houseId));
+    setCommentInput("");
+  };
+
+  const handleEditComment = async (reportId, commentId, houseId) => {
+    if (!commentInput) {
+      setInputError("Comment cannot be empty.");
+      return;
+    }
+    await dispatch(
+      updateCommentToFacilityReport({
+        reportId,
+        commentId,
+        description: commentInput,
+        currentUserId,
+      })
+    );
+    dispatch(fetchHouseDetail(houseId));
+    setCommentInput("");
+    setEditingComment(null);
   };
 
   return (
@@ -245,8 +288,45 @@ const HrHousingManagement = () => {
                             <p>
                               At: {new Date(comment.timestamp).toLocaleString()}
                             </p>
+                            {/* If the comment is by the current user, allow editing */}
+                            {comment.commentUserId === currentUserId && (
+                              <button
+                                onClick={() => setEditingComment(comment.id)}
+                              >
+                                Edit Comment
+                              </button>
+                            )}
                           </div>
                         ))}
+                        <div>
+                          <textarea
+                            placeholder="Enter your comment"
+                            value={commentInput}
+                            onChange={(e) => setCommentInput(e.target.value)}
+                          ></textarea>{" "}
+                          <br />
+                          {editingComment ? (
+                            <button
+                              onClick={() =>
+                                handleEditComment(
+                                  report.id,
+                                  editingComment,
+                                  house.id
+                                )
+                              }
+                            >
+                              Update Comment
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                handleAddComment(report.id, house.id)
+                              }
+                            >
+                              Add Comment
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -256,18 +256,18 @@ exports.updateApplicationStatus = async (req, res) => {
 };
 
 // Get report, just for testing purposes
-exports.getReport = async (req, res) => {
-  try {
-    const report = await Report.find();
-    res.status(200).json(report);
-  } catch (error) {
-    console.error("Error fetching onboarding applications:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch report.",
-    });
-  }
-};
+// exports.getReport = async (req, res) => {
+//   try {
+//     const report = await Report.find();
+//     res.status(200).json(report);
+//   } catch (error) {
+//     console.error("Error fetching onboarding applications:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch report.",
+//     });
+//   }
+// };
 
 // Get all information of individual user - testing - Hieu Tran
 // exports.getIndividual = async (req, res) => {

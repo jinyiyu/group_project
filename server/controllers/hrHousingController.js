@@ -80,6 +80,7 @@ exports.getHouseDetail = async (req, res) => {
         comments: report.comments.map((comment) => ({
           id: comment._id,
           createdBy: comment.createdBy.userName,
+          commentUserId: comment.createdBy._id,
           description: comment.desc,
           timestamp: comment.timestamp,
         })),
@@ -312,6 +313,21 @@ exports.deleteHouse = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete house.",
+      error,
+    });
+  }
+};
+
+// Get report, just for testing purposes
+exports.getReport = async (req, res) => {
+  try {
+    const reports = await Report.find();
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error("Error fetching onboarding applications:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch report.",
       error,
     });
   }

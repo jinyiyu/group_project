@@ -4,6 +4,8 @@ import {
   addHouse,
   deleteHouse,
   fetchHouseDetail,
+  addCommentToFacilityReport,
+  updateCommentToFacilityReport,
 } from "./hrHousing.thunk";
 
 const initialState = {
@@ -49,6 +51,26 @@ const hrHousingSlice = createSlice({
         state.houses = state.houses.filter(
           (house) => house.id !== action.payload
         );
+      })
+      .addCase(addCommentToFacilityReport.fulfilled, (state, action) => {
+        const report = state.houseDetails.facilityReports.find(
+          (report) => report.id === action.meta.arg.reportId
+        );
+        if (report) {
+          report.comments.push(action.payload);
+        }
+      })
+      .addCase(updateCommentToFacilityReport.fulfilled, (state, action) => {
+        const report = state.houseDetails.facilityReports.find(
+          (report) => report.id === action.meta.arg.reportId
+        );
+        const comment = report.comments.find(
+          (comment) => comment.id === action.meta.arg.commentId
+        );
+        if (comment) {
+          comment.desc = action.payload.description;
+          comment.timestamp = new Date().toISOString();
+        }
       });
   },
 });

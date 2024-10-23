@@ -50,3 +50,42 @@ export const deleteHouse = createAsyncThunk(
     }
   }
 );
+
+export const addCommentToFacilityReport = createAsyncThunk(
+  "hrHousing/addCommentToFacilityReport",
+  async ({ reportId, description, userId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASED_URI}/hr/housing/reports/${reportId}/comments`,
+        {
+          description,
+          userId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateCommentToFacilityReport = createAsyncThunk(
+  "hrHousing/updateCommentToFacilityReport",
+  async (
+    { reportId, commentId, description, currentUserId },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.put(
+        `${BASED_URI}/hr/housing/reports/${reportId}/comments/${commentId}`,
+        {
+          description,
+          currentUserId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
