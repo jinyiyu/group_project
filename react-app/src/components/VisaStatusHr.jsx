@@ -159,7 +159,7 @@ const VisaStatusManagementPage = () => {
         (error) => {
           console.log("Failed to send email:", error.text);
           alert("Failed to send notification.");
-        }
+        },
       );
   };
 
@@ -185,7 +185,7 @@ const VisaStatusManagementPage = () => {
             _id,
             status: "Rejected",
             feedback: userFeedback,
-          })
+          }),
         ).unwrap();
         alert("Document is rejected");
         window.location.reload();
@@ -199,7 +199,7 @@ const VisaStatusManagementPage = () => {
     const filteredEmployees = visaEmployees.filter((employee) =>
       `${employee.name.firstName} ${employee.name.lastName}`
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+        .includes(searchQuery.toLowerCase()),
     );
     dispatch(setDisplayedEmployees(filteredEmployees));
     dispatch(setDropdownVisible(false));
@@ -382,7 +382,7 @@ const VisaStatusManagementPage = () => {
                   .filter((employee) =>
                     `${employee.name.firstName} ${employee.name.lastName}`
                       .toLowerCase()
-                      .includes(searchQuery.toLowerCase())
+                      .includes(searchQuery.toLowerCase()),
                   )
                   .map((employee, index) => (
                     <li
@@ -394,13 +394,13 @@ const VisaStatusManagementPage = () => {
                       }}
                       onClick={() =>
                         handleDropdownClick(
-                          `${employee.name.firstName} ${employee.name.lastName}`
+                          `${employee.name.firstName} ${employee.name.lastName}`,
                         )
                       }
                     >
                       {highlightSearchTerm(
                         `${employee.name.firstName} ${employee.name.lastName}`,
-                        searchQuery
+                        searchQuery,
                       )}
                     </li>
                   ))}
@@ -441,13 +441,13 @@ const VisaStatusManagementPage = () => {
                           <div>
                             Start Date:{" "}
                             {moment(
-                              visaEmployee["Work Authorization Title"].start
+                              visaEmployee["Work Authorization Title"].start,
                             ).format("MMMM Do YYYY")}
                           </div>
                           <div>
                             End Date:{" "}
                             {moment(
-                              visaEmployee["Work Authorization Title"].end
+                              visaEmployee["Work Authorization Title"].end,
                             ).format("MMMM Do YYYY")}
                           </div>
                           <div>

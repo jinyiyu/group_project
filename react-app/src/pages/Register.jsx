@@ -19,9 +19,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const dispatch = useDispatch();
-  const { loading, error, accessTokenValid, email, registerSuccess } = useSelector(
-    (state) => state.userAuth
-  );
+  const { loading, error, accessTokenValid, email, registerSuccess } =
+    useSelector((state) => state.userAuth);
 
   // Validate token on component load
   useEffect(() => {

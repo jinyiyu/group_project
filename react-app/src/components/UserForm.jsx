@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
 import {
@@ -15,7 +15,6 @@ import InputField from "./InputField";
 import AddContactForm from "./AddContactForm";
 
 const UserForm = () => {
-  
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const documents = useSelector((state) => state.document);
@@ -34,7 +33,7 @@ const UserForm = () => {
     if (user.employment.status !== "f1") {
       dispatch(updateDocument({ type: "OPT_receipt", url: "" }));
     }
-  }, [user.employment.status])
+  }, [user.employment.status]);
 
   useEffect(() => {
     if (
@@ -310,7 +309,6 @@ const UserForm = () => {
         <h1>section vi</h1>
 
         <TextField
-          
           size="small"
           variant="outlined"
           label="Email"
@@ -331,7 +329,6 @@ const UserForm = () => {
         ></InputField>
 
         <TextField
-          
           size="small"
           variant="outlined"
           label="Date of Birth"
@@ -341,7 +338,6 @@ const UserForm = () => {
           onChange={handleChange}
           required
         ></TextField>
-
 
         <Select
           value={user.userProfile.gender}
@@ -369,16 +365,13 @@ const UserForm = () => {
             "https://bfgp.s3.amazonaws.com",
           )}
         >
-            <MenuItem value="yes">Yes</MenuItem>
-            <MenuItem value="no">No</MenuItem>
-
+          <MenuItem value="yes">Yes</MenuItem>
+          <MenuItem value="no">No</MenuItem>
         </Select>
-
 
         {user.employment.status == "citizen" ||
         user.employment.status == "green_card" ? (
           <>
-          
             <label>
               Citizen or Green Card Holders?
               <select
@@ -414,7 +407,6 @@ const UserForm = () => {
             </label>
 
             <TextField
-              
               size="small"
               variant="outlined"
               label="Start Date"
@@ -426,7 +418,6 @@ const UserForm = () => {
             ></TextField>
 
             <TextField
-              
               size="small"
               variant="outlined"
               label="End Date"
@@ -440,35 +431,40 @@ const UserForm = () => {
         )}
 
         {/* button to visa status page only if user have uploaded opt receipt on last submission */}
-        {((user.employment.status == "f1") && (documents["OPT_receipt"]!=="") && documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") && (user.onboardStatus!=="pending")) ? (
+        {user.employment.status == "f1" &&
+        documents["OPT_receipt"] !== "" &&
+        documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") &&
+        user.onboardStatus !== "pending" ? (
           <>
-          <button> TODO: to visa status page </button> 
+            <button> TODO: to visa status page </button>
           </>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
 
         {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
-        {user.employment.status == "f1" && (documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com")==false || documents["OPT_receipt"]=="") ? (
+        {user.employment.status == "f1" &&
+        (documents["OPT_receipt"].startsWith("https://bfgp.s3.amazonaws.com") ==
+          false ||
+          documents["OPT_receipt"] == "") ? (
           <>
-          <label
-              htmlFor="OPT_receipt"
-            >{`Upload your OPT receipt`}</label>
+            <label htmlFor="OPT_receipt">{`Upload your OPT receipt`}</label>
             <input
               type="file"
               name="OPT_receipt"
               accept="image/*"
-              onChange={(e) =>
-                handleDocumentChange(e, "OPT_receipt")
-              }
+              onChange={(e) => handleDocumentChange(e, "OPT_receipt")}
               required
             />
             <br />
           </>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
 
         {user.employment.status == "other" ? (
           <>
             <TextField
-              
               size="small"
               variant="outlined"
               label="Please specify"
@@ -505,7 +501,6 @@ const UserForm = () => {
             ></InputField>
 
             <TextField
-              
               size="small"
               variant="outlined"
               label="Expiration Date"
@@ -611,7 +606,6 @@ const UserForm = () => {
               .map(([field, value]) => (
                 <div key={`${contact.email}-${field}`}>
                   <TextField
-                    
                     size="small"
                     variant="outlined"
                     label={`${transformString(field)}`}

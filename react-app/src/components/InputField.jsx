@@ -18,7 +18,6 @@ function InputField({ name, label, type = "text", onChange, required }) {
         value={fields.length > 1 ? user[fields[0]][fields[1]] : user[fields[0]]}
         onChange={onChange}
         required={required}
-        
       ></TextField>
 
       {/* <label htmlFor={name}>{label}</label>

@@ -17,7 +17,7 @@ const EmployeeSummaryView = () => {
   }, [dispatch]);
 
   const sortedEmployees = [...displayedEmployees].sort((a, b) =>
-    a.name.lastName.localeCompare(b.name.lastName)
+    a.name.lastName.localeCompare(b.name.lastName),
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +31,7 @@ const EmployeeSummaryView = () => {
   const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
   const currentEmployees = sortedEmployees.slice(
     indexOfFirstEmployee,
-    indexOfLastEmployee
+    indexOfLastEmployee,
   );
 
   const handlePageChange = (event, value) => {

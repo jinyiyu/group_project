@@ -69,9 +69,7 @@ function AddContactForm() {
               value={contact[name] || ""}
               onChange={handleContactChange}
               required={required}
-              
             ></TextField>
-           
           </div>
         ))}
         <button className="addContact" type="submit">
