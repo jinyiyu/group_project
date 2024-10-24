@@ -8,19 +8,9 @@ import InputField from "../components/InputField";
 import LineDivider from "../components/LineDivider";
 import InformationSection from "../components/InformationSection";
 import DocumentGallery from "../components/DocumentGallery";
-import { fetchUserThunk } from "../store/userSlice/userThunks";
-import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 
-function PersonalInformation() {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-  const documents = useSelector((state) => state.document);
-
-  useEffect(() => {
-    dispatch(fetchUserThunk());
-    dispatch(fetchDocumentThunk());
-  }, [dispatch]);
-
+function PersonalInfoView({ user }) {
+  console.log("user:", user);
   function transformString(str) {
     let result = str.replace(/[A-Z]/g, (match) => ` ${match}`);
     result = result.charAt(0).toUpperCase() + result.slice(1);
@@ -75,7 +65,7 @@ function PersonalInformation() {
           />
 
           <Typography variant="subtitle1">Your Profile</Typography>
-          {documents.profilePicture !== "" ? (
+          {/* {documents.profilePicture !== "" ? (
             <Avatar
               src={documents.profilePicture}
               alt="Profile"
@@ -83,7 +73,7 @@ function PersonalInformation() {
             />
           ) : (
             <Avatar sx={{ width: 100, height: 100, bgcolor: "grey.300" }} />
-          )}
+          )} */}
 
           <InputField
             fullWidth={true}
@@ -176,9 +166,9 @@ function PersonalInformation() {
 
       <LineDivider label="Uploaded Documents" />
 
-      <DocumentGallery />
+      {/* <DocumentGallery /> */}
     </>
   );
 }
 
-export default PersonalInformation;
+export default PersonalInfoView;

@@ -7,8 +7,8 @@ const { genAccessToken } = require("../utils/genJwtToken.js");
 // fetch user data(nested object)
 // will return specific fields if given in the query string
 const fetchUserData = async (req, res) => {
-  // const { userId } = req.body;
-  const userId = "6717d2d7cd4fb7e80481f379";
+  const { userId } = req.body;
+  // const userId = "6717d2d7cd4fb7e80481f379";
   const { fields } = req.query;
 
   try {
@@ -24,11 +24,25 @@ const fetchUserData = async (req, res) => {
   }
 };
 
+const fetchUserDataById = async (req, res) => {
+  const { id } = req.params; // Get userId from the URL params
+
+  try {
+    const user = await User.findById(id).lean().exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (error) {
+    return res.status(500).json({ message: `Error fetching user: ${error}` });
+  }
+};
+
 // update user data
 // data can be nested object, should follow the data model, can be partial
 const updateUserData = async (req, res) => {
   // const { userId, data } = req.body;
-  const { data, fromOnBoard=false } = req.body;//TODO_ldl: might need middleware before this function to verify the data is in correct structure
+  const { data, fromOnBoard = false } = req.body; //TODO_ldl: might need middleware before this function to verify the data is in correct structure
   const userId = "6717d2d7cd4fb7e80481f379";
 
   try {
@@ -43,10 +57,11 @@ const updateUserData = async (req, res) => {
       .exec();
 
     if (fromOnBoard) {
-      updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { $set: { onboardStatus: "pending", feedback: [] } },
-      ).lean().exec();
+      updatedUser = await User.findByIdAndUpdate(userId, {
+        $set: { onboardStatus: "pending", feedback: [] },
+      })
+        .lean()
+        .exec();
     }
 
     if (!updatedUser) {
@@ -184,6 +199,7 @@ const validRegisterURL = async (req, res) => {
 };
 
 exports.fetchUserData = fetchUserData;
+exports.fetchUserDataById = fetchUserDataById;
 exports.updateUserData = updateUserData;
 exports.register = register;
 exports.login = login;
