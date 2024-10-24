@@ -5,7 +5,9 @@ export const VisaStatusThunk = createAsyncThunk(
   "userStatus/VisaStatusThunk",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/user/status");
+      const response = await axios.get("/users/status", {
+        withCredentials: true,
+      });
 
       return response.data;
     } catch (error) {

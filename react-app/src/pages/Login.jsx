@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -18,7 +19,8 @@ const Login = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.userAuth);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,6 +29,8 @@ const Login = () => {
     if (loginUser.fulfilled.match(resultAction)) {
       setSnackbarMessage("Login successful!");
       setOpenSnackbar(true);
+      navigate("/");
+
     }
   };
 
@@ -69,6 +73,7 @@ const Login = () => {
         <Alert onClose={() => setOpenSnackbar(false)} severity="success">
           {snackbarMessage}
         </Alert>
+        
       </Snackbar>
     </Container>
   );
