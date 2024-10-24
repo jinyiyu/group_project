@@ -124,7 +124,7 @@ const UserVisaPage = () => {
             />
           )}
           {!["OPT_receipt", "OPT_EAD", "I_983", "I_20"].includes(
-            documentType
+            documentType,
           ) && (
             <Box display="flex" justifyContent="center">
               <Typography>You are all set.</Typography>

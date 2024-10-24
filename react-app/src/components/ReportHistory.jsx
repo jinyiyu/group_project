@@ -46,7 +46,7 @@ const ReportHistory = () => {
   const totalPages = Math.ceil(totalReports / reportsPerPage);
   const currentReports = sortedReports.slice(
     (currentPage - 1) * reportsPerPage,
-    currentPage * reportsPerPage
+    currentPage * reportsPerPage,
   );
 
   // Handler for set new page status

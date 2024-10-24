@@ -28,18 +28,26 @@ const fetchUserData = async (req, res) => {
 // data can be nested object, should follow the data model, can be partial
 const updateUserData = async (req, res) => {
   // const { userId, data } = req.body;
-  const { data } = req.body;//TODO_ldl: might need middleware before this function to verify the data is in correct structure
+  const { data, fromOnBoard=false } = req.body;//TODO_ldl: might need middleware before this function to verify the data is in correct structure
   const userId = "6717d2d7cd4fb7e80481f379";
 
   try {
     // Use $set to update nested fields
-    const updatedUser = await User.findByIdAndUpdate(
+
+    let updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: data },
       { new: true }
     )
       .lean()
       .exec();
+
+    if (fromOnBoard) {
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $set: { onboardStatus: "pending", feedback: [] } },
+      ).lean().exec();
+    }
 
     if (!updatedUser) {
       return res

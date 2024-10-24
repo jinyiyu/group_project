@@ -23,19 +23,17 @@ const Navbar = () => {
         </Typography>
 
 
-          {/*without login*/}
-          {
-              !loginSuccess && (
-                  <>
-                      <Button color="inherit" component={Link} to="/user/login">
-                          Login
-                      </Button>
-                      {/*<Button color="inherit" component={Link} to="/user/register/token123">*/}
-                      {/*    Register*/}
-                      {/*</Button>*/}
-                  </>
-              )
-          }
+        {/*without login*/}
+        {!loginSuccess && (
+          <>
+            <Button color="inherit" component={Link} to="/user/login">
+              Login
+            </Button>
+            {/*<Button color="inherit" component={Link} to="/user/register/token123">*/}
+            {/*    Register*/}
+            {/*</Button>*/}
+          </>
+        )}
 
         {/*Nav for HR logged in */}
         {
