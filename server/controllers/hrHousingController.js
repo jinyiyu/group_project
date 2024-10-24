@@ -1,6 +1,7 @@
 const House = require("../models/houseSchema");
 const { Report } = require("../models/reportSchema");
 const User = require("../models/userSchema");
+// const basicUser = require("../models/basicUserSchema");
 
 // Get all existing houses
 exports.getAllHouses = async (req, res) => {
@@ -43,10 +44,14 @@ exports.getHouseDetail = async (req, res) => {
       });
     }
 
+    // Find employees in both User and basicUser collections
     const employees = await User.find({ house: houseId });
-    // .select(
-    //   "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email"
-    // );
+    // const basicUserEmployees = await basicUser.find({ house: houseId });
+
+    // Combine employees from both collections
+    // const allEmployees = [...userEmployees, ...basicUserEmployees];
+
+    console.log(employees);
 
     // Find facility reports related to the house
     const facilityReports = await Report.find({
@@ -87,9 +92,9 @@ exports.getHouseDetail = async (req, res) => {
       })),
       employees: employees.map((employee) => ({
         fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
-        phone: employee.contactInfo.cellPhone,
-        email: employee.userProfile.email,
-        car: employee.car,
+        phone: employee.contactInfo?.cellPhone || "N/A",
+        email: employee.userProfile?.email || "N/A",
+        car: employee.car || "N/A",
       })),
     };
 
