@@ -41,7 +41,6 @@ UserRouter.get(
   .get("/basicUsers", getUsers)
   .get("/info/:id", fetchUserDataById)
   .get("/info", fetchUserData) // todo: add access middleware
-  .put("/update", updateUserData);
-// todo: add access middleware
+  .put("/update", updateUserData); // todo: add access middleware
 
 module.exports = UserRouter;
