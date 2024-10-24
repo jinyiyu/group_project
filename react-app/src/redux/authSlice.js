@@ -94,8 +94,8 @@ const authSlice = createSlice({
     loading: false, // Loading state for token validation, registration, and login
     error: null, // Error message if something goes wrong
 
-    user: {role:"employee", username:"test"}, // Stores user information after login
-    loginSuccess: true, // Tracks if login is successful
+    user: null, // {role:"employee", username:"test"}, // Stores user information after login
+    loginSuccess: false, // Tracks if login is successful
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -163,7 +163,8 @@ const authSlice = createSlice({
       })
       .addCase(checkLoginStatus.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        console.log("state.user::", state.user);
         state.loginSuccess = true;
       })
       .addCase(checkLoginStatus.rejected, (state) => {

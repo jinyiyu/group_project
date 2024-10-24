@@ -3,6 +3,8 @@ const validator = require("validator");
 
 const accessValidation = (req, res, next) => {
     const token = req.cookies.token;
+    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTlhOGRlYzgyZGExYmQxZGNiYzZjNCIsInVzZXJuYW1lIjoidGVzdDEiLCJyb2xlIjoiZW1wbG95ZWUiLCJpYXQiOjE3Mjk3MzcwMzUsImV4cCI6MTcyOTc0MDYzNX0.IGjQ067wKacBicL-w7dvLbfZCnaTRLVv5jpnaPuZkWo";
+    console.log(token);
 
     if (!token || validator.isEmpty(token)) {
         return res.status(401).json({ message: "Token is required" });
@@ -28,7 +30,7 @@ const inviteUrlValidation = (req, res, next) => {
     const token = req.params.token;
     // test
     console.log(token);
-    req.body.email = "test@gmail.com"
+    req.body.email = "test1@gmail.com"
     
 
     // if (!token || validator.isEmpty(token)) {
