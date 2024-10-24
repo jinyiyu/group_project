@@ -32,7 +32,7 @@ const userProfileSchema = new Schema({
   },
   profilePicture: {
     type: String,
-    default: "placeholder.jpg",
+    default: "",
   },
 });
 
@@ -71,7 +71,7 @@ const contactInfoSchema = new Schema({
 const driverLicenseSchema = new mongoose.Schema({
   licenseCopy: {
     type: String,
-    default: "placeholder.jpg",
+    default: "",
   },
   number: {
     type: String,

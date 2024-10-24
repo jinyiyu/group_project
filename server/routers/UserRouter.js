@@ -6,6 +6,7 @@ const {
 const {
     inviteUrlValidation,
     accessValidation,
+    isEmployee,
 } = require("../middlewares/AuthMiddleWare.js");
 const {
     passwordValidation,
@@ -37,8 +38,8 @@ UserRouter.get(
     .get("/isLoggedIn", accessValidation, isLoggedIn)
     .get("/logout", accessValidation, logout)
 
-    .get("/info", fetchUserData) // todo: add access middleware
-    .put("/update", updateUserData); // todo: add access middleware
+    .get("/info", accessValidation, isEmployee, fetchUserData) // todo: add access middleware
+    .put("/update", accessValidation, isEmployee, updateUserData); // todo: add access middleware
 
     
 
