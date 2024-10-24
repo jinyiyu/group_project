@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const userHouseController = require("../controllers/userHouseController");
-
-router.get("/housing", userHouseController.getHouseDetail);
+const { accessValidation } = require("../middlewares/AuthMiddleWare");
+router.get("/housing", accessValidation, userHouseController.getHouseDetail);
 
 module.exports = router;

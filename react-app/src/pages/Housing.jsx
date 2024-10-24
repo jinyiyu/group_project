@@ -1,6 +1,5 @@
-import { useState } from "react";
 import HousingDetails from "./HousingDetails";
-import ReportPage from "./ReportPage";
+
 import { Paper, Box, Typography, Card } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import CreateReport from "../components/CreateRport";
@@ -39,7 +38,7 @@ const Housing = () => {
           </Grid>
         </Grid>
         <Grid xs={12} md={8}>
-          <Paper elevation={10} sx={{ p: 4, height: "100%", minWidth: "100%" }}>
+          <Paper elevation={10} sx={{ p: 4, height: "100%", minWidth: "105%" }}>
             <ReportHistory />
           </Paper>
         </Grid>

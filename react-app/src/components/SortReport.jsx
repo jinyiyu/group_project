@@ -1,4 +1,4 @@
-import { Typography, Switch, Box, FormControlLabel } from "@mui/material";
+import { Switch, Box, FormControlLabel } from "@mui/material";
 
 const SortReport = ({ sortOption, setSortOption }) => {
   const handleSortChange = (e) => {

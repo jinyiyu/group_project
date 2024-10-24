@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   fetchUserData,
+  fetchUserDataById,
   updateUserData,
 } = require("../controllers/UserController.js");
 const {
@@ -38,6 +39,7 @@ UserRouter.get(
   .get("/isLoggedIn", accessValidation, isLoggedIn)
   .get("/logout", accessValidation, logout)
   .get("/basicUsers", getUsers)
+  .get("/info/:id", fetchUserDataById)
   .get("/info", fetchUserData) // todo: add access middleware
   .put("/update", updateUserData); // todo: add access middleware
 
