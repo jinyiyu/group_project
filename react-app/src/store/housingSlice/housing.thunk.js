@@ -5,7 +5,7 @@ export const initHousingThunk = createAsyncThunk(
   "housing/initHousingThunk",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/user/housing");
+      const response = await axios.get("/users/housing");
       console.log("API response:", response.data);
       return response.data;
     } catch (error) {
