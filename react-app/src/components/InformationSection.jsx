@@ -5,10 +5,8 @@ import { updateField } from "../store/userSlice/userSlice";
 import TextField from "@mui/material/TextField";
 import { Box, Chip, Divider, InputLabel } from "@mui/material";
 import { Avatar, Button, FormControl, Typography } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import LineDivider from "./LineDivider";
 
-import InputField from "../components/InputField";
 
 function InformationSection({ sectionName, labelName }) {
   const BASE_URL = "http://localhost:3000";
@@ -16,8 +14,17 @@ function InformationSection({ sectionName, labelName }) {
   const [mode, setMode] = useState("view");
   const user = useSelector((state) => state.user);
   const fields = Object.keys(user[sectionName]).filter((f) => f !== "_id");
-  const requiredFields = ["apt", "strName", "city", "state", "zip", "cellPhone", "start", "status", "end"];
-
+  const requiredFields = [
+    "apt",
+    "strName",
+    "city",
+    "state",
+    "zip",
+    "cellPhone",
+    "start",
+    "status",
+    "end",
+  ];
 
   function transformString(str) {
     let result = str.replace(/[A-Z]/g, (match) => ` ${match}`);
@@ -83,19 +90,8 @@ function InformationSection({ sectionName, labelName }) {
 
   return (
     <>
-      <Divider
-        sx={{
-          "&::before, &::after": {
-            borderColor: "rgb(179,223,252)",
-            borderWidth: "3px",
-            borderRadius: "5px",
-          },
-          mt: "5vh",
-          mb: "3vh",
-        }}
-      >
-        <Chip variant="outlined" label={labelName} color="info" />
-      </Divider>{" "}
+    <LineDivider label={labelName}/>
+
       <form onSubmit={handleSubmit}>
         <Box
           sx={{
@@ -123,7 +119,7 @@ function InformationSection({ sectionName, labelName }) {
                   readOnly: mode == "view",
                 },
               }}
-              required={requiredFields.includes(field)? true: false}
+              required={requiredFields.includes(field) ? true : false}
             ></TextField>
           ))}
           {mode == "edit" ? (

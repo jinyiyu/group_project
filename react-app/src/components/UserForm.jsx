@@ -8,12 +8,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
+import validateUserData from "../store/userSlice/userValidator";
 import {
   updateField,
   deleteEmergencyContact,
 } from "../store/userSlice/userSlice";
 import InputField from "./InputField";
 import AddContactForm from "./AddContactForm";
+import LineDivider from "./LineDivider";
 import "../assets/styles/onBoarding.css";
 
 const UserForm = () => {
@@ -150,6 +152,11 @@ const UserForm = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    const errors = validateUserData(user);
+    if (errors.length> 0) {
+      alert(errors.join("\n"));
+      return;
+    }
     const userRes = await fetch(`${BASE_URL}/user/update`, {
       method: "PUT",
       credentials: "include",
@@ -182,19 +189,7 @@ const UserForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Name" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Name"></LineDivider>
         <Box
           sx={{
             display: "flex",
@@ -208,42 +203,30 @@ const UserForm = () => {
             label="First Name"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="userProfile.lastName"
             label="Last Name"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="userProfile.middleName"
             label="Middle Name"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
 
           <InputField
             name="userProfile.preferredName"
             label="Preffered Name"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Profile Picture" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Profile Picture"></LineDivider>
         <Box
           sx={{
             display: "flex",
@@ -256,10 +239,10 @@ const UserForm = () => {
             <Avatar
               src={documents.profilePicture}
               alt="Profile"
-              sx={{ width: "8vw", height: "8vw", objectFit: "cover" }} // Using Avatar for better styling
+              sx={{ width: "8vw", height: "8vw", objectFit: "cover" }}
             />
           ) : (
-            <Avatar sx={{ width: 100, height: 100, bgcolor: "grey.300" }} /> // Placeholder avatar if no picture
+            <Avatar sx={{ width: 100, height: 100, bgcolor: "grey.300" }} />
           )}
           <input
             type="file"
@@ -271,19 +254,7 @@ const UserForm = () => {
             id="upload-profile-picture"
           />
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Address" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Address"></LineDivider>
         <Box
           sx={{
             display: "flex",
@@ -297,49 +268,37 @@ const UserForm = () => {
             label="Building/Apt #"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="address.strName"
             label="Street Name"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="address.city"
             label="City"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="address.state"
             label="State"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="address.zip"
             label="ZIP Code"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Phone" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Phone"></LineDivider>
         <Box
           sx={{
             display: "flex",
@@ -354,7 +313,7 @@ const UserForm = () => {
             label="Cell Phone"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <InputField
             name="contactInfo.workPhone"
@@ -362,21 +321,9 @@ const UserForm = () => {
             label="Work Phone"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Car" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Car"></LineDivider>
         <Box
           sx={{
             display: "flex",
@@ -390,35 +337,23 @@ const UserForm = () => {
             label="Car Model"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
 
           <InputField
             name="car.color"
             label="Car Color"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
 
           <InputField
             name="car.make"
             label="Car Make"
             onChange={handleChange}
             required={false}
-          ></InputField>
+          />
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Email" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Email" />
         <Box
           sx={{
             display: "flex",
@@ -441,19 +376,7 @@ const UserForm = () => {
             required
           ></TextField>
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Others" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Others" />
         <Box
           sx={{
             display: "flex",
@@ -467,7 +390,7 @@ const UserForm = () => {
             label="SSN"
             onChange={handleChange}
             required={true}
-          ></InputField>
+          />
 
           <TextField
             size="small"
@@ -501,19 +424,7 @@ const UserForm = () => {
             </Select>
           </FormControl>
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Visa Status" color="info" />
-        </Divider>
+        <LineDivider label="Visa Status" />
         <Box
           sx={{
             display: "flex",
@@ -687,19 +598,7 @@ const UserForm = () => {
             <></>
           )}
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Driver License" color="info" />
-        </Divider>
+        <LineDivider label="Driver License" />
         <Box
           sx={{
             display: "flex",
@@ -718,12 +617,6 @@ const UserForm = () => {
             <Select
               fullWidth
               sx={{ height: "4.5vh" }}
-              disabled={
-                MUIDisabled ||
-                documents["OPT_receipt"].startsWith(
-                  "https://bfgp.s3.amazonaws.com",
-                )
-              }
               value={showDriverLicense}
               label="Do you have a driver’s license?"
               onChange={handleLicenseChange}
@@ -741,7 +634,7 @@ const UserForm = () => {
                 label="Plate Number #"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
 
               <TextField
                 size="small"
@@ -749,8 +642,7 @@ const UserForm = () => {
                 label="Expiration Date"
                 type="date"
                 name="driverLicense.expirationDate"
-                defaultValue={"2024-10-26"}
-                value={user.driverLicense.expirationDate?.split("T")[0]}
+                value={user.driverLicense.expirationDate ? user.driverLicense.expirationDate.split("T")[0] : "2024-10-26"}
                 onChange={handleChange}
                 required
               ></TextField>
@@ -781,19 +673,7 @@ const UserForm = () => {
             <></>
           )}
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Reference" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Reference" />
         <Box
           sx={{
             display: "flex",
@@ -829,21 +709,21 @@ const UserForm = () => {
                 label="First Name"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
 
               <InputField
                 name="reference.lastName"
                 label="Last Name"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
 
               <InputField
                 name="reference.middleName"
                 label="Middle Name"
                 onChange={handleChange}
                 required={false}
-              ></InputField>
+              />
 
               <InputField
                 name="reference.phone"
@@ -851,7 +731,7 @@ const UserForm = () => {
                 label="Phone"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
 
               <InputField
                 name="reference.email"
@@ -859,32 +739,20 @@ const UserForm = () => {
                 label="Email"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
 
               <InputField
                 name="reference.relationship"
                 label="Relationship"
                 onChange={handleChange}
                 required={true}
-              ></InputField>
+              />
             </>
           ) : (
             <></>
           )}
         </Box>
-        <Divider
-          sx={{
-            "&::before, &::after": {
-              borderColor: "rgb(179,223,252)",
-              borderWidth: "3px",
-              borderRadius: "5px",
-            },
-            mt: "5vh",
-            mb: "3vh",
-          }}
-        >
-          <Chip variant="outlined" label="Emergency Contact" color="info" />
-        </Divider>{" "}
+        <LineDivider label="Emergency Contact" />
         <Box
           sx={{
             display: "flex",
@@ -935,23 +803,7 @@ const UserForm = () => {
         </Box>
         {user.onboardStatus !== "pending" ? (
           <>
-            <Divider
-              sx={{
-                "&::before, &::after": {
-                  borderColor: "rgb(179,223,252)",
-                  borderWidth: "3px",
-                  borderRadius: "5px",
-                },
-                mt: "5vh",
-                mb: "3vh",
-              }}
-            >
-              <Chip
-                variant="outlined"
-                label="End of the Application"
-                color="info"
-              />
-            </Divider>
+            <LineDivider label="End of Application" />
             <Button
               variant="contained"
               color="info"
@@ -968,23 +820,7 @@ const UserForm = () => {
 
       {user.onboardStatus !== "pending" ? (
         <>
-          <Divider
-            sx={{
-              "&::before, &::after": {
-                borderColor: "rgb(179,223,252)",
-                borderWidth: "3px",
-                borderRadius: "5px",
-              },
-              mt: "5vh",
-              mb: "3vh",
-            }}
-          >
-            <Chip
-              variant="outlined"
-              label="Add Emergency Contact"
-              color="info"
-            />
-          </Divider>
+          <LineDivider label="Add Emergency Contact" />
           <Box
             sx={{
               display: "flex",
@@ -1002,19 +838,7 @@ const UserForm = () => {
         <></>
       )}
 
-      <Divider
-        sx={{
-          "&::before, &::after": {
-            borderColor: "rgb(179,223,252)",
-            borderWidth: "3px",
-            borderRadius: "5px",
-          },
-          mt: "5vh",
-          mb: "3vh",
-        }}
-      >
-        <Chip variant="outlined" label="Uploaded Documents" color="info" />
-      </Divider>
+      <LineDivider label="Uploaded Documents" />
     </>
   );
 };

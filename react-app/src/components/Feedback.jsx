@@ -12,7 +12,7 @@ const Feedback = () => {
       <Chip
         label={`Status: ${user.onboardStatus}`}
         color={user.onboardStatus == "pending" ? "info" : "warning"}
-        sx={{ margin: "1vh" }}
+        sx={{ margin: "1vh", fontSize: "2vh", borderRadius: "1vh" }}
       />
 
       {user.onboardStatus == "rejected" ? (

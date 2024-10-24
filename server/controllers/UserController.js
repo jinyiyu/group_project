@@ -45,7 +45,7 @@ const updateUserData = async (req, res) => {
     if (fromOnBoard) {
       updatedUser = await User.findByIdAndUpdate(
         userId,
-        { $set: { onboardStatus: "pending" } },
+        { $set: { onboardStatus: "pending", feedback: [] } },
       ).lean().exec();
     }
 
