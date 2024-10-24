@@ -11,6 +11,8 @@ import {
   Select,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 import { updateDocument } from "../store/documentSlice/documentSlice";
@@ -39,44 +41,6 @@ const UserForm = () => {
   const [other, setOther] = useState("");
   const BASE_URL = "http://localhost:3000";
 
-  // Hieu Tran - setErrors for input validation purposes
-  // const [errors, setErrors] = useState({});
-
-  // Hieu Tran - validate fields
-  // const validateFields = () => {
-  //   let validationErrors = {};
-
-  //   if (!user.userProfile.firstName) {
-  //     validationErrors.firstName = "First Name is required.";
-  //   }
-
-  //   if (!user.userProfile.lastName) {
-  //     validationErrors.lastName = "Last Name is required.";
-  //   }
-
-  //   if (!user.userProfile.email) {
-  //     validationErrors.email = "Email is required.";
-  //   } else if (!/\S+@\S+\.\S+/.test(user.userProfile.email)) {
-  //     validationErrors.email = "Invalid email format.";
-  //   }
-
-  //   if (!user.contactInfo.cellPhone) {
-  //     validationErrors.cellPhone = "Cell Phone is required.";
-  //   } else if (!/^\d{10}$/.test(user.contactInfo.cellPhone)) {
-  //     validationErrors.cellPhone = "Invalid phone number.";
-  //   }
-
-  //   if (showDriverLicense === "yes" && !user.driverLicense.number) {
-  //     validationErrors.driverLicenseNumber =
-  //       "Driver's License Number is required.";
-  //   }
-
-  //   if (showReference === "yes" && !user.reference.firstName) {
-  //     validationErrors.referenceFirstName = "Reference First Name is required.";
-  //   }
-
-  //   return validationErrors;
-  // };
 
   useEffect(() => {
     if (user.onboardStatus == "pending") {
@@ -85,7 +49,7 @@ const UserForm = () => {
   });
 
   useEffect(() => {
-    if (user.employment.status !== "f1") {
+    if (user.employment.status !== "OPT") {
       dispatch(updateDocument({ type: "OPT_receipt", url: "" }));
     }
   }, [user.employment.status]);
@@ -126,9 +90,9 @@ const UserForm = () => {
 
   const handleStatusChange = useCallback((e) => {
     if (e.target.value == "yes") {
-      dispatch(updateField({ field: "employment.status", value: "citizen" }));
+      dispatch(updateField({ field: "employment.status", value: "Citizen" }));
     } else {
-      dispatch(updateField({ field: "employment.status", value: "h1b" }));
+      dispatch(updateField({ field: "employment.status", value: "H1B" }));
     }
   });
 
@@ -467,8 +431,8 @@ const UserForm = () => {
               fullWidth
               sx={{ height: "4.5vh" }}
               value={
-                user.employment.status == "citizen" ||
-                user.employment.status == "green_card"
+                user.employment.status == "Citizen" ||
+                user.employment.status == "GC"
                   ? "yes"
                   : "no"
               }
@@ -483,8 +447,8 @@ const UserForm = () => {
             </Select>
           </div>
 
-          {user.employment.status == "citizen" ||
-          user.employment.status == "green_card" ? (
+          {user.employment.status == "Citizen" ||
+          user.employment.status == "GC" ? (
             <>
               <div>
                 <Typography variant="subtitle1" sx={{ marginLeft: 1 }}>
@@ -504,8 +468,8 @@ const UserForm = () => {
                   onChange={handleChange}
                   name="employment.status"
                 >
-                  <MenuItem value="citizen">Citizen</MenuItem>
-                  <MenuItem value="green_card">Green Card</MenuItem>
+                  <MenuItem value="Citizen">Citizen</MenuItem>
+                  <MenuItem value="GC">Green Card</MenuItem>
                 </Select>
               </div>
             </>
@@ -529,9 +493,9 @@ const UserForm = () => {
                   onChange={handleChange}
                   name="employment.status"
                 >
-                  <MenuItem value="h1b">H1-B</MenuItem>
-                  <MenuItem value="l2">L2</MenuItem>
-                  <MenuItem value="f1">{`F1(CPT/OPT)`}</MenuItem>
+                  <MenuItem value="H1B">H1-B</MenuItem>
+                  <MenuItem value="L2">L2</MenuItem>
+                  <MenuItem value="OPT">{`F1(CPT/OPT)`}</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
                 </Select>
               </div>
@@ -561,7 +525,7 @@ const UserForm = () => {
           )}
 
           {/* button to visa status page only if user have uploaded opt receipt on last submission */}
-          {user.employment.status == "f1" &&
+          {user.employment.status == "OPT" &&
           documents["OPT_receipt"] !== "" &&
           documents["OPT_receipt"].startsWith(
             "https://bfgp.s3.amazonaws.com"
@@ -575,8 +539,8 @@ const UserForm = () => {
             <></>
           )}
 
-          {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
-          {user.employment.status == "f1" &&
+          {/* input field to upload opt_receipt only if user choose OPT visa and have not uploaded one on last submission */}
+          {user.employment.status == "OPT" &&
           (documents["OPT_receipt"].startsWith(
             "https://bfgp.s3.amazonaws.com"
           ) == false ||

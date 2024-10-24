@@ -8,6 +8,7 @@ import {
   updateBackendUser,
 } from "../store/userSlice/userUtils";
 import LineDivider from "./LineDivider";
+import StateSelector from "./StateSelector";
 
 function InformationSection({ sectionName, labelName, showEditButton = true }) {
   const BASE_URL = "http://localhost:3000";
