@@ -17,7 +17,7 @@ const {
   validRegisterURL,
   logout,
   isLoggedIn,
-  getBasicUsers,
+  getUsers,
 } = require("../controllers/UserController.js");
 const UserRouter = express.Router();
 
@@ -37,7 +37,7 @@ UserRouter.get(
 
   .get("/isLoggedIn", accessValidation, isLoggedIn)
   .get("/logout", accessValidation, logout)
-  .get("/basicUsers", getBasicUsers)
+  .get("/basicUsers", getUsers)
   .get("/info", fetchUserData) // todo: add access middleware
   .put("/update", updateUserData); // todo: add access middleware
 

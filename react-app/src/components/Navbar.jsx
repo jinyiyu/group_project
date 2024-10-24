@@ -1,23 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/authSlice";
+import { logoutUser, checkLoginStatus } from "../redux/authSlice";
 
 // Hieu Tran NavBar
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.userAuth);
+  const { user, isAuthenticated, loading } = useSelector(
+    (state) => state.userAuth
+  );
 
-  // Get token from localStorage
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    dispatch(checkLoginStatus());
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     window.location.href = "http://localhost:5173/user/login";
   };
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <AppBar position="static">
@@ -27,7 +38,7 @@ const Navbar = () => {
         </Typography>
 
         {/* If not authenticated, show Login button */}
-        {!token && (
+        {!isAuthenticated && (
           <>
             <Button color="inherit" component={Link} to="/user/login">
               Login
@@ -36,7 +47,7 @@ const Navbar = () => {
         )}
 
         {/* Nav for HR logged in */}
-        {token && user.role === "hr" && (
+        {isAuthenticated && user.role === "hr" && (
           <>
             <Button color="inherit" component={Link} to="/generateTokenForm">
               Generate Token Form
@@ -60,10 +71,13 @@ const Navbar = () => {
         )}
 
         {/* Nav for Employee logged in */}
-        {token && user.role === "employee" && (
+        {isAuthenticated && user.role === "employee" && (
           <>
             <Button color="inherit" component={Link} to="/onboarding">
               Onboarding
+            </Button>
+            <Button color="inherit" component={Link} to="/housing">
+              Housing
             </Button>
             <Button color="inherit" component={Link} to="/userVisaPage">
               User Visa Page

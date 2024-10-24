@@ -29,9 +29,13 @@ const HrHousingManagement = () => {
   const [commentInput, setCommentInput] = useState("");
   const [editingComment, setEditingComment] = useState(null);
 
-  const currentUser = localStorage.getItem("user");
-  const user = JSON.parse(currentUser);
-  const currentUserId = user.id;
+  // const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userAuth);
+  let currentUserId = "";
+
+  if (user) {
+    currentUserId = user.id;
+  }
 
   const [newHouse, setNewHouse] = useState({
     address: "",

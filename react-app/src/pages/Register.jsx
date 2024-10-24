@@ -26,31 +26,23 @@ const Register = () => {
 
   const dispatch = useDispatch();
 
-  const { loading, error, accessTokenValid, email, registerSuccess } =
-    useSelector((state) => state.userAuth);
+  const {
+    loading,
+    error,
+    accessTokenValid,
+    email,
+    registerSuccess,
+    isAuthenticated,
+    user,
+  } = useSelector((state) => state.userAuth);
+
+  console.log(isAuthenticated, user);
 
   useEffect(() => {
     if (token) {
       dispatch(validateRegister(token));
     }
   }, [dispatch, token]);
-
-  useEffect(() => {
-    const loginToken = localStorage.getItem("token");
-    const currentUser = localStorage.getItem("user");
-    console.log(loginToken, currentUser);
-    if (loginToken && currentUser) {
-      const user = JSON.parse(currentUser);
-      const role = user.role;
-      if (loginToken) {
-        if (role === "hr") {
-          window.location.href = "http://localhost:5173/application";
-        } else if (role === "employee") {
-          window.location.href = "http://localhost:5173/";
-        }
-      }
-    }
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,6 +67,16 @@ const Register = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "hr") {
+        window.location.href = "http://localhost:5173/generateTokenForm";
+      } else if (user.role === "employee") {
+        window.location.href = "http://localhost:5173/onboarding";
+      }
+    }
+  }, [isAuthenticated, user]);
 
   // Display a message when registration is successful
   useEffect(() => {

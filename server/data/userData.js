@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 
 // Added 4 more users - Hieu Tran
+// Modify seedUsers, with all passwords to "Password123!"
+// HR username is john_doe
 const seedUsers = [
   {
     _id: "67147b5445846b9bac51d17f",
     userName: "john_doe",
-    password: "securePassword123",
-    role: "employee",
+    password: "Password123!",
+    role: "hr",
     onboardStatus: "pending",
     userProfile: {
       firstName: "John",
@@ -66,7 +68,7 @@ const seedUsers = [
   },
   {
     userName: "jane_doe",
-    password: "securePassword456",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "not started",
     userProfile: {
@@ -127,7 +129,7 @@ const seedUsers = [
   },
   {
     userName: "alice_smith",
-    password: "password789",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "not started",
     userProfile: {
@@ -188,7 +190,7 @@ const seedUsers = [
   },
   {
     userName: "michael_johnson",
-    password: "password1010",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "Pending",
     userProfile: {
@@ -249,7 +251,7 @@ const seedUsers = [
   },
   {
     userName: "robert_williams",
-    password: "securePass2020",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "approved",
     userProfile: {
@@ -310,7 +312,7 @@ const seedUsers = [
   },
   {
     userName: "emma_jones",
-    password: "strongPass123",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "rejected",
     userProfile: {
@@ -371,7 +373,7 @@ const seedUsers = [
   },
   {
     userName: "olivia_clark",
-    password: "oliviaPass2021",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "approved",
     userProfile: {
@@ -432,7 +434,7 @@ const seedUsers = [
   },
   {
     userName: "liam_smith",
-    password: "strongPassword321",
+    password: "Password123!",
     role: "employee",
     onboardStatus: "pending",
     userProfile: {

@@ -1,6 +1,6 @@
 const User = require("../models/userSchema.js");
 const House = require("../models/houseSchema.js");
-const basicUser = require("../models/basicUserSchema.js");
+// const basicUser = require("../models/basicUserSchema.js");
 const tokenHistory = require("../models/tokenHistorySchema.js");
 const argon2 = require("argon2");
 // const generateToken = require("../utils/generateToken.js");
@@ -71,19 +71,15 @@ const register = async (req, res) => {
     const firstName = nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
-    // Check if the username or email already exists on both User and Basic User
+    // Check if the username or email already exists
     const userExists = await User.findOne({ userName: username });
-    const basicUserExists = await basicUser.findOne({ userName: username });
     const emailExists = await User.findOne({ "userProfile.email": email });
-    const basicEmailExists = await basicUser.findOne({
-      "userProfile.email": email,
-    });
 
-    if (userExists || basicUserExists) {
+    if (userExists) {
       return res.status(409).json({ message: "Username already exists." });
     }
 
-    if (emailExists || basicEmailExists) {
+    if (emailExists) {
       return res.status(409).json({ message: "Email already exists." });
     }
 
@@ -95,25 +91,42 @@ const register = async (req, res) => {
 
     const userRole = role || "employee";
 
+    const getRandomDate = (start, end) => {
+      return new Date(
+        start.getTime() + Math.random() * (end.getTime() - start.getTime())
+      );
+    };
+
+    const randomStartDate = getRandomDate(new Date(2018, 0, 1), new Date());
+
+    const randomEndDate =
+      Math.random() > 0.5
+        ? getRandomDate(randomStartDate, new Date(2029, 0, 1))
+        : null;
+
     // Create the new basic user
-    const newBasicUser = new basicUser({
+    const newUser = new User({
       userName: username,
       password: hashedPassword,
       userProfile: { email, firstName, lastName },
       role: userRole,
       house: randomHouse[0]._id,
+      employment: {
+        status: "citizen",
+        start: randomStartDate,
+        end: randomEndDate,
+      },
     });
 
-    await newBasicUser.save();
+    await newUser.save();
 
     const accessToken = genAccessToken(
-      newBasicUser._id,
-      newBasicUser.userName,
-      newBasicUser.role
+      newUser._id,
+      newUser.userName,
+      newUser.role
     );
 
     const matchHistory = await tokenHistory.findOne({ email });
-    // const nameMatchHistory = await tokenHistory.findOne({})
     if (matchHistory) {
       matchHistory.status = "registered";
       await matchHistory.save();
@@ -133,6 +146,7 @@ const register = async (req, res) => {
       message: `${username} registered successfully`,
       matchHistoryStatus: matchHistory.status,
       accessToken,
+      newUser,
     });
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -146,14 +160,101 @@ const register = async (req, res) => {
   }
 };
 
-// Hieu Tran - get basic user for testing purposes
-exports.getBasicUsers = async (req, res) => {
+// Hieu Tran - new login
+const login = async (req, res) => {
+  const { username, password } = req.body;
   try {
-    const users = await basicUser.find();
+    // check if user exists
+    let user = await User.findOne({ userName: username }).lean().exec();
+    if (!user) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    // check if password is correct
+    const isPasswordCorrect = await argon2.verify(user.password, password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Invalid user or password" });
+    }
+
+    // generate access token
+    const token = genAccessToken(user._id, user.userName, user.role);
+    if (!token) {
+      return res.status(500).json({ message: "Failed to generate token." });
+    }
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        username: user.userName,
+        role: user.role,
+        id: user._id,
+      },
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Hieu Tran - get basic user for testing purposes
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
     return res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ error });
   }
+};
+
+// logout
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    return res.status(500).json({ message: "Logout failed", error });
+  }
+};
+
+// is logged in
+const isLoggedIn = async (req, res) => {
+  try {
+    if (req.user) {
+      return res.status(200).json({
+        message: "Logged in",
+        user: {
+          username: req.user.userName,
+          role: req.user.role,
+          id: req.user.id,
+        },
+      });
+    } else {
+      // If user is not authenticated
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+  } catch (error) {
+    // Catch any unexpected errors
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// validate register URL
+const validRegisterURL = async (req, res) => {
+  return res
+    .status(200)
+    .json({ message: "Valid register URL", email: req.body.email });
 };
 
 // old register by Hansen
@@ -209,79 +310,6 @@ exports.getBasicUsers = async (req, res) => {
 //     res.status(500).json({ message: `${error}` });
 //   }
 // };
-
-// login
-const login = async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    // check if user exists
-    let user = await User.findOne({ userName: username }).lean().exec();
-    if (!user) {
-      user = await basicUser.findOne({ userName: username }).lean().exec();
-      if (!user) {
-        return res
-          .status(401)
-          .json({ message: "Invalid username or password" });
-      }
-    }
-
-    // check if password is correct
-    const isPasswordCorrect = await argon2.verify(user.password, password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Invalid user or password" });
-    }
-
-    // generate access token
-    const token = genAccessToken(user._id, user.userName, user.role);
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    });
-
-    return res.status(200).json({
-      message: "Login successful",
-      user: {
-        username: user.userName,
-        role: user.role,
-        id: user._id,
-      },
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-// logout
-const logout = async (req, res) => {
-  try {
-    res.clearCookie("token");
-    return res.status(200).json({ message: "Logout successful" });
-  } catch (error) {
-    return res.status(500).json({ message: "Logout failed", error });
-  }
-};
-
-// is logged in
-const isLoggedIn = async (req, res) => {
-  return res.status(200).json({
-    message: "Logged in",
-    user: {
-      username: req.user.userName,
-      role: req.user.role,
-    },
-  });
-};
-
-// validate register URL
-const validRegisterURL = async (req, res) => {
-  return res
-    .status(200)
-    .json({ message: "Valid register URL", email: req.body.email });
-};
 
 exports.fetchUserData = fetchUserData;
 exports.updateUserData = updateUserData;

@@ -19,26 +19,9 @@ const Login = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const dispatch = useDispatch();
-  const { loading, error, isAuthenticated } = useSelector(
+  const { loading, error, isAuthenticated, user } = useSelector(
     (state) => state.userAuth
   );
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const currentUser = localStorage.getItem("user");
-    console.log(token, currentUser);
-    if (token && currentUser) {
-      const user = JSON.parse(currentUser);
-      const role = user.role;
-      if (token) {
-        if (role === "hr") {
-          window.location.href = "http://localhost:5173/application";
-        } else if (role === "employee") {
-          window.location.href = "http://localhost:5173/onboarding";
-        }
-      }
-    }
-  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,7 +32,14 @@ const Login = () => {
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
 
-      window.location.href = "http://localhost:5173/generateTokenForm";
+      console.log("User from action payload:", resultAction.payload);
+
+      const loggedInUser = resultAction.payload.user || resultAction.payload;
+
+      if (loggedInUser.role === "hr") {
+        window.location.href = "http://localhost:5173/generateTokenForm";
+      } else if (loggedInUser.role === "employee")
+        window.location.href = "http://localhost:5173/onboarding";
     }
   };
 

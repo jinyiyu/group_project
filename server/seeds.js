@@ -7,10 +7,21 @@ const House = require("./models/houseSchema");
 const tokenHistory = require("./models/tokenHistorySchema");
 const basicUser = require("./models/basicUserSchema");
 
+const argon2 = require("argon2");
+
 const seedUsers = require("./data/userData");
 const seedDocument = require("./data/documentData");
 const seedReports = require("./data/reportData");
 const seedHouses = require("./data/houseData");
+
+const hashPasswords = async (users) => {
+  return Promise.all(
+    users.map(async (user) => {
+      const hashedPassword = await argon2.hash(user.password);
+      return { ...user, password: hashedPassword };
+    })
+  );
+};
 
 const start = async () => {
   try {
@@ -28,8 +39,8 @@ const seedDatabase = async () => {
     await Document.deleteMany({});
     await Report.deleteMany({});
     await House.deleteMany({});
-    // await tokenHistory.deleteMany({});
-    // await basicUser.deleteMany({});
+    await tokenHistory.deleteMany({});
+    await basicUser.deleteMany({});
 
     console.log("Existing data deleted successfully.");
 
@@ -41,7 +52,9 @@ const seedDatabase = async () => {
     seedUsers[2].house = createdHouses[0]._id;
     seedUsers[3].house = createdHouses[1]._id;
 
-    const createdUsers = await User.insertMany(seedUsers);
+    const usersWithHashedPasswords = await hashPasswords(seedUsers);
+
+    const createdUsers = await User.insertMany(usersWithHashedPasswords);
     const userIds = createdUsers.map((user) => user._id);
 
     // Update seedDocument with actual user IDs - Hieu Tran edit

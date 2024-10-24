@@ -1,7 +1,7 @@
 const House = require("../models/houseSchema");
 const { Report } = require("../models/reportSchema");
 const User = require("../models/userSchema");
-const basicUser = require("../models/basicUserSchema");
+// const basicUser = require("../models/basicUserSchema");
 
 // Get all existing houses
 exports.getAllHouses = async (req, res) => {
@@ -45,49 +45,20 @@ exports.getHouseDetail = async (req, res) => {
     }
 
     // Find employees in both User and basicUser collections
-    const userEmployees = await User.find({ house: houseId });
-    const basicUserEmployees = await basicUser.find({ house: houseId });
+    const employees = await User.find({ house: houseId });
+    // const basicUserEmployees = await basicUser.find({ house: houseId });
 
     // Combine employees from both collections
-    const allEmployees = [...userEmployees, ...basicUserEmployees];
+    // const allEmployees = [...userEmployees, ...basicUserEmployees];
 
-    console.log(allEmployees);
+    console.log(employees);
 
     // Find facility reports related to the house
     const facilityReports = await Report.find({
-      createdBy: { $in: allEmployees.map((emp) => emp._id) },
+      createdBy: { $in: employees.map((emp) => emp._id) },
     })
-      .populate({
-        path: "createdBy",
-        model: "User",
-        select: "userName",
-      })
-      .populate({
-        path: "createdBy",
-        model: "BasicUser",
-        select: "userName",
-      })
-      .exec();
-
-    // const populatedReports = await Promise.all(
-    //   facilityReports.map(async (report) => {
-    //     const populatedComments = await Report.populate(report, {
-    //       path: "comments.createdBy",
-    //       model: "User",
-    //       select: "userName",
-    //     });
-    //     const populatedCommentsBasicUser = await Report.populate(
-    //       populatedComments,
-    //       {
-    //         path: "comments.createdBy",
-    //         model: "BasicUser",
-    //         select: "userName",
-    //       }
-    //     );
-
-    //     return populatedCommentsBasicUser;
-    //   })
-    // );
+      .populate("createdBy", "userName")
+      .populate("comments.createdBy", "userName");
 
     const houseDetails = {
       id: house._id,
@@ -108,7 +79,7 @@ exports.getHouseDetail = async (req, res) => {
         id: report._id,
         title: report.title,
         description: report.desc,
-        createdBy: report.createdBy,
+        createdBy: report.createdBy.userName,
         timestamp: report.timestamp,
         status: report.status,
         comments: report.comments.map((comment) => ({
@@ -119,7 +90,7 @@ exports.getHouseDetail = async (req, res) => {
           timestamp: comment.timestamp,
         })),
       })),
-      employees: allEmployees.map((employee) => ({
+      employees: employees.map((employee) => ({
         fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
         phone: employee.contactInfo?.cellPhone || "N/A",
         email: employee.userProfile?.email || "N/A",

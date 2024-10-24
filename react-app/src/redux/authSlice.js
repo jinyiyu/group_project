@@ -77,7 +77,6 @@ export const logoutUser = createAsyncThunk(
       await axios.get("http://localhost:3000/user/logout", {
         withCredentials: true,
       });
-      localStorage.removeItem("token");
       // return {};
       return response.data;
     } catch (error) {
@@ -93,10 +92,10 @@ const authSlice = createSlice({
     email: null,
     accessTokenValid: false,
     registerSuccess: false,
-    isAuthenticated: !!localStorage.getItem("token"),
+    isAuthenticated: false,
     loading: false,
     error: null,
-    user: JSON.parse(localStorage.getItem("user")) || null,
+    user: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -141,10 +140,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.user ? action.payload.user : action.payload;
         state.isAuthenticated = true;
-        localStorage.setItem("token", action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -159,7 +156,7 @@ const authSlice = createSlice({
       })
       .addCase(checkLoginStatus.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
       })
       .addCase(checkLoginStatus.rejected, (state) => {
@@ -184,6 +181,8 @@ const authSlice = createSlice({
       });
   },
 });
+
+export default authSlice.reducer;
 
 // const authSlice = createSlice({
 //   name: "auth",
@@ -289,5 +288,3 @@ const authSlice = createSlice({
 //       });
 //   },
 // });
-
-export default authSlice.reducer;

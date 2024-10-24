@@ -10,17 +10,21 @@ const accessValidation = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-    req.body.user = {
+    req.user = {
       id: decoded.id,
       username: decoded.username,
       role: decoded.role,
     };
+    next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    } else if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    } else {
+      return res.status(500).json({ message: "Server error verifying token" });
+    }
   }
-
-  next();
 };
 
 // Hieu Tran - inviteUrlValidation
