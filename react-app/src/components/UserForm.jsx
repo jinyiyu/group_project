@@ -1,14 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import { Box, Chip, Divider, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  TextField,
+  Avatar,
+  Button,
+  FormControl,
+  Typography,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
-import validateUserData from "../store/userSlice/userValidator";
+import {
+  validateUserData,
+  updateBackendUser,
+} from "../store/userSlice/userUtils";
+import { uploadDocument } from "../store/documentSlice/documentUtils";
 import {
   updateField,
   deleteEmergencyContact,
@@ -16,6 +28,7 @@ import {
 import InputField from "./InputField";
 import AddContactForm from "./AddContactForm";
 import LineDivider from "./LineDivider";
+import StateSelector from "./StateSelector";
 import "../assets/styles/onBoarding.css";
 
 const UserForm = () => {
@@ -28,44 +41,6 @@ const UserForm = () => {
   const [other, setOther] = useState("");
   const BASE_URL = "http://localhost:3000";
 
-  // Hieu Tran - setErrors for input validation purposes
-  // const [errors, setErrors] = useState({});
-
-  // Hieu Tran - validate fields
-  // const validateFields = () => {
-  //   let validationErrors = {};
-
-  //   if (!user.userProfile.firstName) {
-  //     validationErrors.firstName = "First Name is required.";
-  //   }
-
-  //   if (!user.userProfile.lastName) {
-  //     validationErrors.lastName = "Last Name is required.";
-  //   }
-
-  //   if (!user.userProfile.email) {
-  //     validationErrors.email = "Email is required.";
-  //   } else if (!/\S+@\S+\.\S+/.test(user.userProfile.email)) {
-  //     validationErrors.email = "Invalid email format.";
-  //   }
-
-  //   if (!user.contactInfo.cellPhone) {
-  //     validationErrors.cellPhone = "Cell Phone is required.";
-  //   } else if (!/^\d{10}$/.test(user.contactInfo.cellPhone)) {
-  //     validationErrors.cellPhone = "Invalid phone number.";
-  //   }
-
-  //   if (showDriverLicense === "yes" && !user.driverLicense.number) {
-  //     validationErrors.driverLicenseNumber =
-  //       "Driver's License Number is required.";
-  //   }
-
-  //   if (showReference === "yes" && !user.reference.firstName) {
-  //     validationErrors.referenceFirstName = "Reference First Name is required.";
-  //   }
-
-  //   return validationErrors;
-  // };
 
   useEffect(() => {
     if (user.onboardStatus == "pending") {
@@ -74,7 +49,7 @@ const UserForm = () => {
   });
 
   useEffect(() => {
-    if (user.employment.status !== "f1") {
+    if (user.employment.status !== "OPT") {
       dispatch(updateDocument({ type: "OPT_receipt", url: "" }));
     }
   }, [user.employment.status]);
@@ -115,9 +90,9 @@ const UserForm = () => {
 
   const handleStatusChange = useCallback((e) => {
     if (e.target.value == "yes") {
-      dispatch(updateField({ field: "employment.status", value: "citizen" }));
+      dispatch(updateField({ field: "employment.status", value: "Citizen" }));
     } else {
-      dispatch(updateField({ field: "employment.status", value: "h1b" }));
+      dispatch(updateField({ field: "employment.status", value: "H1B" }));
     }
   });
 
@@ -144,22 +119,6 @@ const UserForm = () => {
       reader.onerror = (error) => reject(error);
     });
   });
-
-  const uploadDocument = async (docName) => {
-    const res = await fetch(`${BASE_URL}/document/upload?type=${docName}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        base64File: documents[docName],
-      }),
-    });
-    if (!res.ok) {
-      throw new Error("Network response was not ok");
-    }
-  };
 
   const handleLicenseChange = (e) => {
     if (e.target.value == "no") {
@@ -189,41 +148,29 @@ const UserForm = () => {
     }
   };
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateUserData(user);
     if (errors.length > 0) {
       alert(errors.join("\n"));
       return;
     }
-    const userRes = await fetch(`${BASE_URL}/user/update`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: user,
-        fromOnBoard: true,
-      }),
-    });
+
+    await updateBackendUser(user, true);
 
     for (let docName in documents) {
       if (
         documents[docName] !== "" &&
         documents[docName].startsWith("https://bfgp.s3.amazonaws.com") == false
       ) {
-        await uploadDocument(docName);
+        await uploadDocument(documents, docName);
       }
     }
-    if (!userRes.ok) {
-      throw new Error("Network response was not ok");
-    } else {
-      dispatch(fetchUserThunk());
-      dispatch(fetchDocumentThunk());
-      window.location.reload();
-    }
-  });
+
+    dispatch(fetchUserThunk());
+    dispatch(fetchDocumentThunk());
+    window.location.reload();
+  };
 
   return (
     <>
@@ -322,13 +269,15 @@ const UserForm = () => {
             onChange={handleChange}
             required={true}
           />
-
+{/* 
           <InputField
             name="address.state"
             label="State"
             onChange={handleChange}
             required={true}
-          />
+          /> */}
+
+          <StateSelector disabled={MUIDisabled} width={"12vw"}/>
 
           <InputField
             name="address.zip"
@@ -482,8 +431,8 @@ const UserForm = () => {
               fullWidth
               sx={{ height: "4.5vh" }}
               value={
-                user.employment.status == "citizen" ||
-                user.employment.status == "green_card"
+                user.employment.status == "Citizen" ||
+                user.employment.status == "GC"
                   ? "yes"
                   : "no"
               }
@@ -498,8 +447,8 @@ const UserForm = () => {
             </Select>
           </div>
 
-          {user.employment.status == "citizen" ||
-          user.employment.status == "green_card" ? (
+          {user.employment.status == "Citizen" ||
+          user.employment.status == "GC" ? (
             <>
               <div>
                 <Typography variant="subtitle1" sx={{ marginLeft: 1 }}>
@@ -519,8 +468,8 @@ const UserForm = () => {
                   onChange={handleChange}
                   name="employment.status"
                 >
-                  <MenuItem value="citizen">Citizen</MenuItem>
-                  <MenuItem value="green_card">Green Card</MenuItem>
+                  <MenuItem value="Citizen">Citizen</MenuItem>
+                  <MenuItem value="GC">Green Card</MenuItem>
                 </Select>
               </div>
             </>
@@ -544,9 +493,9 @@ const UserForm = () => {
                   onChange={handleChange}
                   name="employment.status"
                 >
-                  <MenuItem value="h1b">H1-B</MenuItem>
-                  <MenuItem value="l2">L2</MenuItem>
-                  <MenuItem value="f1">{`F1(CPT/OPT)`}</MenuItem>
+                  <MenuItem value="H1B">H1-B</MenuItem>
+                  <MenuItem value="L2">L2</MenuItem>
+                  <MenuItem value="OPT">{`F1(CPT/OPT)`}</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
                 </Select>
               </div>
@@ -576,7 +525,7 @@ const UserForm = () => {
           )}
 
           {/* button to visa status page only if user have uploaded opt receipt on last submission */}
-          {user.employment.status == "f1" &&
+          {user.employment.status == "OPT" &&
           documents["OPT_receipt"] !== "" &&
           documents["OPT_receipt"].startsWith(
             "https://bfgp.s3.amazonaws.com"
@@ -590,8 +539,8 @@ const UserForm = () => {
             <></>
           )}
 
-          {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
-          {user.employment.status == "f1" &&
+          {/* input field to upload opt_receipt only if user choose OPT visa and have not uploaded one on last submission */}
+          {user.employment.status == "OPT" &&
           (documents["OPT_receipt"].startsWith(
             "https://bfgp.s3.amazonaws.com"
           ) == false ||

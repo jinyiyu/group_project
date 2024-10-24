@@ -1,8 +1,6 @@
 import React, { memo } from "react";
 import { useSelector } from "react-redux";
-import { Box, Chip, Typography, Button, Input } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
+import { Alert, Chip, Stack } from "@mui/material";
 
 const Feedback = () => {
   const user = useSelector((state) => state.user);

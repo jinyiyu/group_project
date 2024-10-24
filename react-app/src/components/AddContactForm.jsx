@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState, memo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useState, memo } from "react";
+import { useDispatch } from "react-redux";
 import { addEmergencyContact } from "../store/userSlice/userSlice";
-import TextField from "@mui/material/TextField";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 function AddContactForm() {
   const contactFields = [

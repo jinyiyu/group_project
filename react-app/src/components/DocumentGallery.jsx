@@ -1,6 +1,6 @@
-import React, { memo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, Button, Grid, Card, CardMedia, Typography } from "@mui/material";
+import React, { memo, useState } from "react";
+import { useSelector } from "react-redux";
+import { Box, Button, CardMedia, Typography } from "@mui/material";
 
 const DocumentGallery = () => {
   const documents = useSelector((state) => state.document);
