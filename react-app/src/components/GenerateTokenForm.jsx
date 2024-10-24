@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { generateToken } from "../store/actions/auth.actions";
+import { generateToken } from "../store/hrAuthSlice/auth.thunk";
+import {
+  selectLoading,
+  selectSuccess,
+  selectError,
+} from "../store/hrAuthSlice/auth.selectors";
+
 import TokenHistory from "./TokenHistory";
 
 const GenerateTokenForm = () => {
   const dispatch = useDispatch();
 
-  const {
-    loading: tokenLoading,
-    success,
-    error: tokenError,
-  } = useSelector((state) => state.auth);
+  // const {
+  //   loading: tokenLoading,
+  //   success,
+  //   error: tokenError,
+  // } = useSelector((state) => state.auth);
+
+  const tokenLoading = useSelector(selectLoading);
+  const success = useSelector(selectSuccess);
+  const tokenError = useSelector(selectError);
 
   const [showMessage, setShowMessage] = useState(false);
   const [email, setEmail] = useState("");

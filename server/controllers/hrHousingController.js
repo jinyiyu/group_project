@@ -44,14 +44,7 @@ exports.getHouseDetail = async (req, res) => {
       });
     }
 
-    // Find employees in both User and basicUser collections
     const employees = await User.find({ house: houseId });
-    // const basicUserEmployees = await basicUser.find({ house: houseId });
-
-    // Combine employees from both collections
-    // const allEmployees = [...userEmployees, ...basicUserEmployees];
-
-    console.log(employees);
 
     // Find facility reports related to the house
     const facilityReports = await Report.find({
@@ -91,6 +84,7 @@ exports.getHouseDetail = async (req, res) => {
         })),
       })),
       employees: employees.map((employee) => ({
+        id: employee.id,
         fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
         phone: employee.contactInfo?.cellPhone || "N/A",
         email: employee.userProfile?.email || "N/A",

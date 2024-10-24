@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+// import {
+//   fetchApplications,
+//   fetchIndividualApplication,
+// } from "../store/actions/application.actions";
 import {
   fetchApplications,
   fetchIndividualApplication,
-} from "../store/actions/application.actions";
+} from "../store/applicationSlice/application.thunk";
+import {
+  selectPendingApplications,
+  selectApprovedApplications,
+  selectRejectedApplications,
+  selectLoading,
+  selectApplicationError,
+  selectIndividualApplication,
+} from "../store/applicationSlice/application.selectors";
 import ApplicationDetails from "./ApplicationDetail";
 
 const ApplicationReview = () => {
@@ -11,8 +23,15 @@ const ApplicationReview = () => {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const dispatch = useDispatch();
 
-  const { loading, pending, approved, rejected, error, application } =
-    useSelector((state) => state.application);
+  // const { loading, pending, approved, rejected, error, application } =
+  //   useSelector((state) => state.application);
+
+  const pending = useSelector(selectPendingApplications);
+  const approved = useSelector(selectApprovedApplications);
+  const rejected = useSelector(selectRejectedApplications);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectApplicationError);
+  const application = useSelector(selectIndividualApplication);
 
   useEffect(() => {
     dispatch(fetchApplications());

@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import {
   updateApplicationStatus,
   giveFeedback,
-} from "../store/actions/application.actions";
+} from "../store/applicationSlice/application.thunk";
 
 const ApplicationDetails = ({ application, onBack }) => {
   const dispatch = useDispatch();
@@ -12,7 +12,11 @@ const ApplicationDetails = ({ application, onBack }) => {
 
   const handleStatusUpdate = (status) => {
     dispatch(
-      updateApplicationStatus(application.user, status, application.feedback),
+      updateApplicationStatus({
+        userId: application.user,
+        status,
+        feedback: application.feedback,
+      })
     );
   };
 
