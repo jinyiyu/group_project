@@ -6,7 +6,7 @@ const baseUrl = "https://bfgp.s3.amazonaws.com"
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
-  const userId = req.user.body.id;
+  const userId = req.user.id;
   const { type } = req.query;
   const {base64File} = req.body;
   const fileType = base64File.slice(0, 30).split(/[;/]/)[1]
@@ -73,7 +73,7 @@ const updateFile = async(req, res) => {
 
 const fetchFileUrls = async (req, res) => {
   // const { userId } = req.body;
-  const userId = req.user.body.id;
+  const userId = req.user.id;
   const files = {
     profilePicture: "",
     licenseCopy: "",

@@ -51,7 +51,8 @@ const inviteUrlValidation = (req, res, next) => {
 };
 
 const isEmployee = (req, res, next) => {
-    if (req.body.user.role !== "employee") {
+
+    if (req.user.role !== "employee") {
         return res.status(403).json({ message: "you are not a emplotee" });
     }
     else {
