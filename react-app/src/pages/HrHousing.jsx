@@ -15,9 +15,9 @@ import {
   selectHouseDetails,
 } from "../store/hrHousingSlice/hrHousing.selectors";
 
-import EmployeeProfileModel from "../components/EmployeeProfileModel.jsx"; // Import the modal for employee details
-import { fetchUserByIdThunk } from "../store/userSlice/userThunks.js"; // Import to fetch user details by ID
-import PersonalInfoView from "./personalInfoView.jsx"; // Import to display user details
+import EmployeeProfileModel from "../components/EmployeeProfileModel.jsx";
+import { fetchUserByIdThunk } from "../store/userSlice/userThunks.js";
+import PersonalInfoView from "./personalInfoView.jsx";
 
 const HrHousingManagement = () => {
   const dispatch = useDispatch();
@@ -33,15 +33,10 @@ const HrHousingManagement = () => {
   const [commentInput, setCommentInput] = useState("");
   const [editingComment, setEditingComment] = useState(null);
 
-  const [user, setUser] = useState(null); // State for selected employee's details
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [selectedUserId, setSelectedUserId] = useState(null); // State for selected employee ID
+  const [user, setUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { user: currentUser } = useSelector((state) => state.userAuth);
-
-  // const dispatch = useDispatch();
-  // const { user } = useSelector((state) => state.userAuth);
-  // let currentUserId = "";
 
   const currentUserId = currentUser ? currentUser.id : "";
 
