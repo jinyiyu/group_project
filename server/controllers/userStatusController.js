@@ -8,9 +8,7 @@ exports.getVisaStatus = async (req, res) => {
   try {
 
     const userId = req.body.user.id;
-    console.log(userId);
-    // const userId = "67147b5445846b9bac51d17f";
- 
+
 
     // Get one newest uploaded document from documentSchema by userId,
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"

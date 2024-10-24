@@ -8,9 +8,8 @@ import {
   updateBackendUser,
 } from "../store/userSlice/userUtils";
 import LineDivider from "./LineDivider";
-import StateSelector from "./StateSelector";
 
-function InformationSection({ sectionName, labelName }) {
+function InformationSection({ sectionName, labelName, showEditButton = true }) {
   const BASE_URL = "http://localhost:3000";
   const dispatch = useDispatch();
   const [mode, setMode] = useState("view");
@@ -74,7 +73,7 @@ function InformationSection({ sectionName, labelName }) {
       setMode("view");
       dispatch(fetchUserThunk());
     },
-    [dispatch, user],
+    [dispatch, user]
   );
 
   const handleEdit = (e) => {
@@ -88,7 +87,7 @@ function InformationSection({ sectionName, labelName }) {
       dispatch(fetchUserThunk());
       setMode("view");
     },
-    [dispatch, setMode],
+    [dispatch, setMode]
   );
   console.log(fields)
 
@@ -163,14 +162,16 @@ function InformationSection({ sectionName, labelName }) {
                   justifyContent: "flex-end",
                 }}
               >
-                <Button
-                  variant="outlined"
-                  color="info"
-                  className={sectionName}
-                  onClick={handleEdit}
-                >
-                  Edit
-                </Button>
+                {showEditButton && (
+                  <Button
+                    variant="outlined"
+                    color="info"
+                    className={sectionName}
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </Button>
+                )}
               </Box>
             </>
           )}

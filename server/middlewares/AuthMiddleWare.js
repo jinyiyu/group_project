@@ -2,49 +2,52 @@ const jwt = require("jsonwebtoken");
 const validator = require("validator");
 
 const accessValidation = (req, res, next) => {
-    const token = req.cookies.token;
-    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTlhOGRlYzgyZGExYmQxZGNiYzZjNCIsInVzZXJuYW1lIjoidGVzdDEiLCJyb2xlIjoiZW1wbG95ZWUiLCJpYXQiOjE3Mjk3MzcwMzUsImV4cCI6MTcyOTc0MDYzNX0.IGjQ067wKacBicL-w7dvLbfZCnaTRLVv5jpnaPuZkWo";
-    console.log(token);
+  const token = req.cookies.token;
 
-    if (!token || validator.isEmpty(token)) {
-        return res.status(401).json({ message: "Token is required" });
-    }
+  if (!token || validator.isEmpty(token)) {
+    return res.status(401).json({ message: "Token is required" });
+  }
 
-    try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-        req.body.user = {
-            id: decoded.id,
-            username: decoded.username,
-            role: decoded.role,
-        };
-        
-    } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
-    }
-
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = {
+      id: decoded.id,
+      username: decoded.username,
+      role: decoded.role,
+    };
     next();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    } else if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    } else {
+      return res.status(500).json({ message: "Server error verifying token" });
+    }
+  }
 };
 
+// Hieu Tran - inviteUrlValidation
 const inviteUrlValidation = (req, res, next) => {
-    const token = req.params.token;
-    // test
-    console.log(token);
-    req.body.email = "test1@gmail.com"
-    
+  const token = req.params.token;
 
-    // if (!token || validator.isEmpty(token)) {
-    //     return res.status(403).json({ message: "Invalid link." });
-    // }
+  // Check if the token is provided
+  if (!token || validator.isEmpty(token)) {
+    return res.status(403).json({ message: "Invalid link." });
+  }
 
-    // try {
-    //     const decoded = jwt.verify(token, process.env.INVITE_TOKEN_SECRET);
-    //     req.body.email = decoded.email;
-    // } catch (error) {
-    //     return res.status(401).json({ message: "Invalid url or url expired." });
-    // }
+  try {
+    // Verify and decode the token using your JWT secret
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Attach the decoded email to the request body for further use
+    req.body.email = decoded.email;
 
     next();
+  } catch (error) {
+    console.error("Token verification failed:", error.message);
+    return res.status(401).json({ message: "Invalid URL or URL expired." });
+  }
 };
 
 const isEmployee = (req, res, next) => {
@@ -58,4 +61,5 @@ const isEmployee = (req, res, next) => {
 
 exports.accessValidation = accessValidation;
 exports.inviteUrlValidation = inviteUrlValidation;
+
 exports.isEmployee = isEmployee;

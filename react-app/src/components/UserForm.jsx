@@ -39,6 +39,45 @@ const UserForm = () => {
   const [other, setOther] = useState("");
   const BASE_URL = "http://localhost:3000";
 
+  // Hieu Tran - setErrors for input validation purposes
+  // const [errors, setErrors] = useState({});
+
+  // Hieu Tran - validate fields
+  // const validateFields = () => {
+  //   let validationErrors = {};
+
+  //   if (!user.userProfile.firstName) {
+  //     validationErrors.firstName = "First Name is required.";
+  //   }
+
+  //   if (!user.userProfile.lastName) {
+  //     validationErrors.lastName = "Last Name is required.";
+  //   }
+
+  //   if (!user.userProfile.email) {
+  //     validationErrors.email = "Email is required.";
+  //   } else if (!/\S+@\S+\.\S+/.test(user.userProfile.email)) {
+  //     validationErrors.email = "Invalid email format.";
+  //   }
+
+  //   if (!user.contactInfo.cellPhone) {
+  //     validationErrors.cellPhone = "Cell Phone is required.";
+  //   } else if (!/^\d{10}$/.test(user.contactInfo.cellPhone)) {
+  //     validationErrors.cellPhone = "Invalid phone number.";
+  //   }
+
+  //   if (showDriverLicense === "yes" && !user.driverLicense.number) {
+  //     validationErrors.driverLicenseNumber =
+  //       "Driver's License Number is required.";
+  //   }
+
+  //   if (showReference === "yes" && !user.reference.firstName) {
+  //     validationErrors.referenceFirstName = "Reference First Name is required.";
+  //   }
+
+  //   return validationErrors;
+  // };
+
   useEffect(() => {
     if (user.onboardStatus == "pending") {
       disableAllInputs();
@@ -121,7 +160,7 @@ const UserForm = () => {
     if (e.target.value == "no") {
       dispatch(updateField({ field: "driverLicense.number", value: "" }));
       dispatch(
-        updateField({ field: "driverLicense.expirationDate", value: "" }),
+        updateField({ field: "driverLicense.expirationDate", value: "" })
       );
       dispatch(updateField({ field: "driverLicense.licenseCopy", value: "" }));
       dispatch(updateDocument({ type: "licenseCopy", url: "" }));
@@ -436,7 +475,7 @@ const UserForm = () => {
               label="Are you a citizen or permanent resident of the U.S?"
               onChange={handleStatusChange}
               disabled={documents["OPT_receipt"].startsWith(
-                "https://bfgp.s3.amazonaws.com",
+                "https://bfgp.s3.amazonaws.com"
               )}
             >
               <MenuItem value="yes">Yes</MenuItem>
@@ -457,7 +496,7 @@ const UserForm = () => {
                   disabled={
                     MUIDisabled ||
                     documents["OPT_receipt"].startsWith(
-                      "https://bfgp.s3.amazonaws.com",
+                      "https://bfgp.s3.amazonaws.com"
                     )
                   }
                   value={user.employment.status}
@@ -482,7 +521,7 @@ const UserForm = () => {
                   disabled={
                     MUIDisabled ||
                     documents["OPT_receipt"].startsWith(
-                      "https://bfgp.s3.amazonaws.com",
+                      "https://bfgp.s3.amazonaws.com"
                     )
                   }
                   value={user.employment.status}
@@ -525,7 +564,7 @@ const UserForm = () => {
           {user.employment.status == "f1" &&
           documents["OPT_receipt"] !== "" &&
           documents["OPT_receipt"].startsWith(
-            "https://bfgp.s3.amazonaws.com",
+            "https://bfgp.s3.amazonaws.com"
           ) ? (
             <>
               <Button variant="outlined" color="info">
@@ -539,7 +578,7 @@ const UserForm = () => {
           {/* input field to upload opt_receipt only if user choose f1 visa and have not uploaded one on last submission */}
           {user.employment.status == "f1" &&
           (documents["OPT_receipt"].startsWith(
-            "https://bfgp.s3.amazonaws.com",
+            "https://bfgp.s3.amazonaws.com"
           ) == false ||
             documents["OPT_receipt"] == "") ? (
             <>
