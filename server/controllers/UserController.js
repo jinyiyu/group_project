@@ -102,9 +102,10 @@ const register = async (req, res) => {
       newUser.role
     );
     res.cookie("token", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      maxAge: 1000 * 3600 * 3, // 3 hours
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "Strict",
     });
     return res
       .status(201)
@@ -135,9 +136,10 @@ const login = async (req, res) => {
     const token = genAccessToken(user._id, user.userName, user.role);
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      maxAge: 1000 * 3600 * 3, // 3 hours
+      Path: "/",
+      sameSite: "Lax",
+      secure: false,
     });
 
     return res.status(200).json({
@@ -168,8 +170,8 @@ const isLoggedIn = async (req, res) => {
   return res.status(200).json({
     message: "Logged in",
     user: {
-      username: req.user.userName,
-      role: req.user.role,
+      username: req.body.user.username,
+      role: req.body.user.role,
     },
   });
 };
