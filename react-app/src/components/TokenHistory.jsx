@@ -1,10 +1,18 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTokenHistory } from "../store/actions/auth.actions";
+import { fetchTokenHistory } from "../store/hrAuthSlice/auth.thunk";
+import {
+  selectTokenHistory,
+  selectHistoryLoading,
+  selectHistoryError,
+} from "../store/hrAuthSlice/auth.selectors";
 
 const TokenHistory = () => {
   const dispatch = useDispatch();
-  const { tokenHistory, loading, error } = useSelector((state) => state.auth);
+  // const { tokenHistory, loading, error } = useSelector((state) => state.auth);
+  const tokenHistory = useSelector(selectTokenHistory);
+  const loading = useSelector(selectHistoryLoading);
+  const error = useSelector(selectHistoryError);
 
   useEffect(() => {
     dispatch(fetchTokenHistory());

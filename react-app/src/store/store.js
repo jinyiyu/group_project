@@ -7,8 +7,8 @@ import employeeReducer from "./employeeSlice/employeeSlice.js";
 import userAuthReducer from "../redux/authSlice.js";
 import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
-import authReducer from "../store/reducers/auth.reducers";
-import applicationReducer from "./reducers/application.reducers";
+import authReducer from "./hrAuthSlice/auth.slice";
+import applicationReducer from "./applicationSlice/application.slice.js";
 import hrHousingReducer from "./hrHousingSlice/hrHousing.slice";
 
 const store = configureStore({
@@ -17,7 +17,7 @@ const store = configureStore({
     report: reportReducer,
     userStatus: statusReducer,
     fileUpload: fileReducer,
-    userAuth: userAuthReducer, // User login authentication
+    userAuth: userAuthReducer,
     employees: employeeReducer,
     user: userReducer,
     document: documentReducer,
