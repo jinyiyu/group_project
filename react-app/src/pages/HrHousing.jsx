@@ -15,6 +15,10 @@ import {
   selectHouseDetails,
 } from "../store/hrHousingSlice/hrHousing.selectors";
 
+import EmployeeProfileModel from "../components/EmployeeProfileModel.jsx"; // Import the modal for employee details
+import { fetchUserByIdThunk } from "../store/userSlice/userThunks.js"; // Import to fetch user details by ID
+import PersonalInfoView from "./personalInfoView.jsx"; // Import to display user details
+
 const HrHousingManagement = () => {
   const dispatch = useDispatch();
   const houses = useSelector(selectHouses);
@@ -29,13 +33,17 @@ const HrHousingManagement = () => {
   const [commentInput, setCommentInput] = useState("");
   const [editingComment, setEditingComment] = useState(null);
 
-  // const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.userAuth);
-  let currentUserId = "";
+  const [user, setUser] = useState(null); // State for selected employee's details
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [selectedUserId, setSelectedUserId] = useState(null); // State for selected employee ID
 
-  if (user) {
-    currentUserId = user.id;
-  }
+  const { user: currentUser } = useSelector((state) => state.userAuth);
+
+  // const dispatch = useDispatch();
+  // const { user } = useSelector((state) => state.userAuth);
+  // let currentUserId = "";
+
+  const currentUserId = currentUser ? currentUser.id : "";
 
   const [newHouse, setNewHouse] = useState({
     address: "",
@@ -140,6 +148,23 @@ const HrHousingManagement = () => {
     dispatch(fetchHouseDetail(houseId));
     setCommentInput("");
     setEditingComment(null);
+  };
+
+  const handleOpenModal = (id) => {
+    console.log(id);
+    dispatch(fetchUserByIdThunk(id))
+      .unwrap()
+      .then((result) => {
+        setUser(result);
+        setIsModalOpen(true);
+      })
+      .catch((error) => {
+        console.error("Fetch user by ID failed:", error);
+      });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -359,7 +384,16 @@ const HrHousingManagement = () => {
                     <h4>Employee Information:</h4>
                     {houseDetails.employees.map((employee) => (
                       <div className="employee-info" key={employee.email}>
-                        <p>Name: {employee.fullName}</p>
+                        <p>
+                          Name:{" "}
+                          <span
+                            className="employee-link"
+                            onClick={() => handleOpenModal(employee.id)}
+                            style={{ cursor: "pointer", color: "blue" }}
+                          >
+                            {employee.fullName}
+                          </span>
+                        </p>
                         <p>Phone: {employee.phone}</p>
                         <p>Email: {employee.email}</p>
                         <p>
@@ -381,6 +415,15 @@ const HrHousingManagement = () => {
           )}
         </div>
       ))}
+      {/* Employee Modal */}
+      <EmployeeProfileModel isOpen={isModalOpen} onClose={handleCloseModal}>
+        {user && (
+          <PersonalInfoView
+            user={user}
+            className="modal-overlay modal-content"
+          />
+        )}
+      </EmployeeProfileModel>
     </div>
   );
 };

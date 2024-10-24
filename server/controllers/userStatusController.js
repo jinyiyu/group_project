@@ -6,7 +6,7 @@ const path = require("path");
 // Take in a userId, return user's visa status
 exports.getVisaStatus = async (req, res) => {
   try {
-    const userId = req.body.user.id;
+    const userId = req.user.id;
 
     // Get one newest uploaded document from documentSchema by userId,
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"
@@ -32,14 +32,16 @@ exports.getVisaStatus = async (req, res) => {
       feedback: latestDocument.feedback,
     });
   } catch (error) {
-    res.status(500),
-      json({ message: "Fail to get user's visa status", error: error.message });
+    res.status(500).json({
+      message: "Fail to get user's visa status",
+      error: error.message,
+    });
   }
 };
 
 exports.uploadDocument = async (req, res) => {
   try {
-    const userId = req.body.user.id; // Extract the user ID from cookies
+    const userId = req.user.id; // Extract the user ID from cookies
     const { type } = req.query;
     const file = req.files.file;
 
