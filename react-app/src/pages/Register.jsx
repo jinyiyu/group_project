@@ -85,7 +85,7 @@ const Register = () => {
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
       setTimeout(() => {
-        window.location.href = "http://localhost:5173/user/login";
+        window.location.href = "http://localhost:5173/";
       }, 3000);
     }
   }, [registerSuccess]);
