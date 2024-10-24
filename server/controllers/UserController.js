@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 // fetch user data(nested object)
 // will return specific fields if given in the query string
 const fetchUserData = async (req, res) => {
-  const { userId } = req.body;
+  const userId = req.user.id;
   // const userId = "6717d2d7cd4fb7e80481f379";
   const { fields } = req.query;
 
@@ -45,8 +45,10 @@ const fetchUserDataById = async (req, res) => {
 // data can be nested object, should follow the data model, can be partial
 const updateUserData = async (req, res) => {
   // const { userId, data } = req.body;
-  const { data } = req.body; //TODO_ldl: might need middleware before this function to verify the data is in correct structure
-  const userId = "6717d2d7cd4fb7e80481f379";
+  const { data, fromOnBoard } = req.body; 
+  console.log(data)
+
+  const userId = req.user.id;
 
   try {
     // Use $set to update nested fields
@@ -58,6 +60,8 @@ const updateUserData = async (req, res) => {
     )
       .lean()
       .exec();
+
+
 
     if (fromOnBoard) {
       updatedUser = await User.findByIdAndUpdate(userId, {
@@ -135,7 +139,7 @@ const register = async (req, res) => {
       role: userRole,
       house: randomHouse[0]._id,
       employment: {
-        status: "citizen",
+        status: "Citizen",
         start: randomStartDate,
         end: randomEndDate,
       },

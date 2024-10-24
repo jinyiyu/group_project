@@ -6,7 +6,7 @@ const baseUrl = "https://bfgp.s3.amazonaws.com"
 
 const updateFile = async(req, res) => {
   // const { userId } = req.body;
-  const userId = "6717d2d7cd4fb7e80481f379";
+  const userId = req.user.id;
   const { type } = req.query;
   const {base64File} = req.body;
   const fileType = base64File.slice(0, 30).split(/[;/]/)[1]
@@ -73,7 +73,7 @@ const updateFile = async(req, res) => {
 
 const fetchFileUrls = async (req, res) => {
   // const { userId } = req.body;
-  const userId = "6717d2d7cd4fb7e80481f379";
+  const userId = req.user.id;
   const files = {
     profilePicture: "",
     licenseCopy: "",
@@ -85,10 +85,10 @@ const fetchFileUrls = async (req, res) => {
 
   try {
     const user = await User.findById(userId).lean().exec();
-    if (user.userProfile.profilePicture) {
+    if (user.userProfile?.profilePicture) {
       files["profilePicture"] = user.userProfile.profilePicture;
     }
-    if (user.driverLicense.licenseCopy) {
+    if (user.driverLicense?.licenseCopy) {
       files["licenseCopy"] = user.driverLicense.licenseCopy;
     }
 

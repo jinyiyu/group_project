@@ -121,7 +121,7 @@ const HrHousingManagement = () => {
         reportId,
         description: commentInput,
         userId: currentUserId,
-      })
+      }),
     );
     dispatch(fetchHouseDetail(houseId));
     setCommentInput("");
@@ -138,7 +138,7 @@ const HrHousingManagement = () => {
         commentId,
         description: commentInput,
         currentUserId,
-      })
+      }),
     );
     dispatch(fetchHouseDetail(houseId));
     setCommentInput("");

@@ -1,20 +1,29 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TextField from "@mui/material/TextField";
-import { Box, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-
-import InputField from "../components/InputField";
+import {
+  TextField,
+  Box,
+  InputLabel,
+  Avatar,
+  Button,
+  FormControl,
+  Typography,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { updateDocument } from "../store/documentSlice/documentSlice";
-
+import { uploadDocument } from "../store/documentSlice/documentUtils";
+import {
+  validateUserData,
+  updateBackendUser,
+} from "../store/userSlice/userUtils";
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 import {
   updateField,
   deleteEmergencyContact,
 } from "../store/userSlice/userSlice";
+import InputField from "../components/InputField";
 import DocumentGallery from "../components/DocumentGallery";
 import InformationSection from "../components/InformationSection";
 import AddContactForm from "../components/AddContactForm";
@@ -61,21 +70,18 @@ function PersonalInformation() {
     dispatch(updateDocument({ type: fileType, url: base64File }));
   };
 
-  const handleSaveContact = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const userRes = await fetch(`${BASE_URL}/user/update`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: user }),
-      });
-      dispatch(fetchUserThunk);
-      setModeContact("view");
-    },
-    [dispatch, user],
-  );
+  const handleSaveContact = async (e) => {
+    e.preventDefault();
+    const errors = validateUserData(user);
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+      return;
+    }
 
+    await updateBackendUser(user, false);
+    dispatch(fetchUserThunk);
+    setModeContact("view");
+  };
   const handleEditContact = (e) => {
     e.preventDefault();
     setModeContact("edit");
@@ -89,47 +95,27 @@ function PersonalInformation() {
     },
     [dispatch, setModeContact],
   );
+  const handleSaveName = async (e) => {
+    e.preventDefault();
+    const errors = validateUserData(user);
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+      return;
+    }
 
-  const handleSaveName = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const userRes = await fetch(`${BASE_URL}/user/update`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: user }),
-      });
+    await updateBackendUser(user, false);
+    if (
+      documents["profilePicture"] !== "" &&
+      documents["profilePicture"].startsWith("https://bfgp.s3.amazonaws.com") ==
+        false
+    ) {
+      await uploadDocument(documents, "profilePicture");
+    }
+    dispatch(fetchDocumentThunk);
+    dispatch(fetchUserThunk);
 
-      if (
-        documents["profilePicture"] !== "" &&
-        documents["profilePicture"].startsWith(
-          "https://bfgp.s3.amazonaws.com",
-        ) == false
-      ) {
-        const res = await fetch(
-          `${BASE_URL}/document/upload?type=profilePicture`,
-          {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              base64File: documents["profilePicture"],
-            }),
-          },
-        );
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-      }
-      dispatch(fetchDocumentThunk);
-      dispatch(fetchUserThunk);
-
-      setModeName("view");
-    },
-    [dispatch, user],
-  );
+    setModeName("view");
+  };
 
   const handleEditName = (e) => {
     e.preventDefault();

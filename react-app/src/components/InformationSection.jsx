@@ -1,11 +1,14 @@
 import { useEffect, useCallback, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Box, Button, TextField} from "@mui/material";
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { updateField } from "../store/userSlice/userSlice";
-import TextField from "@mui/material/TextField";
-import { Box, Chip, Divider, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
+import {
+  validateUserData,
+  updateBackendUser,
+} from "../store/userSlice/userUtils";
 import LineDivider from "./LineDivider";
+import StateSelector from "./StateSelector";
 
 function InformationSection({ sectionName, labelName, showEditButton = true }) {
   const BASE_URL = "http://localhost:3000";
@@ -61,12 +64,13 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      const userRes = await fetch(`${BASE_URL}/user/update`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: user }),
-      });
+      const errors = validateUserData(user);
+      if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return;
+      }
+
+      await updateBackendUser(user, false);
       setMode("view");
       dispatch(fetchUserThunk());
     },
@@ -86,6 +90,7 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
     },
     [dispatch, setMode]
   );
+  console.log(fields)
 
   return (
     <>
@@ -102,7 +107,7 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
             ml: "25vw",
           }}
         >
-          {fields.map((field, index) => (
+          {fields.map((field, index) => {return field!=="state"? (
             <TextField
               key={field}
               fullWidth
@@ -120,7 +125,7 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
               }}
               required={requiredFields.includes(field) ? true : false}
             ></TextField>
-          ))}
+          ): (<StateSelector disabled={mode=="view"} width={"100%"}/>)})}
           {mode == "edit" ? (
             <>
               <Box
