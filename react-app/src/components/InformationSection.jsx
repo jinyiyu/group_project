@@ -7,8 +7,7 @@ import { Box, Chip, Divider, InputLabel } from "@mui/material";
 import { Avatar, Button, FormControl, Typography } from "@mui/material";
 import LineDivider from "./LineDivider";
 
-
-function InformationSection({ sectionName, labelName }) {
+function InformationSection({ sectionName, labelName, showEditButton = true }) {
   const BASE_URL = "http://localhost:3000";
   const dispatch = useDispatch();
   const [mode, setMode] = useState("view");
@@ -71,7 +70,7 @@ function InformationSection({ sectionName, labelName }) {
       setMode("view");
       dispatch(fetchUserThunk());
     },
-    [dispatch, user],
+    [dispatch, user]
   );
 
   const handleEdit = (e) => {
@@ -85,12 +84,12 @@ function InformationSection({ sectionName, labelName }) {
       dispatch(fetchUserThunk());
       setMode("view");
     },
-    [dispatch, setMode],
+    [dispatch, setMode]
   );
 
   return (
     <>
-    <LineDivider label={labelName}/>
+      <LineDivider label={labelName} />
 
       <form onSubmit={handleSubmit}>
         <Box
@@ -159,14 +158,16 @@ function InformationSection({ sectionName, labelName }) {
                   justifyContent: "flex-end",
                 }}
               >
-                <Button
-                  variant="outlined"
-                  color="info"
-                  className={sectionName}
-                  onClick={handleEdit}
-                >
-                  Edit
-                </Button>
+                {showEditButton && (
+                  <Button
+                    variant="outlined"
+                    color="info"
+                    className={sectionName}
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </Button>
+                )}
               </Box>
             </>
           )}

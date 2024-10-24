@@ -7,6 +7,7 @@ import EmployeeTable from "../components/EmployeeTable.jsx";
 import PaginationControl from "../components/PaginationControl.jsx";
 import { fetchEmployees } from "../store/employeeSlice/employee.thunk";
 import { selectDisplayedEmployees } from "../store/employeeSlice/employee.selectors";
+import PersonalInfoView from "./personalInfoView.jsx";
 
 const EmployeeSummaryView = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const EmployeeSummaryView = () => {
   }, [dispatch]);
 
   const sortedEmployees = [...displayedEmployees].sort((a, b) =>
-    a.name.lastName.localeCompare(b.name.lastName),
+    a.name.lastName.localeCompare(b.name.lastName)
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +32,7 @@ const EmployeeSummaryView = () => {
   const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
   const currentEmployees = sortedEmployees.slice(
     indexOfFirstEmployee,
-    indexOfLastEmployee,
+    indexOfLastEmployee
   );
 
   const handlePageChange = (event, value) => {
@@ -61,7 +62,12 @@ const EmployeeSummaryView = () => {
         onPageChange={handlePageChange}
       />
       <EmployeeProfileModel isOpen={isModalOpen} onClose={handleCloseModal}>
-        <h1>Hello</h1>
+        {selectedEmployee && (
+          <PersonalInfoView
+            employee={selectedEmployee}
+            className="modal-overlay modal-content"
+          />
+        )}
       </EmployeeProfileModel>
     </div>
   );

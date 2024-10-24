@@ -17,12 +17,12 @@ createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <Provider store={store}>
     {/* <App /> */}
-    {/* <EmployeeSummaryView /> */}
+    <EmployeeSummaryView />
     {/* <VisaStatusManagementPage /> */}
     {/* <Housing /> */}
     {/* <UserVisaPage /> */}
-    <OnBoarding />
+    {/* <OnBoarding /> */}
     {/* <PersonalInformation /> */}
-  </Provider>,
+  </Provider>
   // </StrictMode>
 );
