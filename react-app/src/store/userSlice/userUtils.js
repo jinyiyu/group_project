@@ -1,3 +1,5 @@
+const BASE_URL = "http://localhost:3000";
+
 // Validation function
 const validateUserData = (user) => {
   const errors = [];
@@ -62,5 +64,25 @@ const validateUserData = (user) => {
   return errors;
 };
 
-export default validateUserData;
+const updateBackendUser = async (user, fromOnBoard) => {
+  const res = await fetch(`${BASE_URL}/user/update`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      data: user,
+      fromOnBoard: fromOnBoard,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Network response was not ok for updating user`);
+  }
+
+  return res;
+}
+
+export { validateUserData, updateBackendUser };
 

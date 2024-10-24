@@ -30,7 +30,6 @@ const Login = () => {
       setSnackbarMessage("Login successful!");
       setOpenSnackbar(true);
       navigate("/");
-
     }
   };
 
@@ -73,7 +72,6 @@ const Login = () => {
         <Alert onClose={() => setOpenSnackbar(false)} severity="success">
           {snackbarMessage}
         </Alert>
-        
       </Snackbar>
     </Container>
   );

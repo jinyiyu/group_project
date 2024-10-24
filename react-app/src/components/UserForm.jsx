@@ -8,7 +8,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
-import validateUserData from "../store/userSlice/userValidator";
+import {
+  validateUserData,
+  updateBackendUser,
+} from "../store/userSlice/userUtils";
+import { uploadDocument } from "../store/documentSlice/documentUtils";
 import {
   updateField,
   deleteEmergencyContact,
@@ -106,22 +110,6 @@ const UserForm = () => {
     });
   });
 
-  const uploadDocument = async (docName) => {
-    const res = await fetch(`${BASE_URL}/document/upload?type=${docName}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        base64File: documents[docName],
-      }),
-    });
-    if (!res.ok) {
-      throw new Error("Network response was not ok");
-    }
-  };
-
   const handleLicenseChange = (e) => {
     if (e.target.value == "no") {
       dispatch(updateField({ field: "driverLicense.number", value: "" }));
@@ -150,41 +138,29 @@ const UserForm = () => {
     }
   };
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateUserData(user);
-    if (errors.length> 0) {
+    if (errors.length > 0) {
       alert(errors.join("\n"));
       return;
     }
-    const userRes = await fetch(`${BASE_URL}/user/update`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: user,
-        fromOnBoard: true,
-      }),
-    });
+
+    await updateBackendUser(user, true);
 
     for (let docName in documents) {
       if (
         documents[docName] !== "" &&
         documents[docName].startsWith("https://bfgp.s3.amazonaws.com") == false
       ) {
-        await uploadDocument(docName);
+        await uploadDocument(documents, docName);
       }
     }
-    if (!userRes.ok) {
-      throw new Error("Network response was not ok");
-    } else {
-      dispatch(fetchUserThunk());
-      dispatch(fetchDocumentThunk());
-      window.location.reload();
-    }
-  });
+
+    dispatch(fetchUserThunk());
+    dispatch(fetchDocumentThunk());
+    window.location.reload();
+  };
 
   return (
     <>
@@ -642,7 +618,11 @@ const UserForm = () => {
                 label="Expiration Date"
                 type="date"
                 name="driverLicense.expirationDate"
-                value={user.driverLicense.expirationDate ? user.driverLicense.expirationDate.split("T")[0] : "2024-10-26"}
+                value={
+                  user.driverLicense.expirationDate
+                    ? user.driverLicense.expirationDate.split("T")[0]
+                    : "2024-10-26"
+                }
                 onChange={handleChange}
                 required
               ></TextField>

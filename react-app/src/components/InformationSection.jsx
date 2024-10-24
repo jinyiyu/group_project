@@ -6,7 +6,10 @@ import TextField from "@mui/material/TextField";
 import { Box, Chip, Divider, InputLabel } from "@mui/material";
 import { Avatar, Button, FormControl, Typography } from "@mui/material";
 import LineDivider from "./LineDivider";
-
+import {
+  validateUserData,
+  updateBackendUser,
+} from "../store/userSlice/userUtils";
 
 function InformationSection({ sectionName, labelName }) {
   const BASE_URL = "http://localhost:3000";
@@ -62,12 +65,13 @@ function InformationSection({ sectionName, labelName }) {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      const userRes = await fetch(`${BASE_URL}/user/update`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: user }),
-      });
+      const errors = validateUserData(user);
+      if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return;
+      }
+
+      await updateBackendUser(user, false);
       setMode("view");
       dispatch(fetchUserThunk());
     },
@@ -90,7 +94,7 @@ function InformationSection({ sectionName, labelName }) {
 
   return (
     <>
-    <LineDivider label={labelName}/>
+      <LineDivider label={labelName} />
 
       <form onSubmit={handleSubmit}>
         <Box
