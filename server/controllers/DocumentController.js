@@ -85,10 +85,10 @@ const fetchFileUrls = async (req, res) => {
 
   try {
     const user = await User.findById(userId).lean().exec();
-    if (user.userProfile.profilePicture) {
+    if (user.userProfile?.profilePicture) {
       files["profilePicture"] = user.userProfile.profilePicture;
     }
-    if (user.driverLicense.licenseCopy) {
+    if (user.driverLicense?.licenseCopy) {
       files["licenseCopy"] = user.driverLicense.licenseCopy;
     }
 

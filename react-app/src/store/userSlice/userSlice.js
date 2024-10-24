@@ -65,7 +65,6 @@ const userSlice = createSlice({
             return { ...state, ...action.payload };
         },
         updateField: (state, action) => {
-            console.log(action.payload, "121231")
             const { field, value } = action.payload;
             const fields = field.split('.');
             let current = state;
