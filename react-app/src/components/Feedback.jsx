@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { useSelector } from "react-redux";
+import { Box, Chip, Typography, Button, Input } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 
@@ -8,14 +9,22 @@ const Feedback = () => {
 
   return (
     <>
-      <h1>{`Status: ${user.onboardStatus}`}</h1>
+      <Chip
+        label={`Status: ${user.onboardStatus}`}
+        color={user.onboardStatus == "pending" ? "info" : "warning"}
+        sx={{ margin: "1vh", fontSize: "2vh", borderRadius: "1vh" }}
+      />
 
       {user.onboardStatus == "rejected" ? (
         <>
-          <Stack sx={{ width: "100%" }} spacing={1}>
-            <h1>Feedbacks: </h1>
+          <Stack sx={{ width: "100%" }}>
             {user.feedback.map((f, index) => (
-              <Alert key={index} variant="filled" severity="info">
+              <Alert
+                sx={{ margin: "0.5vh" }}
+                key={index}
+                variant="outlined"
+                severity="warning"
+              >
                 {f}
               </Alert>
             ))}
@@ -27,7 +36,9 @@ const Feedback = () => {
 
       {user.onboardStatus == "pending" ? (
         <>
-          <h1>Please wait for HR to review your application</h1>
+          <Alert variant="outlined" severity="info">
+            Please wait for HR to review your application
+          </Alert>
         </>
       ) : (
         <></>

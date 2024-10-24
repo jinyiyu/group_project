@@ -40,11 +40,6 @@ const updateFile = async(req, res) => {
     //change onboard status to pending
     //update document table
     else {
-      const newUser = await User.findByIdAndUpdate(
-        userId,
-        { $set: { onboardStatus: "pending" } },
-      ).lean().exec();
-
 
       const document = await Document.find({user: userId, documentType: type}).lean().exec();
       if (document.length!==0) {

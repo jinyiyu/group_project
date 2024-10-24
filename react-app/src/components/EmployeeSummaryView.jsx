@@ -9,7 +9,7 @@ import {
   setSearchQuery,
   setDropdownVisible,
   setDisplayedEmployees,
-} from "../redux/employeeSlice";
+} from "../store/employeeSlice";
 
 const EmployeeSummaryView = () => {
   const dispatch = useDispatch();

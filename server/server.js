@@ -39,7 +39,7 @@ app.use("/document", DocumentRouter);
 app.use("/employee", employeeRouter);
 app.use("/hr/hiring", hrHiringRoutes);
 app.use("/hr/housing", hrHousingRoutes);
-app.use("/users/", userStatusController);
+// app.use("/users/", userStatusController);
 app.use("/users", userHouseRoutes);
 app.use("/users", userReportRoutes);
 app.use("/users", userStatusRoutes);

@@ -36,13 +36,22 @@ const updateUserData = async (req, res) => {
 
   try {
     // Use $set to update nested fields
-    const updatedUser = await User.findByIdAndUpdate(
+
+    let updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: data },
       { new: true }
     )
       .lean()
       .exec();
+
+    if (fromOnBoard) {
+      updatedUser = await User.findByIdAndUpdate(userId, {
+        $set: { onboardStatus: "pending", feedback: [] },
+      })
+        .lean()
+        .exec();
+    }
 
     if (!updatedUser) {
       return res
@@ -137,9 +146,10 @@ const register = async (req, res) => {
 
     // Set cookie for future requests
     res.cookie("token", accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      maxAge: 1000 * 3600 * 3, // 3 hours
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "Strict",
     });
 
     return res.status(201).json({
@@ -183,9 +193,10 @@ const login = async (req, res) => {
     }
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      maxAge: 1000 * 3600 * 3, // 3 hours
+      Path: "/",
+      sameSite: "Lax",
+      secure: false,
     });
 
     return res.status(200).json({

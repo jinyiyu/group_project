@@ -89,13 +89,15 @@ export const logoutUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    email: null,
-    accessTokenValid: false,
-    registerSuccess: false,
-    isAuthenticated: false,
-    loading: false,
-    error: null,
-    user: null,
+    email: null, // Stores email if token is valid
+    accessTokenValid: false, // Tracks if url token for register is valid
+    registerSuccess: false, // Tracks if registration is successful
+
+    loading: false, // Loading state for token validation, registration, and login
+    error: null, // Error message if something goes wrong
+
+    user: { role: "employee", username: "test" }, // Stores user information after login
+    loginSuccess: true, // Tracks if login is successful
   },
   reducers: {},
   extraReducers: (builder) => {
