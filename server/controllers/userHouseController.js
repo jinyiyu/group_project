@@ -5,7 +5,7 @@ const House = require("../models/houseSchema");
 // Take a userId, return a house address and list of user's roommates
 exports.getHouseDetail = async (req, res) => {
   try {
-    const userId = req.cookies.user_id;
+    const userId = req.body.user.id;
 
     // From userSchema grab user info by Id
     const user = await User.findById(userId);
