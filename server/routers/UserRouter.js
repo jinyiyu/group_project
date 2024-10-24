@@ -38,8 +38,8 @@ UserRouter.get(
     .get("/isLoggedIn", accessValidation, isLoggedIn)
     .get("/logout", accessValidation, logout)
 
-    .get("/info", accessValidation, isEmployee, fetchUserData) // todo: add access middleware
-    .put("/update", accessValidation, isEmployee, updateUserData); // todo: add access middleware
+    .get("/info",  fetchUserData) // todo: accessValidation, isEmployee,
+    .put("/update",  updateUserData); // todo: accessValidation, isEmployee,
 
     
 

@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import { Box, Chip, Divider, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
+import {
+  Box,
+  InputLabel,
+  TextField,
+  Avatar,
+  Button,
+  FormControl,
+  Typography,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { useDispatch, useSelector } from "react-redux";
 import { updateDocument } from "../store/documentSlice/documentSlice";
 import {
   validateUserData,
@@ -20,6 +26,7 @@ import {
 import InputField from "./InputField";
 import AddContactForm from "./AddContactForm";
 import LineDivider from "./LineDivider";
+import StateSelector from "./StateSelector";
 import "../assets/styles/onBoarding.css";
 
 const UserForm = () => {
@@ -259,13 +266,15 @@ const UserForm = () => {
             onChange={handleChange}
             required={true}
           />
-
+{/* 
           <InputField
             name="address.state"
             label="State"
             onChange={handleChange}
             required={true}
-          />
+          /> */}
+
+          <StateSelector disabled={MUIDisabled} width={"12vw"}/>
 
           <InputField
             name="address.zip"

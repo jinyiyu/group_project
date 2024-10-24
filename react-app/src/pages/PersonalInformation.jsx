@@ -1,24 +1,30 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TextField from "@mui/material/TextField";
-import { Box, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { uploadDocument } from "../store/documentSlice/documentUtils";
-import InputField from "../components/InputField";
+import { debounce } from "lodash";
+import {
+  TextField,
+  Box,
+  InputLabel,
+  Avatar,
+  Button,
+  FormControl,
+  Typography,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { updateDocument } from "../store/documentSlice/documentSlice";
+import { uploadDocument } from "../store/documentSlice/documentUtils";
 import {
   validateUserData,
   updateBackendUser,
 } from "../store/userSlice/userUtils";
-
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 import {
   updateField,
   deleteEmergencyContact,
 } from "../store/userSlice/userSlice";
+import InputField from "../components/InputField";
 import DocumentGallery from "../components/DocumentGallery";
 import InformationSection from "../components/InformationSection";
 import AddContactForm from "../components/AddContactForm";

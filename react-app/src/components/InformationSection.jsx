@@ -1,15 +1,14 @@
 import { useEffect, useCallback, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Box, Button, TextField} from "@mui/material";
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { updateField } from "../store/userSlice/userSlice";
-import TextField from "@mui/material/TextField";
-import { Box, Chip, Divider, InputLabel } from "@mui/material";
-import { Avatar, Button, FormControl, Typography } from "@mui/material";
-import LineDivider from "./LineDivider";
 import {
   validateUserData,
   updateBackendUser,
 } from "../store/userSlice/userUtils";
+import LineDivider from "./LineDivider";
+import StateSelector from "./StateSelector";
 
 function InformationSection({ sectionName, labelName }) {
   const BASE_URL = "http://localhost:3000";
@@ -91,6 +90,7 @@ function InformationSection({ sectionName, labelName }) {
     },
     [dispatch, setMode],
   );
+  console.log(fields)
 
   return (
     <>
@@ -107,7 +107,7 @@ function InformationSection({ sectionName, labelName }) {
             ml: "25vw",
           }}
         >
-          {fields.map((field, index) => (
+          {fields.map((field, index) => {return field!=="state"? (
             <TextField
               key={field}
               fullWidth
@@ -125,7 +125,7 @@ function InformationSection({ sectionName, labelName }) {
               }}
               required={requiredFields.includes(field) ? true : false}
             ></TextField>
-          ))}
+          ): (<StateSelector disabled={mode=="view"} width={"100%"}/>)})}
           {mode == "edit" ? (
             <>
               <Box
