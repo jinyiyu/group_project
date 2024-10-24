@@ -1,109 +1,116 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { fetchUserThunk } from './userThunks';
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchUserThunk, fetchUserByIdThunk } from "./userThunks";
 
 const initialState = {
-    userName: '',
-    password: '',
-    role: '',
-    userProfile: {
-        firstName: '',
-        lastName: '',
-        middleName: '',
-        preferredName: '',
-        email: '',
-        SSN: '',
-        DoB: '',
-        gender: '',
-        profilePicture: '',
-    },
-    address: {
-        apt: '',
-        strName: '',
-        city: '',
-        state: '',
-        zip: '',
-    },
-    contactInfo: {
-        cellPhone: '',
-        workPhone: '',
-    },
-    employment: {
-        status: '',
-        start: '',
-        end: '',
-    },
-    emergencyContact: [],
-    reference: {
-        firstName: '',
-        lastName: '',
-        middleName: '',
-        phone: '',
-        email: '',
-        relationship: '',
-    },
-    onboardStatus: '',
-    driverLicense: {
-        number: '',
-        expirationDate: '',
-        licenseCopy: '',
-    },
-    house: '',
-    feedback: [],
-    nextStep: '',
-    car: {
-        model: '',
-        color: '',
-        make: ''
-    },
+  userName: "",
+  password: "",
+  role: "",
+  userProfile: {
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    preferredName: "",
+    email: "",
+    SSN: "",
+    DoB: "",
+    gender: "",
+    profilePicture: "",
+  },
+  address: {
+    apt: "",
+    strName: "",
+    city: "",
+    state: "",
+    zip: "",
+  },
+  contactInfo: {
+    cellPhone: "",
+    workPhone: "",
+  },
+  employment: {
+    status: "",
+    start: "",
+    end: "",
+  },
+  emergencyContact: [],
+  reference: {
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    phone: "",
+    email: "",
+    relationship: "",
+  },
+  onboardStatus: "",
+  driverLicense: {
+    number: "",
+    expirationDate: "",
+    licenseCopy: "",
+  },
+  house: "",
+  feedback: [],
+  nextStep: "",
+  car: {
+    model: "",
+    color: "",
+    make: "",
+  },
 };
 
 const userSlice = createSlice({
-    name: 'user',
-    initialState: initialState,
-    reducers: {
-        setUser: (state, action) => {
-            return { ...state, ...action.payload };
-        },
-        updateField: (state, action) => {
-            const { field, value } = action.payload;
-            const fields = field.split('.');
-            let current = state;
-
-            for (let i = 0; i < fields.length - 1; i++) {
-                current = current[fields[i]];
-            }
-
-            current[fields[fields.length - 1]] = value;
-        },
-        addEmergencyContact: (state, action) => {
-            state["emergencyContact"].push(action.payload)
-        },
-        deleteEmergencyContact: (state, action) => {
-            const email = action.payload;
-            state.emergencyContact = state.emergencyContact.filter(contact => contact.email !== email);
-        },
-        clearUser: (state) => {
-            return initialState;
-        },
+  name: "user",
+  initialState: initialState,
+  reducers: {
+    setUser: (state, action) => {
+      return { ...state, ...action.payload };
     },
+    updateField: (state, action) => {
+      const { field, value } = action.payload;
+      const fields = field.split(".");
+      let current = state;
 
-    extraReducers: (builder) => {
-      builder.addCase(
-        fetchUserThunk.fulfilled,
-        (state, action) => {
-          return { ...state, ...action.payload };
-        },
+      for (let i = 0; i < fields.length - 1; i++) {
+        current = current[fields[i]];
+      }
+
+      current[fields[fields.length - 1]] = value;
+    },
+    addEmergencyContact: (state, action) => {
+      state["emergencyContact"].push(action.payload);
+    },
+    deleteEmergencyContact: (state, action) => {
+      const email = action.payload;
+      state.emergencyContact = state.emergencyContact.filter(
+        (contact) => contact.email !== email
       );
     },
+    clearUser: (state) => {
+      return initialState;
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder.addCase(fetchUserThunk.fulfilled, (state, action) => {
+      return { ...state, ...action.payload };
+    });
+
+    builder.addCase(fetchUserByIdThunk.fulfilled, (state, action) => {
+      return { ...state, ...action.payload }; // Update state with fetched user data by ID
+    });
+
+    builder.addCase(fetchUserByIdThunk.rejected, (state, action) => {
+      console.error("Error fetching user by ID:", action.payload);
+    });
+  },
 });
 
 // Export actions
 export const {
-    setUser,
-    updateField,
-    addEmergencyContact,
-    deleteEmergencyContact,
-    clearUser,
+  setUser,
+  updateField,
+  addEmergencyContact,
+  deleteEmergencyContact,
+  clearUser,
 } = userSlice.actions;
 
 // Export reducer

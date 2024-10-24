@@ -4,6 +4,7 @@ const { accessValidation } = require("../middlewares/AuthMiddleWare");
 
 router.get("/status", accessValidation, userStatusController.getVisaStatus);
 router.put("/upload", accessValidation, userStatusController.uploadDocument);
+
 router.get(
   "/download/:templateType",
   accessValidation,

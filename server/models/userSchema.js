@@ -1,6 +1,8 @@
+// Hieu Tran - modified userSchema to use empty string for required fields, set new Date() for Date type
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// User Profile Schema
 const userProfileSchema = new Schema({
   firstName: {
     type: String,
@@ -12,9 +14,11 @@ const userProfileSchema = new Schema({
   },
   middleName: {
     type: String,
+    default: "",
   },
   preferredName: {
     type: String,
+    default: "",
   },
   email: {
     type: String,
@@ -23,19 +27,23 @@ const userProfileSchema = new Schema({
   },
   SSN: {
     type: String,
+    default: "",
   },
   DoB: {
     type: Date,
+    default: new Date(),
   },
   gender: {
     type: String,
+    default: "",
   },
   profilePicture: {
     type: String,
-    default: "placeholder.jpg",
+    default: "",
   },
 });
 
+// Address Schema
 const addressSchema = new Schema({
   apt: {
     type: String,
@@ -43,46 +51,56 @@ const addressSchema = new Schema({
   },
   strName: {
     type: String,
+    default: "",
     required: true,
   },
   city: {
     type: String,
+    default: "",
     required: true,
   },
   state: {
     type: String,
+    default: "",
     required: true,
   },
   zip: {
     type: String,
+    default: "",
     required: true,
   },
 });
 
+// Contact Info Schema
 const contactInfoSchema = new Schema({
   cellPhone: {
     type: String,
+    default: "",
   },
   workPhone: {
     type: String,
+    default: "",
   },
 });
 
+// Driver License Schema
 const driverLicenseSchema = new mongoose.Schema({
   licenseCopy: {
     type: String,
-    default: "placeholder.jpg",
+    default: "",
   },
   number: {
     type: String,
+    default: "",
     required: true,
   },
   expirationDate: {
     type: Date,
-    required: true,
+    default: null,
   },
 });
 
+// Employment Schema
 const employmentSchema = new mongoose.Schema({
   status: {
     type: String,
@@ -109,49 +127,51 @@ const employmentSchema = new mongoose.Schema({
   },
   end: {
     type: Date,
-    default: null,
+    default: new Date(),
   },
 });
 
+// Emergency Contact & Reference Schema
 const ContactSchema = new Schema({
   firstName: {
     type: String,
-    required: true,
+    default: "",
   },
   lastName: {
     type: String,
-    required: true,
+    default: "",
   },
   middleName: {
     type: String,
-    required: true,
+    default: "",
   },
   phone: {
     type: String,
-    required: true,
+    default: "",
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    default: "",
   },
   relationship: {
     type: String,
-    required: true,
+    default: "",
   },
 });
 
+// Car Schema
 const carSchema = new mongoose.Schema({
   model: {
     type: String,
-    required: true,
+    default: "",
   },
   color: {
     type: String,
-    required: true,
+    default: "",
   },
   make: {
     type: String,
+    default: "",
   },
 });
 
@@ -174,8 +194,14 @@ const userSchema = new Schema({
   address: addressSchema,
   contactInfo: contactInfoSchema,
   employment: employmentSchema,
-  emergencyContact: [ContactSchema],
-  reference: ContactSchema,
+  emergencyContact: {
+    type: [ContactSchema],
+    default: [],
+  },
+  reference: {
+    type: ContactSchema,
+    default: {},
+  },
   onboardStatus: {
     type: String,
     default: "not started",
@@ -186,15 +212,13 @@ const userSchema = new Schema({
     ref: "House",
     required: true,
   },
-  // feedback: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Comment",
-  //   },
-  // ],
-  feedback: [String],
+  feedback: {
+    type: [String],
+    default: [],
+  },
   nextStep: {
     type: String,
+    default: "",
   },
   car: carSchema,
 });

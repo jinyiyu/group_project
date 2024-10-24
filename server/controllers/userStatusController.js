@@ -6,7 +6,9 @@ const path = require("path");
 // Take in a userId, return user's visa status
 exports.getVisaStatus = async (req, res) => {
   try {
+
     const userId = req.body.user.id;
+
 
     // Get one newest uploaded document from documentSchema by userId,
     // and make sure only counting for documentType: "OPT receipt", "OPT EAD", "I_983", "I_20"

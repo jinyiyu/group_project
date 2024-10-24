@@ -33,6 +33,7 @@ const getProfile = async (req, res) => {
 
     // Map users to the desired profile format
     const profiles = users.map((user) => ({
+      id: user._id,
       name: {
         firstName: user.userProfile.firstName,
         lastName: user.userProfile.lastName,

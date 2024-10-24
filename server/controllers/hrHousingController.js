@@ -1,6 +1,7 @@
 const House = require("../models/houseSchema");
-const Report = require("../models/reportSchema");
+const { Report } = require("../models/reportSchema");
 const User = require("../models/userSchema");
+// const basicUser = require("../models/basicUserSchema");
 
 // Get all existing houses
 exports.getAllHouses = async (req, res) => {
@@ -43,14 +44,21 @@ exports.getHouseDetail = async (req, res) => {
       });
     }
 
-    const employees = await User.find({ house: houseId }).select(
-      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email"
-    );
+    // Find employees in both User and basicUser collections
+    const employees = await User.find({ house: houseId });
+    // const basicUserEmployees = await basicUser.find({ house: houseId });
+
+    // Combine employees from both collections
+    // const allEmployees = [...userEmployees, ...basicUserEmployees];
+
+    console.log(employees);
 
     // Find facility reports related to the house
     const facilityReports = await Report.find({
       createdBy: { $in: employees.map((emp) => emp._id) },
-    }).populate("createdBy", "userName");
+    })
+      .populate("createdBy", "userName")
+      .populate("comments.createdBy", "userName");
 
     const houseDetails = {
       id: house._id,
@@ -76,15 +84,17 @@ exports.getHouseDetail = async (req, res) => {
         status: report.status,
         comments: report.comments.map((comment) => ({
           id: comment._id,
-          createdBy: comment.createdBy,
+          createdBy: comment.createdBy.userName,
+          commentUserId: comment.createdBy._id,
           description: comment.desc,
           timestamp: comment.timestamp,
         })),
       })),
       employees: employees.map((employee) => ({
         fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
-        phone: employee.contactInfo.cellPhone,
-        email: employee.userProfile.email,
+        phone: employee.contactInfo?.cellPhone || "N/A",
+        email: employee.userProfile?.email || "N/A",
+        car: employee.car || "N/A",
       })),
     };
 
@@ -208,7 +218,7 @@ exports.getEmployees = async (req, res) => {
 
   try {
     const employees = await User.find({ house: houseId }).select(
-      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email cars"
+      "userProfile.firstName userProfile.lastName contactInfo.cellPhone userProfile.email car"
     );
 
     if (!employees || employees.length === 0) {
@@ -222,14 +232,7 @@ exports.getEmployees = async (req, res) => {
       fullName: `${employee.userProfile.firstName} ${employee.userProfile.lastName}`,
       phone: employee.contactInfo.cellPhone,
       email: employee.userProfile.email,
-      cars:
-        employee.cars.length > 0
-          ? {
-              make: employee.cars[0].make,
-              model: employee.cars[0].model,
-              color: employee.cars[0].color,
-            }
-          : null,
+      car: employee.car,
     }));
 
     // Send the response
@@ -271,7 +274,7 @@ exports.addHouse = async (req, res) => {
         mattresse: facilityInfo.mattresse,
         table: facilityInfo.tables,
         chair: facilityInfo.chairs,
-        addr: facilityInfo.addr,
+        addr: address,
       },
     });
 
@@ -287,6 +290,49 @@ exports.addHouse = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to add new house.",
+      error,
+    });
+  }
+};
+
+// Delete house
+exports.deleteHouse = async (req, res) => {
+  const { houseId } = req.params;
+
+  try {
+    const house = await House.findByIdAndDelete(houseId);
+
+    if (!house) {
+      return res.status(404).json({
+        success: false,
+        message: "House not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "House deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting house:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete house.",
+      error,
+    });
+  }
+};
+
+// Get report, just for testing purposes
+exports.getReport = async (req, res) => {
+  try {
+    const reports = await Report.find();
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error("Error fetching onboarding applications:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch report.",
       error,
     });
   }

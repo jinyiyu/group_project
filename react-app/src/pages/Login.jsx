@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -10,15 +10,19 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.userAuth
+  );
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,13 +30,28 @@ const Login = () => {
 
     if (loginUser.fulfilled.match(resultAction)) {
       setSnackbarMessage("Login successful!");
+      setSnackbarSeverity("success");
       setOpenSnackbar(true);
+
+      console.log("User from action payload:", resultAction.payload);
+
+      const loggedInUser = resultAction.payload.user || resultAction.payload;
+
+      if (loggedInUser.role === "hr") {
+        window.location.href = "http://localhost:5173/generateTokenForm";
+      } else if (loggedInUser.role === "employee")
+        window.location.href = "http://localhost:5173/onboarding";
     }
   };
 
   return (
     <Container maxWidth="xs">
       <Typography variant="h4">Login</Typography>
+      {isAuthenticated && (
+        <Alert severity="success" style={{ marginBottom: "20px" }}>
+          Logged in successful!
+        </Alert>
+      )}
       <form onSubmit={handleLogin}>
         <TextField
           fullWidth
@@ -66,7 +85,11 @@ const Login = () => {
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

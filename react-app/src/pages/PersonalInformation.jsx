@@ -1,15 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import TextField from "@mui/material/TextField";
+import { Box, InputLabel } from "@mui/material";
+import { Avatar, Button, FormControl, Typography } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+
+import InputField from "../components/InputField";
+import { updateDocument } from "../store/documentSlice/documentSlice";
+
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 import {
-  addEmergencyContact,
   updateField,
   deleteEmergencyContact,
 } from "../store/userSlice/userSlice";
 import DocumentGallery from "../components/DocumentGallery";
 import InformationSection from "../components/InformationSection";
 import AddContactForm from "../components/AddContactForm";
+import LineDivider from "../components/LineDivider";
 
 function PersonalInformation() {
   const BASE_URL = "http://localhost:3000";
@@ -61,6 +70,7 @@ function PersonalInformation() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: user }),
       });
+      dispatch(fetchUserThunk);
       setModeContact("view");
     },
     [dispatch, user],
@@ -105,7 +115,7 @@ function PersonalInformation() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              base64File: documents[profilePicture],
+              base64File: documents["profilePicture"],
             }),
           },
         );
@@ -113,6 +123,8 @@ function PersonalInformation() {
           throw new Error("Network response was not ok");
         }
       }
+      dispatch(fetchDocumentThunk);
+      dispatch(fetchUserThunk);
 
       setModeName("view");
     },
@@ -153,175 +165,295 @@ function PersonalInformation() {
   return (
     <>
       <form className="name" onSubmit={handleSaveName}>
-        <label htmlFor="userProfile.firstName">First Name</label>
-        <input
-          type="text"
-          name="userProfile.firstName"
-          value={user.userProfile.firstName}
-          onChange={handleChange}
-          required
-        />
-        <br />
+        <LineDivider label="Basic Information" />
 
-        <label htmlFor="userProfile.lastName">Last Name</label>
-        <input
-          type="text"
-          name="userProfile.lastName"
-          value={user.userProfile.lastName}
-          onChange={handleChange}
-          required
-        />
-        <br />
-
-        <label htmlFor="userProfile.middleName">Middle Name</label>
-        <input
-          type="text"
-          name="userProfile.middleName"
-          value={user.userProfile.middleName}
-          onChange={handleChange}
-        />
-        <br />
-
-        <label htmlFor="userProfile.preferredName">Preferred Name</label>
-        <input
-          type="text"
-          name="userProfile.preferredName"
-          value={user.userProfile.preferredName}
-          onChange={handleChange}
-        />
-        <br />
-
-        {documents.profilePicture !== "" ? (
-          <img
-            src={documents.profilePicture}
-            alt="Profile"
-            style={{ width: "100px", height: "100px", objectFit: "cover" }}
-          />
-        ) : (
-          <></>
-        )}
-        <label htmlFor="profilePicture">Upload a new profile picture</label>
-        <input
-          type="file"
-          name="profilePicture"
-          accept="image/*"
-          onChange={(e) =>
-            handleDocumentChange(e, "userProfile.profilePicture")
-          }
-        />
-        <br />
-
-        <label htmlFor="userProfile.email">Email</label>
-        <input
-          type="email"
-          name="userProfile.email"
-          value={user.userProfile.email}
-          readOnly
-        />
-        <br />
-
-        <label htmlFor="userProfile.SSN">SSN</label>
-        <input
-          type="text"
-          name="userProfile.SSN"
-          value={user.userProfile.SSN}
-          readOnly
-        />
-        <br />
-
-        <label htmlFor="userProfile.DoB">Date of Birth</label>
-        <input
-          type="date"
-          name="userProfile.DoB"
-          value={user.userProfile.DoB?.split("T")[0]}
-          onChange={handleChange}
-          required
-        />
-        <br />
-
-        <label htmlFor="userProfile.gender">Gender</label>
-        <select
-          name="userProfile.gender"
-          value={user.userProfile.gender}
-          onChange={handleChange}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2vh",
+            maxWidth: "50vw",
+            ml: "25vw",
+          }}
         >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">I do not wish to answer</option>
-        </select>
-        <br />
+          <InputField
+            fullWidth={true}
+            name="userProfile.firstName"
+            label="First Name"
+            onChange={handleChange}
+            value={user.userProfile.firstName}
+            required={true}
+          ></InputField>
 
-        {modeName == "edit" ? (
+          <InputField
+            fullWidth={true}
+            name="userProfile.lastName"
+            label="Last Name"
+            onChange={handleChange}
+            value={user.userProfile.lastName}
+            required={true}
+          ></InputField>
+
+          <InputField
+            fullWidth={true}
+            name="userProfile.middleName"
+            label="Middle Name"
+            onChange={handleChange}
+            value={user.userProfile.middleName}
+          ></InputField>
+
+          <InputField
+            fullWidth={true}
+            name="userProfile.preferredName"
+            label="Preferred Name"
+            onChange={handleChange}
+            value={user.userProfile.preferredName}
+          ></InputField>
+
+          <Typography variant="subtitle1">Your Profile</Typography>
+          {documents.profilePicture !== "" ? (
+            <Avatar
+              src={documents.profilePicture}
+              alt="Profile"
+              sx={{ width: "8vw", height: "8vw", objectFit: "cover" }}
+            />
+          ) : (
+            <Avatar sx={{ width: 100, height: 100, bgcolor: "grey.300" }} />
+          )}
+
+          <input
+            type="file"
+            name="profilePicture"
+            accept="image/*"
+            onChange={(e) =>
+              handleDocumentChange(e, "userProfile.profilePicture")
+            }
+            id="upload-profile-picture"
+          />
+
+          <InputField
+            fullWidth={true}
+            name="userProfile.email"
+            label="Email"
+            onChange={handleChange}
+            value={user.userProfile.email}
+            readOnly={true}
+            required={true}
+          ></InputField>
+
+          <InputField
+            fullWidth={true}
+            name="userProfile.SSN"
+            label="SSN"
+            onChange={handleChange}
+            value={user.userProfile.SSN}
+            readOnly={true}
+            required={true}
+          ></InputField>
+
+          <TextField
+            fullWidth
+            size="small"
+            variant="outlined"
+            label="Date of Birth"
+            type="date"
+            name="userProfile.DoB"
+            value={user.userProfile.DoB?.split("T")[0]}
+            onChange={handleChange}
+            required
+          ></TextField>
+
+          <FormControl sx={{ width: "50vw" }} disabled={modeName == "view"}>
+            <InputLabel id="gender-label">Gender</InputLabel>
+            <Select
+              sx={{ height: "4vh" }}
+              labelId="gender-label"
+              value={user.userProfile.gender}
+              onChange={handleChange}
+              name="userProfile.gender"
+              label="Gender"
+            >
+              <MenuItem value="">Select Gender</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Other">I do not wish to answer</MenuItem>
+            </Select>
+          </FormControl>
+
+          {modeName == "edit" ? (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "50vw",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  color="info"
+                  className="name"
+                  sx={{ mr: "4px" }}
+                  type="submit"
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="info"
+                  className="name"
+                  onClick={handleCancelName}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box
+                sx={{
+                  display: "flex",
+                  width: "50vw",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  color="info"
+                  className="name"
+                  onClick={handleEditName}
+                >
+                  Edit
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </form>
+      <InformationSection
+        sectionName={"address"}
+        labelName={"Address"}
+      ></InformationSection>
+      <InformationSection
+        sectionName={"contactInfo"}
+        labelName={"Contact Information"}
+      ></InformationSection>
+      <InformationSection
+        sectionName={"employment"}
+        labelName={"Visa Status"}
+      ></InformationSection>
+      <LineDivider label="Emergency Contact" />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "3vh",
+          maxWidth: "50vw",
+          justifyContent: "center",
+          ml: "25vw",
+        }}
+      >
+        {user.emergencyContact.map((contact, index) => (
+          <div key={contact.email}>
+            <h3>{`Emergency Contact: ${contact.firstName} ${contact.lastName}`}</h3>
+            {Object.entries(contact)
+              .filter(([field, _]) => field != "_id")
+              .map(([field, value]) => (
+                <div key={`${contact.email}-${field}`}>
+                  <TextField
+                    fullWidth
+                    sx={{ mt: "2vh" }}
+                    size="small"
+                    variant="outlined"
+                    label={`${transformString(field)}`}
+                    type="text"
+                    name={`emergencyContact.${field}`}
+                    value={value}
+                    readOnly
+                  ></TextField>
+                </div>
+              ))}
+            {modeContact == "edit" ? (
+              <Button
+                variant="outlined"
+                color="info"
+                sx={{ width: "100%", mt: "2vh" }}
+                onClick={() => dispatch(deleteEmergencyContact(contact.email))}
+                disabled={user.emergencyContact.length === 1}
+              >
+                Delete
+              </Button>
+            ) : (
+              <></>
+            )}
+          </div>
+        ))}
+
+        {modeContact == "edit" ? (
           <>
-            <button className="name" type="submit">
-              Save
-            </button>
-            <button className="name" onClick={handleCancelName}>
-              Cancel
-            </button>
+            <Box
+              sx={{
+                display: "flex",
+                width: "50vw",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                variant="outlined"
+                color="info"
+                className="contact"
+                sx={{ mr: "4px" }}
+                onClick={handleSaveContact}
+              >
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                color="info"
+                className="contact"
+                onClick={handleCancelContact}
+              >
+                Cancel
+              </Button>
+            </Box>
           </>
         ) : (
           <>
-            <button className="name" onClick={handleEditName}>
+            <Button
+              variant="outlined"
+              color="info"
+              className="contact"
+              onClick={handleEditContact}
+            >
               Edit
-            </button>
+            </Button>
           </>
         )}
-      </form>
-
-      <InformationSection sectionName={"address"}></InformationSection>
-      <InformationSection sectionName={"contactInfo"}></InformationSection>
-      <InformationSection sectionName={"employment"}></InformationSection>
-
-      {user.emergencyContact.map((contact, index) => (
-        <div key={contact.email}>
-          <h3>{`Emergency Contact: ${contact.firstName} ${contact.lastName}`}</h3>
-          {Object.entries(contact)
-            .filter(([field, _]) => field != "_id")
-            .map(([field, value]) => (
-              <div key={`${contact.email}-${field}`}>
-                <label
-                  htmlFor={`emergencyContact.${field}`}
-                >{`${transformString(field)}`}</label>
-                <input
-                  className="contact"
-                  type="text"
-                  name={`emergencyContact.${field}`}
-                  value={value}
-                  readOnly
-                />
-                <br />
-              </div>
-            ))}
-          <button
-            className="contact"
-            onClick={() => dispatch(deleteEmergencyContact(contact.email))}
-            disabled={user.emergencyContact.length === 1}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+      </Box>
 
       {modeContact == "edit" ? (
         <>
-          <button className="contact" onClick={handleSaveContact}>
-            Save
-          </button>
-          <button className="contact" onClick={handleCancelContact}>
-            Cancel
-          </button>
-
-          <AddContactForm></AddContactForm>
+          <LineDivider label="Add Emergency Contact" />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "3vh",
+              maxWidth: "50vw",
+              justifyContent: "center",
+              ml: "25vw",
+            }}
+          >
+            <AddContactForm></AddContactForm>
+          </Box>
         </>
       ) : (
-        <>
-          <button className="contact" onClick={handleEditContact}>
-            Edit
-          </button>
-        </>
+        <></>
       )}
+
+      <LineDivider label="Uploaded Documents" />
 
       <DocumentGallery></DocumentGallery>
     </>

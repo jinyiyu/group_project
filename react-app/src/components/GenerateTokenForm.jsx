@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateToken } from "../store/actions/auth.actions";
-import { fetchApplications } from "../store/actions/application.actions";
+import TokenHistory from "./TokenHistory";
 
 const GenerateTokenForm = () => {
   const dispatch = useDispatch();
-
-  const {
-    notStarted = [],
-    loading: appLoading,
-    error: appError,
-  } = useSelector((state) => state.application);
 
   const {
     loading: tokenLoading,
@@ -19,11 +13,8 @@ const GenerateTokenForm = () => {
   } = useSelector((state) => state.auth);
 
   const [showMessage, setShowMessage] = useState(false);
-  const [currentEmail, setCurrentEmail] = useState("");
-
-  useEffect(() => {
-    dispatch(fetchApplications());
-  }, [dispatch]);
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
     if (success || tokenError) {
@@ -36,47 +27,46 @@ const GenerateTokenForm = () => {
     }
   }, [success, tokenError]);
 
-  const handleGenerateToken = (email) => {
-    setCurrentEmail(email);
-    dispatch(generateToken(email));
+  const handleGenerateToken = (e) => {
+    e.preventDefault();
+    dispatch(generateToken({ email, fullName }));
   };
 
   return (
     <div>
       <h2>Generate Registration Token</h2>
-
-      {/* Display any loading or error states related to fetching applications */}
-      {appLoading && <p>Loading applications...</p>}
-      {appError && <p style={{ color: "red" }}>{appError}</p>}
-
-      {/* List of applications with "not started" status */}
-      <ul>
-        {notStarted.length > 0 ? (
-          notStarted.map((app) => (
-            <li key={app.email}>
-              <span>{app.email}</span>
-              <button
-                onClick={() => handleGenerateToken(app.email)}
-                disabled={tokenLoading}
-              >
-                {tokenLoading && currentEmail === app.email
-                  ? "Generating..."
-                  : "Generate Token"}
-              </button>
-            </li>
-          ))
-        ) : (
-          <p>No applications with 'not started' status found.</p>
-        )}
-      </ul>
-
+      <form onSubmit={handleGenerateToken}>
+        <div>
+          <label htmlFor="fullname">Full Name:</label>
+          <input
+            type="text"
+            id="fullname"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>{" "}
+        <br />
+        <button type="submit" disabled={tokenLoading}>
+          {tokenLoading ? "Generating..." : "Generate Token"}
+        </button>
+      </form>
       {/* Display success or error messages based on the state, hidden after 3 seconds */}
-      {showMessage && success && (
-        <p>Registration token sent to {currentEmail}!</p>
-      )}
+      {showMessage && success && <p>Registration token sent to {email}!</p>}
       {showMessage && tokenError && (
         <p style={{ color: "red" }}>{tokenError}</p>
       )}
+      <TokenHistory />
     </div>
   );
 };
