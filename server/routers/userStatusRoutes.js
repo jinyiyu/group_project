@@ -1,8 +1,13 @@
 const router = require("express").Router();
 const userStatusController = require("../controllers/userStatusController");
+const { accessValidation } = require("../middlewares/AuthMiddleWare");
 
-router.get("/status", userStatusController.getVisaStatus);
-router.put("/upload", userStatusController.uploadDocument);
-router.get("/download/:templateType", userStatusController.downloadTemplate);
+router.get("/status", accessValidation, userStatusController.getVisaStatus);
+router.put("/upload", accessValidation, userStatusController.uploadDocument);
+router.get(
+  "/download/:templateType",
+  accessValidation,
+  userStatusController.downloadTemplate
+);
 
 module.exports = router;

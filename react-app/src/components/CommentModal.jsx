@@ -1,4 +1,3 @@
-// import Modal from "react-modal";
 import React, { useState, useEffect } from "react";
 
 import SortReport from "../components/SortReport";
@@ -49,7 +48,7 @@ const CommentModal = ({
   const totalPages = Math.ceil(totalComments / commentsPerPage);
   const currentComments = sortedComments.slice(
     (currentPage - 1) * commentsPerPage,
-    currentPage * commentsPerPage,
+    currentPage * commentsPerPage
   );
 
   const handlePageChange = (event, newPage) => {
@@ -74,9 +73,9 @@ const CommentModal = ({
 
   // Handle updating a comment
   const handleUpdateClick = (commentId, commentDesc) => {
-    setIsUpdating(true); // Switch form to update mode
-    setCommentIdToUpdate(commentId); // Set the ID of the comment to update
-    setNewComment(commentDesc); // Prefill the form with the comment description
+    setIsUpdating(true);
+    setCommentIdToUpdate(commentId);
+    setNewComment(commentDesc);
   };
 
   return (
@@ -133,13 +132,16 @@ const CommentModal = ({
                   By: {comment.createdBy.userName}
                 </Box>
                 <Box component="span" sx={{ ml: 1 }}>
-                  At: {new Date(comment.timestamp).toLocaleDateString()}
+                  Last modified:{" "}
+                  {new Date(comment.timestamp).toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                  })}
                 </Box>
               </Typography>
 
               {comment.createdBy._id === currentUserId && (
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   size="small"
                   sx={{ mt: 1 }}
                   onClick={() => handleUpdateClick(comment._id, comment.desc)}

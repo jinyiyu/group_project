@@ -8,15 +8,8 @@ import {
 import { selectReports } from "../store/reportSlice/report.selectors";
 import CommentModal from "../components/CommentModal";
 import SortReport from "../components/SortReport";
-import {
-  Typography,
-  Button,
-  Box,
-  Pagination,
-  Card,
-  CardContent,
-  CardActions,
-} from "@mui/material";
+import { Typography, Button, Box, Pagination, Divider } from "@mui/material";
+import SortByStatus from "./SortByStatus";
 
 const ReportHistory = () => {
   const dispatch = useDispatch();
@@ -28,13 +21,24 @@ const ReportHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState("latest");
   const reportsPerPage = 5;
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     dispatch(fetchReportsThunk());
   }, [dispatch]);
 
-  // Sorting logic
-  const sortedReports = [...reports].sort((a, b) => {
+  const filteredReports = reports.filter((report) => {
+    if (statusFilter === "open") {
+      return report.status === "open";
+    } else if (statusFilter === "In Progress") {
+      return report.status === "In Progress";
+    } else if (statusFilter === "closed") {
+      return report.status === "closed";
+    }
+    return true;
+  });
+
+  const sortedReports = [...filteredReports].sort((a, b) => {
     if (sortOption === "latest") {
       return new Date(b.timestamp) - new Date(a.timestamp); // Sort by latest first
     }
@@ -109,10 +113,12 @@ const ReportHistory = () => {
       <Typography variant="h5" mb={2}>
         Facility Reports
       </Typography>
-
       {/* Sort Dropdown */}
       <SortReport sortOption={sortOption} setSortOption={setSortOption} />
-
+      <SortByStatus
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
       {/* Report List */}
       <Box
         sx={{
@@ -120,35 +126,46 @@ const ReportHistory = () => {
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
+
           alignItems: "center",
           mt: 4,
         }}
       >
         {currentReports.map((report) => (
-          <Card
+          <Box
             key={report._id}
             variant="outlined"
             sx={{
               mb: 2,
               display: "flex",
               flexDirection: "column",
-              width: "400px",
+              width: "500px",
             }}
           >
-            <CardContent>
-              <Typography variant="h6">{report.title}</Typography>
-              <Typography>{report.desc}</Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                variant="outlined"
-                sx={{ mt: 1 }}
-                onClick={() => openCommentModal(report)}
-              >
-                View Comments
-              </Button>
-            </CardActions>
-          </Card>
+            <Divider sx={{ mb: 2, mt: 1 }} />
+
+            <Typography variant="h6">{report.title}</Typography>
+            <Typography>{report.desc}</Typography>
+            <Typography variant="caption" display="block" mt={4}>
+              <Box component="span" sx={{ mr: 1 }}>
+                Posted at:
+                {new Date(report.timestamp).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                })}
+              </Box>
+              <Box component="span" sx={{ ml: 1 }}>
+                Status: {report.status}
+              </Box>
+            </Typography>
+
+            <Button
+              variant="contained"
+              sx={{ mt: 1, width: "40%" }}
+              onClick={() => openCommentModal(report)}
+            >
+              View Comments
+            </Button>
+          </Box>
         ))}
       </Box>
       <Box mt={2} display="flex" justifyContent="center">
@@ -158,7 +175,6 @@ const ReportHistory = () => {
           color="primary"
         />
       </Box>
-
       {/* Comment Modal */}
       {selectedReport && (
         <Box sx={{ overflowY: "auto" }}>
