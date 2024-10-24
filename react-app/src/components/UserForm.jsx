@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { Box, Chip, Divider, InputLabel } from "@mui/material";
 import { Avatar, Button, FormControl, Typography } from "@mui/material";
-
+import { fetchUserThunk } from "../store/userSlice/userThunks";
+import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useDispatch, useSelector } from "react-redux";
@@ -104,7 +105,6 @@ const UserForm = () => {
   });
 
   const uploadDocument = async (docName) => {
-    console.log(documents[docName]);
     const res = await fetch(`${BASE_URL}/document/upload?type=${docName}`, {
       method: "PUT",
       credentials: "include",
@@ -173,6 +173,8 @@ const UserForm = () => {
     if (!userRes.ok) {
       throw new Error("Network response was not ok");
     } else {
+      dispatch(fetchUserThunk());
+      dispatch(fetchDocumentThunk());
       window.location.reload();
     }
   });

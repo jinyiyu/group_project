@@ -21,8 +21,8 @@ createRoot(document.getElementById("root")).render(
     {/* <VisaStatusManagementPage /> */}
     {/* <Housing /> */}
     {/* <UserVisaPage /> */}
-    <OnBoarding />
-    {/* <PersonalInformation /> */}
+    {/* <OnBoarding /> */}
+    <PersonalInformation />
   </Provider>,
   // </StrictMode>
 );
