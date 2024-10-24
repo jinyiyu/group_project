@@ -5,7 +5,7 @@ const { Report } = require("../models/reportSchema");
 exports.createReport = async (req, res) => {
   try {
     const { title, desc } = req.body;
-    const userId = req.body.user.id;
+    const userId = req.user.id;
 
     // Create a new Report
     const newReport = new Report({
@@ -30,7 +30,7 @@ exports.createReport = async (req, res) => {
 
 exports.getUserReports = async (req, res) => {
   try {
-    const userId = req.body.user.id;
+    const userId = req.user.id;
     const userReports = await Report.find({ createdBy: userId }).populate({
       path: "comments",
       populate: {
@@ -54,7 +54,7 @@ exports.getUserReports = async (req, res) => {
 
 exports.addComment = async (req, res) => {
   try {
-    const userId = req.body.user.id;
+    const userId = req.user.id;
     const { reportId } = req.params;
     const { desc } = req.body;
 
@@ -92,7 +92,7 @@ exports.updateComment = async (req, res) => {
   try {
     const { reportId, commentId } = req.params;
     const { desc } = req.body;
-    const userId = req.body.user.id;
+    const userId = req.user.id;
 
     const report = await Report.findById(reportId);
     if (!report) {

@@ -11,6 +11,7 @@ import VisaStatusManagementPage from "./components/VisaStatusHr.jsx";
 import EmployeeSummaryView from "./pages/EmployeeSummaryView.jsx";
 import UserVisaPage from "./pages/UserVisaPage.jsx";
 import OnBoarding from "./pages/onBoarding.jsx";
+import PersonalInformation from "./pages/PersonalInformation.jsx";
 import Housing from "./pages/Housing.jsx";
 import HrHousingManagement from "./pages/HrHousing.jsx";
 
@@ -34,6 +35,10 @@ function App() {
             <Route path="user/register/:token" element={<Register />} />
             <Route path="user/login" element={<Login />} />
             <Route path="onboarding" element={<OnBoarding />} />
+            <Route
+              path="personalInformation"
+              element={<PersonalInformation />}
+            />
             <Route path="application" element={<Application />} />
             <Route path="generateTokenForm" element={<GenerateTokenForm />} />
             <Route path="visaStatus" element={<VisaStatusManagementPage />} />
