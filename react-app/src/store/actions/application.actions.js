@@ -68,23 +68,21 @@ export const updateApplicationStatus =
     }
   };
 
-export const giveFeedback =
-  (userId, description, createdBy) => async (dispatch) => {
-    dispatch({ type: GIVE_FEEDBACK_REQUEST });
-    try {
-      const response = await axios.put(
-        `${BASED_URI}/hr/hiring/applications/${userId}/feedback`,
-        {
-          description,
-          createdBy,
-        }
-      );
-      dispatch({ type: GIVE_FEEDBACK_SUCCESS, payload: response.data });
-      dispatch(fetchIndividualApplication(userId));
-    } catch (error) {
-      dispatch({
-        type: GIVE_FEEDBACK_FAILURE,
-        payload: error.response?.data || "Error giving feedback",
-      });
-    }
-  };
+export const giveFeedback = (userId, description) => async (dispatch) => {
+  dispatch({ type: GIVE_FEEDBACK_REQUEST });
+  try {
+    const response = await axios.put(
+      `${BASED_URI}/hr/hiring/applications/${userId}/feedback`,
+      {
+        description,
+      }
+    );
+    dispatch({ type: GIVE_FEEDBACK_SUCCESS, payload: response.data });
+    dispatch(fetchIndividualApplication(userId));
+  } catch (error) {
+    dispatch({
+      type: GIVE_FEEDBACK_FAILURE,
+      payload: error.response?.data || "Error giving feedback",
+    });
+  }
+};

@@ -1,6 +1,6 @@
 import GenerateTokenForm from "./components/GenerateTokenForm";
 import Application from "./components/Application";
-// import "./App.css";
+import "./App.css";
 import EmailForm from "./utils/EmailJs";
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -13,6 +13,8 @@ import EmployeeSummaryView from "./pages/EmployeeSummaryView.jsx";
 import UserVisaPage from "./pages/UserVisaPage.jsx";
 import OnBoarding from "./pages/onBoarding.jsx";
 import Housing from "./pages/Housing.jsx";
+import HrHousingManagement from "./pages/HrHousing.jsx";
+
 import Logout from "./components/Logout.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { checkLoginStatus } from "./redux/authSlice";
@@ -52,7 +54,7 @@ const LoginHOC = (WrappedComponent) => {
 
     return <WrappedComponent {...props} />;
   };
-}
+};
 
 // const RegisterHOC = (WrappedComponent) => {
 //   return (props) => {
@@ -79,12 +81,19 @@ function App() {
   const ProtectedApplication = AuthHOC(Application, ["employee"]);
   // const ProtectedRegister = AuthHOC(Register, ["hr"]);
   const ProtectedLogin = LoginHOC(Login);
-
-
+  const ProtectedHrHousingManagement = AuthHOC(HrHousingManagement, ["hr"]);
 
   return (
     <>
+      {/* testing component for personal info and onboard application page */}
+      {/* <OnBoarding></OnBoarding> */}
       <div>
+        {/* generate token  */}
+        {/* <GenerateTokenForm /> <br /> */}
+        {/* application component */}
+        {/* <Application /> <br /> */}
+        {/* <HrHousingManagement /> */}
+        {/* Commented out for readability purposes */}
         <Router>
           <Navbar />
           <Routes>
@@ -93,17 +102,27 @@ function App() {
             <Route path="user/login" element={<ProtectedLogin />} />
             <Route path="user/register/:token" element={<Register />} />
 
-            <Route path="onboarding" element={<ProtectedOnBoarding/>} />
+            <Route path="onboarding" element={<ProtectedOnBoarding />} />
             <Route path={"housing"} element={<ProtectedHousing />} />
             <Route path="userVisaPage" element={<ProtectedUserVisaPage />} />
 
             <Route path="application" element={<ProtectedApplication />} />
-            <Route path="generateTokenForm" element={<ProtectedGenerateTokenForm />} />
-            <Route path="visaStatus" element={<ProtectedVisaStatusManagementPage />} />
+            <Route
+              path="generateTokenForm"
+              element={<ProtectedGenerateTokenForm />}
+            />
+            <Route
+              path="visaStatus"
+              element={<ProtectedVisaStatusManagementPage />}
+            />
             <Route path="logout" element={<ProtectedLogout />} />
             <Route
               path="employeeSummaryView"
               element={<ProtectedEmployeeSummaryView />}
+            />
+            <Route
+              path="hrHousing"
+              element={<ProtectedHrHousingManagement />}
             />
           </Routes>
         </Router>

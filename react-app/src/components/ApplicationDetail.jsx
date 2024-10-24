@@ -18,13 +18,7 @@ const ApplicationDetails = ({ application, onBack }) => {
 
   const handleGiveFeedback = () => {
     if (feedbackInput.trim()) {
-      dispatch(
-        giveFeedback(
-          application.user,
-          feedbackInput,
-          "671600ba18cf70faee977ec3",
-        ),
-      ); //  using a sample userId
+      dispatch(giveFeedback(application.user, feedbackInput));
       setFeedbackInput("");
       setFeedbackError("");
     } else {
@@ -57,11 +51,7 @@ const ApplicationDetails = ({ application, onBack }) => {
       <div>
         <h3>Feedback</h3>
         {Array.isArray(application.feedback) ? (
-          application.feedback.map((f, index) => (
-            <p key={index}>
-              "{f.desc}" - {f.createdBy}
-            </p>
-          ))
+          application.feedback.map((f, index) => <p key={index}>"{f}"</p>)
         ) : (
           <p>{application.feedback}</p>
         )}
@@ -71,15 +61,18 @@ const ApplicationDetails = ({ application, onBack }) => {
               placeholder="Enter feedback"
               value={feedbackInput}
               onChange={(e) => setFeedbackInput(e.target.value)}
-            />
+            />{" "}
+            <br />
             {feedbackError && <p style={{ color: "red" }}>{feedbackError}</p>}
-            <button onClick={handleGiveFeedback}>Add Feedback</button>
+            <button onClick={handleGiveFeedback} id="feedback-button">
+              Add Feedback
+            </button>
           </div>
         )}
       </div>
       {/* Show Approve/Reject buttons only if status is "Pending" */}
       {application.onboardStatus.toLowerCase() === "pending" && (
-        <div>
+        <div className="update-status-btn">
           <button onClick={() => handleStatusUpdate("approved")}>
             Approve
           </button>

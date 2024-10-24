@@ -186,12 +186,6 @@ const userSchema = new Schema({
     ref: "House",
     required: true,
   },
-  // feedback: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Comment",
-  //   },
-  // ],
   feedback: [String],
   nextStep: {
     type: String,
