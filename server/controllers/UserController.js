@@ -139,7 +139,7 @@ const register = async (req, res) => {
       role: userRole,
       house: randomHouse[0]._id,
       employment: {
-        status: "citizen",
+        status: "Citizen",
         start: randomStartDate,
         end: randomEndDate,
       },

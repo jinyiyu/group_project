@@ -98,7 +98,7 @@ const seedUsers = [
       expirationDate: new Date("2025-12-15"),
     },
     employment: {
-      status: "citizen",
+      status: "Citizen",
       start: new Date("2018-01-15"),
       end: null,
     },
@@ -151,15 +151,15 @@ const seedUsers = [
       zip: "54321",
     },
     contactInfo: {
-      cellPhone: "654-321-9870",
-      workPhone: "123-456-7890",
+      cellPhone: "6543219870",
+      workPhone: "1234567890",
     },
     driverLicense: {
       number: "D543210987",
       expirationDate: new Date("2024-09-30"),
     },
     employment: {
-      status: "green_card",
+      status: "GC",
       start: new Date("2019-03-10"),
       end: null,
     },
@@ -220,7 +220,7 @@ const seedUsers = [
       expirationDate: new Date("2027-01-15"),
     },
     employment: {
-      status: "f1",
+      status: "OPT",
       start: new Date("2022-05-01"),
       end: new Date("2024-05-01"),
     },
@@ -281,7 +281,7 @@ const seedUsers = [
       expirationDate: new Date("2025-06-15"),
     },
     employment: {
-      status: "f1",
+      status: "OPT",
       start: new Date("2015-08-01"),
       end: null,
     },
@@ -342,7 +342,7 @@ const seedUsers = [
       expirationDate: new Date("2024-12-15"),
     },
     employment: {
-      status: "citizen",
+      status: "Citizen",
       start: new Date("2021-02-15"),
       end: null,
     },
@@ -403,7 +403,7 @@ const seedUsers = [
       expirationDate: new Date("2026-05-05"),
     },
     employment: {
-      status: "f1",
+      status: "OPT",
       start: new Date("2017-01-10"),
       end: null,
     },
@@ -464,7 +464,7 @@ const seedUsers = [
       expirationDate: new Date("2025-12-30"),
     },
     employment: {
-      status: "f1",
+      status: "OPT",
       start: new Date("2020-06-20"),
       end: null,
     },
