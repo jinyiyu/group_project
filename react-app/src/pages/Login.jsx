@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -16,9 +16,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.userAuth
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const currentUser = localStorage.getItem("user");
+    console.log(token, currentUser);
+    if (token && currentUser) {
+      const user = JSON.parse(currentUser);
+      const role = user.role;
+      if (token) {
+        if (role === "hr") {
+          window.location.href = "http://localhost:5173/application";
+        } else if (role === "employee") {
+          window.location.href = "http://localhost:5173/onboarding";
+        }
+      }
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,13 +46,21 @@ const Login = () => {
 
     if (loginUser.fulfilled.match(resultAction)) {
       setSnackbarMessage("Login successful!");
+      setSnackbarSeverity("success");
       setOpenSnackbar(true);
+
+      window.location.href = "http://localhost:5173/generateTokenForm";
     }
   };
 
   return (
     <Container maxWidth="xs">
       <Typography variant="h4">Login</Typography>
+      {isAuthenticated && (
+        <Alert severity="success" style={{ marginBottom: "20px" }}>
+          Logged in successful!
+        </Alert>
+      )}
       <form onSubmit={handleLogin}>
         <TextField
           fullWidth
@@ -66,7 +94,11 @@ const Login = () => {
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

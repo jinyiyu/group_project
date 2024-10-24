@@ -7,39 +7,58 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { validateRegister, registerUser } from "../redux/authSlice";
 
 const Register = () => {
-  const { token } = useParams(); // Get token from the URL
+  const { token } = useParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Hieu Tran add on
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
   const dispatch = useDispatch();
+
   const { loading, error, accessTokenValid, email, registerSuccess } =
     useSelector((state) => state.userAuth);
 
-  // Validate token on component load
   useEffect(() => {
     if (token) {
-      // console.log("Token::", token);
       dispatch(validateRegister(token));
     }
   }, [dispatch, token]);
 
-  // Monitor tokenValid state
   useEffect(() => {
-    // console.log("tokenValid::::", accessTokenValid);
-  }, [accessTokenValid]);
+    const loginToken = localStorage.getItem("token");
+    const currentUser = localStorage.getItem("user");
+    console.log(loginToken, currentUser);
+    if (loginToken && currentUser) {
+      const user = JSON.parse(currentUser);
+      const role = user.role;
+      if (loginToken) {
+        if (role === "hr") {
+          window.location.href = "http://localhost:5173/application";
+        } else if (role === "employee") {
+          window.location.href = "http://localhost:5173/";
+        }
+      }
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setSnackbarMessage("Passwords do not match!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
 
@@ -52,86 +71,134 @@ const Register = () => {
     dispatch(registerUser({ token, userData }));
   };
 
-  // If token is still being validated
-  if (loading) {
-    return <CircularProgress />;
-  }
+  // Handle snackbar close
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
-  // If token is invalid or expired
-  if (error) {
-    return <Alert severity="error">{error}</Alert>;
-  }
+  // Display a message when registration is successful
+  useEffect(() => {
+    if (registerSuccess) {
+      setSnackbarMessage("Registration successful!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        window.location.href = "http://localhost:5173/user/login";
+      }, 3000);
+    }
+  }, [registerSuccess]);
 
-  // If registration was successful
-  if (registerSuccess) {
-    return <Alert severity="success">Registration successful!</Alert>;
-  }
-  // If token is valid, show the registration form
-  if (accessTokenValid) {
-    return (
-      <Container maxWidth="xs">
-        <Typography variant="h4" gutterBottom>
-          Register
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          Registering for email: {email}
-        </Typography>
+  // Display error messages from API or form validation
+  useEffect(() => {
+    if (error) {
+      setSnackbarMessage(error);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  }, [error]);
 
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            type="text"
-            label="Username"
-            variant="outlined"
-            margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            type="text"
-            label="Email"
-            variant="outlined"
-            margin="normal"
-            value={email}
-            disabled
-          />
+  return (
+    <Container maxWidth="xs">
+      <Typography variant="h4" gutterBottom>
+        Register
+      </Typography>
 
-          <TextField
-            fullWidth
-            type="password"
-            label="Password"
-            variant="outlined"
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            type="password"
-            label="Confirm Password"
-            variant="outlined"
-            margin="normal"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+      {/* If token is invalid or expired */}
+      {accessTokenValid === false && (
+        <Alert severity="error" style={{ marginBottom: "20px" }}>
+          Invalid or expired token.
+        </Alert>
+      )}
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            style={{ marginTop: 20 }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} /> : "Register"}
-          </Button>
-        </form>
-      </Container>
-    );
-  }
+      {/* If registration was successful */}
+      {registerSuccess && (
+        <Alert severity="success" style={{ marginBottom: "20px" }}>
+          Registration successful!
+        </Alert>
+      )}
 
-  return <Alert severity="error">Invalid token</Alert>;
+      {/* Error notification */}
+      {error && (
+        <Alert severity="error" style={{ marginBottom: "20px" }}>
+          {error}
+        </Alert>
+      )}
+
+      {/* Loading spinner when the request is in progress */}
+      {loading && (
+        <CircularProgress style={{ marginBottom: "20px", display: "block" }} />
+      )}
+
+      {/* Registration form */}
+      <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          type="text"
+          label="Username"
+          variant="outlined"
+          margin="normal"
+          value={username || ""}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          type="text"
+          variant="outlined"
+          margin="normal"
+          value={email || ""}
+          disabled
+        />
+
+        <TextField
+          fullWidth
+          type="password"
+          label="Password"
+          variant="outlined"
+          margin="normal"
+          value={password || ""}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          type="password"
+          label="Confirm Password"
+          variant="outlined"
+          margin="normal"
+          value={confirmPassword || ""}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          style={{ marginTop: 20 }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : "Register"}
+        </Button>
+      </form>
+
+      {/* Snackbar for feedback messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Container>
+  );
 };
 
 export default Register;

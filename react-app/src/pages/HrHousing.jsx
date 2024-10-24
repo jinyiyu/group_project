@@ -29,7 +29,9 @@ const HrHousingManagement = () => {
   const [commentInput, setCommentInput] = useState("");
   const [editingComment, setEditingComment] = useState(null);
 
-  const currentUserId = "6719779eb1546e50e551261f"; // just for testing purpose, get logged in userId by verifying login feature
+  const currentUser = localStorage.getItem("user");
+  const user = JSON.parse(currentUser);
+  const currentUserId = user.id;
 
   const [newHouse, setNewHouse] = useState({
     address: "",
@@ -270,65 +272,81 @@ const HrHousingManagement = () => {
                     <p>Chairs: {houseDetails.facilityInfo.chairs}</p>
 
                     <h4>Facility Reports:</h4>
-                    {houseDetails.facilityReports.slice(0, 5).map((report) => (
-                      <div className="facility-report" key={report.id}>
-                        <h4>{report.title}</h4>
-                        <p>Description: {report.description}</p>
-                        <p>Status: {report.status}</p>
-                        <p>Created by: {report.createdBy}</p>
-                        <p>
-                          Date: {new Date(report.timestamp).toLocaleString()}
-                        </p>
+                    {houseDetails.facilityReports
+                      .slice(0, 5)
+                      .map((report, index) => (
+                        <div
+                          className="facility-report"
+                          key={report.id || index}
+                        >
+                          <h4>{report.title}</h4>
+                          <p>Description: {report.description}</p>
+                          <p>Status: {report.status}</p>
+                          <p>Created by: {report.createdBy}</p>
+                          <p>
+                            Date: {new Date(report.timestamp).toLocaleString()}
+                          </p>
 
-                        <h4>Comments:</h4>
-                        {report.comments.map((comment) => (
-                          <div className="facility-comment" key={comment.id}>
-                            <p>{comment.description}</p>
-                            <p>By: {comment.createdBy}</p>
-                            <p>
-                              At: {new Date(comment.timestamp).toLocaleString()}
-                            </p>
-                            {/* If the comment is by the current user, allow editing */}
-                            {comment.commentUserId === currentUserId && (
+                          <h4>Comments:</h4>
+                          {report.comments.map((comment) => (
+                            <div className="facility-comment" key={comment.id}>
+                              <p>{comment.description}</p>
+                              {/* <p>By: {comment.createdBy}</p> */}
+                              <p>
+                                At:{" "}
+                                {new Date(comment.timestamp).toLocaleString()}
+                              </p>
+                              {/* If the comment is by the current user, allow editing */}
+                              {comment.commentUserId === currentUserId && (
+                                <button
+                                  onClick={() => setEditingComment(comment.id)}
+                                >
+                                  Edit Comment
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                          <div>
+                            <textarea
+                              placeholder="Enter your comment"
+                              value={commentInput}
+                              onChange={(e) => setCommentInput(e.target.value)}
+                            ></textarea>{" "}
+                            <br />
+                            {editingComment ? (
+                              <div>
+                                <button
+                                  onClick={() =>
+                                    handleEditComment(
+                                      report.id,
+                                      editingComment,
+                                      house.id
+                                    )
+                                  }
+                                >
+                                  Update Comment
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingComment(null);
+                                    setCommentInput("");
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
                               <button
-                                onClick={() => setEditingComment(comment.id)}
+                                onClick={() =>
+                                  handleAddComment(report.id, house.id)
+                                }
                               >
-                                Edit Comment
+                                Add Comment
                               </button>
                             )}
                           </div>
-                        ))}
-                        <div>
-                          <textarea
-                            placeholder="Enter your comment"
-                            value={commentInput}
-                            onChange={(e) => setCommentInput(e.target.value)}
-                          ></textarea>{" "}
-                          <br />
-                          {editingComment ? (
-                            <button
-                              onClick={() =>
-                                handleEditComment(
-                                  report.id,
-                                  editingComment,
-                                  house.id
-                                )
-                              }
-                            >
-                              Update Comment
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                handleAddComment(report.id, house.id)
-                              }
-                            >
-                              Add Comment
-                            </button>
-                          )}
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
 

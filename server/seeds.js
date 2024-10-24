@@ -4,6 +4,8 @@ const User = require("./models/userSchema");
 const Document = require("./models/documentSchema");
 const { Report, Comment } = require("./models/reportSchema");
 const House = require("./models/houseSchema");
+const tokenHistory = require("./models/tokenHistorySchema");
+const basicUser = require("./models/basicUserSchema");
 
 const seedUsers = require("./data/userData");
 const seedDocument = require("./data/documentData");
@@ -26,6 +28,8 @@ const seedDatabase = async () => {
     await Document.deleteMany({});
     await Report.deleteMany({});
     await House.deleteMany({});
+    // await tokenHistory.deleteMany({});
+    // await basicUser.deleteMany({});
 
     console.log("Existing data deleted successfully.");
 
