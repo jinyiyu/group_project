@@ -25,7 +25,7 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
                 <td>
                   <a
                     href="#"
-                    onClick={() => onOpenModal(employee)}
+                    onClick={() => onOpenModal(employee.id)}
                     style={{ color: "black", cursor: "pointer" }}
                   >
                     {employee.name.firstName} {employee.name.lastName}
