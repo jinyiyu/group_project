@@ -49,11 +49,11 @@ const AuthHOC = (WrappedComponent, allowedRoles) => {
       dispatch(checkLoginStatus());
     }, [dispatch]);
     if (!isAuthenticated) {
-      return <Navigate to="/user/login" />;
+      return <Navigate to="/" />;
     }
 
     if (!allowedRoles.includes(user.role)) {
-      return <p>Unauthorized role</p>; // or 401
+      return <Navigate to="/" />;
     }
 
     return <WrappedComponent {...props} />;
