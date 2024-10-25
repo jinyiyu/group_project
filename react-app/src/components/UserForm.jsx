@@ -44,7 +44,7 @@ const UserForm = () => {
 
 
   useEffect(() => {
-    if (user.onboardStatus == "pending") {
+    if (user.onboardStatus == "pending" || user.onboardStatus=="approved") {
       disableAllInputs();
     }
   });
@@ -796,7 +796,7 @@ const UserForm = () => {
             </div>
           ))}
         </Box>
-        {user.onboardStatus !== "pending" ? (
+        {user.onboardStatus == "rejected" || user.onboardStatus == "not started" ? (
           <>
             <LineDivider label="End of Application" />
             <Button
@@ -813,7 +813,7 @@ const UserForm = () => {
         )}{" "}
       </form>
 
-      {user.onboardStatus !== "pending" ? (
+      {user.onboardStatus == "not started" || user.onboardStatus=="pending" ? (
         <>
           <LineDivider label="Add Emergency Contact" />
           <Box

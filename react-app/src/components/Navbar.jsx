@@ -90,7 +90,7 @@ const Navbar = () => {
             )}
 
             {/* only show when user.onboardStatus == approved */}
-            {onboardStatus === "Approved" && (
+            {onboardStatus === "Approved" || onboardStatus === "approved" && (
               <>
                 <Button
                   color="inherit"

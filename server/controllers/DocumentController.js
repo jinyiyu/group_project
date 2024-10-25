@@ -43,6 +43,7 @@ const updateFile = async(req, res) => {
 
       const document = await Document.find({user: userId, documentType: type}).lean().exec();
       if (document.length!==0) {
+        console.log("new doc11111")
         updated = await Document.findOneAndUpdate(
           { user: userId, documentType: type }, 
           {
@@ -54,6 +55,7 @@ const updateFile = async(req, res) => {
           { new: true }
         ).lean().exec();
       } else {
+        console.log("old doc22222222")
         updated = await Document.create({
           user: userId,
           documentType: type,

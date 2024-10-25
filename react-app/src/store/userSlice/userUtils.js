@@ -31,6 +31,10 @@ const validateUserData = (user) => {
     errors.push("Date of Birth is required");
   }
 
+  if (user.emergencyContact.length < 1) {
+    errors.push("you need at least one emergency contact");
+  };
+
   const reference = user.reference;
 
   // Check if at least one reference is provided
