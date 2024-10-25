@@ -11,11 +11,10 @@ const jwt = require("jsonwebtoken");
 // will return specific fields if given in the query string
 const fetchUserData = async (req, res) => {
   const userId = req.user.id;
-  // const userId = "6717d2d7cd4fb7e80481f379";
   const { fields } = req.query;
 
   try {
-    let filter = ""; //TODO_ldl: needs a middleware before this function to validate the filter
+    let filter = "";
     if (fields) {
       filter = fields.split(";").join(" ");
     }
@@ -23,7 +22,7 @@ const fetchUserData = async (req, res) => {
     const user = await User.findById(userId).select(filter).lean().exec();
     return res.status(200).json({ user });
   } catch (error) {
-    res.status(500).json({ message: `${error}` });
+    return res.status(500).json({ message: `Error fetching user: ${error}` });
   }
 };
 
@@ -44,15 +43,11 @@ const fetchUserDataById = async (req, res) => {
 // update user data
 // data can be nested object, should follow the data model, can be partial
 const updateUserData = async (req, res) => {
-  // const { userId, data } = req.body;
   const { data, fromOnBoard } = req.body; 
-  console.log(data)
-
   const userId = req.user.id;
 
   try {
     // Use $set to update nested fields
-
     let updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: data },
@@ -60,8 +55,6 @@ const updateUserData = async (req, res) => {
     )
       .lean()
       .exec();
-
-
 
     if (fromOnBoard) {
       updatedUser = await User.findByIdAndUpdate(userId, {
@@ -74,7 +67,7 @@ const updateUserData = async (req, res) => {
     if (!updatedUser) {
       return res
         .status(500)
-        .json({ message: `DB update error for ${(userId, data)}` });
+        .json({ message: `Database update error for ${(userId, data)}` });
     }
 
     return res.status(200).json({ updatedUser });

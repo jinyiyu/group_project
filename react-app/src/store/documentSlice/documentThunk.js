@@ -11,7 +11,7 @@ export const fetchDocumentThunk = createAsyncThunk('document/fetchDocument', asy
     });
 
   if (!res.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error('error fetching documents');
   }
 
   const {files} = await res.json();

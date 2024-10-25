@@ -11,7 +11,7 @@ export const fetchUserThunk = createAsyncThunk(
     });
 
     if (!res.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error("error fetching user data");
     }
 
     const { user } = await res.json();
