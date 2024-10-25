@@ -14,48 +14,136 @@ import OnBoarding from "./pages/onBoarding.jsx";
 import PersonalInformation from "./pages/PersonalInformation.jsx";
 import Housing from "./pages/Housing.jsx";
 import HrHousingManagement from "./pages/HrHousing.jsx";
+import { useSelector, useDispatch } from "react-redux";
+import { checkLoginStatus } from "./store/authSlice/authSlice.js";
+import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import Logout from "./components/Logout.jsx";
+const LoginHOC = (WrappedComponent) => {
+  return (props) => {
+    const dispatch = useDispatch();
+    const { isAuthenticated, user } = useSelector((state) => state.userAuth);
 
-// import PrivateRoute from "./components/PrivateRoute";
+    useEffect(() => {
+      dispatch(checkLoginStatus());
+    }, [dispatch]);
+
+    if (isAuthenticated) {
+      if (user.role === "hr") {
+        return <Navigate to="/generateTokenForm" />;
+      } else if (user.role === "employee") {
+        return <Navigate to="/onboarding" />;
+      }
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+};
+
+const AuthHOC = (WrappedComponent, allowedRoles) => {
+  return (props) => {
+    const dispatch = useDispatch();
+
+    const { isAuthenticated, user } = useSelector((state) => state.userAuth);
+    useEffect(() => {
+      dispatch(checkLoginStatus());
+    }, [dispatch]);
+    if (!isAuthenticated) {
+      return <Navigate to="/" />;
+    }
+
+    if (!allowedRoles.includes(user.role)) {
+      return <Navigate to="/" />;
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+};
+
+const Home = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector((state) => state.userAuth);
+  useEffect(() => {
+    dispatch(checkLoginStatus());
+  }, [dispatch]);
+  if (!isAuthenticated) {
+    return <Navigate to="/user/login" />;
+  }
+  if (user.role === "hr") {
+    return <Navigate to="/generateTokenForm" />;
+  } else if (user.role === "employee") {
+    return <Navigate to="/onboarding" />;
+  }
+};
 
 function App() {
+  const ProtectedLogin = LoginHOC(Login);
+  const ProtectedLogout = AuthHOC(Logout, ["hr", "employee"]);
+  const ProtectedOnBoarding = AuthHOC(OnBoarding, ["employee"]);
+  // personal information page
+  const ProtectedPersonalInformation = AuthHOC(PersonalInformation, [
+    "employee",
+  ]);
+  //housing
+  const ProtectedHousing = AuthHOC(Housing, ["employee"]);
+  // user visa page
+  const ProtectedUserVisaPage = AuthHOC(UserVisaPage, ["employee"]);
+
+  // hr
+  //generate token form
+  const ProtectedGenerateTokenForm = AuthHOC(GenerateTokenForm, ["hr"]);
+  //visa status
+  const ProtectedVisaStatusManagementPage = AuthHOC(VisaStatusManagementPage, [
+    "hr",
+  ]);
+  //employee summary view
+  const ProtectedEmployeeSummaryView = AuthHOC(EmployeeSummaryView, ["hr"]);
+  //application
+  const ProtectedApplication = AuthHOC(Application, ["hr"]);
+  //hr housing
+  const ProtectedHrHousingManagement = AuthHOC(HrHousingManagement, ["hr"]);
+
   return (
     <>
-      {/* testing component for personal info and onboard application page */}
-      {/* <OnBoarding></OnBoarding> */}
       <div>
-        {/* generate token  */}
-        {/* <GenerateTokenForm /> <br /> */}
-        {/* application component */}
-        {/* <Application /> <br /> */}
-        {/* <HrHousingManagement /> */}
-        {/* Commented out for readability purposes */}
         <Router>
           <Navbar />
 
           <Routes>
             {/* Register page with token validation */}
-            <Route path="/" element={<p>Welcome</p>} />
+            <Route path="/" element={<Home />} />
             <Route path="user/register/:token" element={<Register />} />
-            <Route path="user/login" element={<Login />} />
-            <Route path="onboarding" element={<OnBoarding />} />
+            <Route path="user/login" element={<ProtectedLogin />} />
+            <Route path="onboarding" element={<ProtectedOnBoarding />} />
             <Route
               path="personalInformation"
-              element={<PersonalInformation />}
+              element={<ProtectedPersonalInformation />}
             />
-            <Route path="application" element={<Application />} />
-            <Route path="generateTokenForm" element={<GenerateTokenForm />} />
-            <Route path="visaStatus" element={<VisaStatusManagementPage />} />
-            <Route path="hrHousing" element={<HrHousingManagement />} />
+            <Route path="application" element={<ProtectedApplication />} />
+            <Route
+              path="generateTokenForm"
+              element={<ProtectedGenerateTokenForm />}
+            />
+            <Route
+              path="visaStatus"
+              element={<ProtectedVisaStatusManagementPage />}
+            />
+            <Route
+              path="hrHousing"
+              element={<ProtectedHrHousingManagement />}
+            />
+            {/* <EmployeeSummaryView /> */}
             <Route
               path="employeeSummaryView"
-              element={<EmployeeSummaryView />}
+              element={<ProtectedEmployeeSummaryView />}
             />
-            <Route path="userVisaPage" element={<UserVisaPage />} />
-            <Route path={"housing"} element={<Housing />} />
-            {/* <EmployeeSummaryView /> */}
             {/* <Housing /> */}
+            <Route path={"housing"} element={<ProtectedHousing />} />
             {/* <UserVisaPage /> */}
+            <Route path="userVisaPage" element={<ProtectedUserVisaPage />} />
             {/* <OnBoarding /> */}
+            <Route path="/user/logout" element={<ProtectedLogout />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>
       </div>

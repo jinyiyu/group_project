@@ -20,6 +20,7 @@ const {
   logout,
   isLoggedIn,
   getUsers,
+  getUserOnboardStatus,
 } = require("../controllers/UserController.js");
 const UserRouter = express.Router();
 
@@ -36,6 +37,7 @@ UserRouter.get(
     register
   )
   .post("/login", login)
+  .get("/onboardStatus", accessValidation, getUserOnboardStatus)
 
   .get("/isLoggedIn", accessValidation, isLoggedIn)
   .get("/logout", accessValidation, logout)

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { validateRegister, registerUser } from "../redux/authSlice";
+import { validateRegister, registerUser } from "../store/authSlice/authSlice.js";
 
 const Register = () => {
   const { token } = useParams();

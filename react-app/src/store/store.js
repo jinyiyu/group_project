@@ -4,7 +4,7 @@ import reportReducer from "./reportSlice/report.slice";
 import statusReducer from "./statusSlice/status.slice";
 import fileReducer from "./statusSlice/file.slice";
 import employeeReducer from "./employeeSlice/employeeSlice.js";
-import userAuthReducer from "../redux/authSlice.js";
+import userAuthReducer from "./authSlice/authSlice.js";
 import userReducer from "./userSlice/userSlice";
 import documentReducer from "./documentSlice/documentSlice";
 import authReducer from "./hrAuthSlice/auth.slice";

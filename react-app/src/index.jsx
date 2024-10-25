@@ -17,12 +17,6 @@ createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <Provider store={store}>
     <App />
-    {/* <EmployeeSummaryView /> */}
-    {/* <VisaStatusManagementPage /> */}
-    {/* <Housing /> */}
-    {/* <UserVisaPage /> */}
-    {/* <OnBoarding /> */}
-    {/* <PersonalInformation /> */}
   </Provider>
   // </StrictMode>
 );
