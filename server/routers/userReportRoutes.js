@@ -14,5 +14,10 @@ router.put(
   accessValidation,
   userReportController.updateComment
 );
+router.patch(
+  "/:reportId/status",
+  accessValidation,
+  userReportController.changeReportStatus
+);
 
 module.exports = router;

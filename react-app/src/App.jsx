@@ -15,6 +15,8 @@ import PersonalInformation from "./pages/PersonalInformation.jsx";
 import Housing from "./pages/Housing.jsx";
 import HrHousingManagement from "./pages/HrHousing.jsx";
 
+// import PrivateRoute from "./components/PrivateRoute";
+
 function App() {
   return (
     <>
@@ -29,6 +31,7 @@ function App() {
         {/* Commented out for readability purposes */}
         <Router>
           <Navbar />
+
           <Routes>
             {/* Register page with token validation */}
             <Route path="/" element={<p>Welcome</p>} />
@@ -43,15 +46,15 @@ function App() {
             <Route path="generateTokenForm" element={<GenerateTokenForm />} />
             <Route path="visaStatus" element={<VisaStatusManagementPage />} />
             <Route path="hrHousing" element={<HrHousingManagement />} />
-            {/* <EmployeeSummaryView /> */}
             <Route
               path="employeeSummaryView"
               element={<EmployeeSummaryView />}
             />
-            {/* <Housing /> */}
-            <Route path={"housing"} element={<Housing />} />
-            {/* <UserVisaPage /> */}
             <Route path="userVisaPage" element={<UserVisaPage />} />
+            <Route path={"housing"} element={<Housing />} />
+            {/* <EmployeeSummaryView /> */}
+            {/* <Housing /> */}
+            {/* <UserVisaPage /> */}
             {/* <OnBoarding /> */}
           </Routes>
         </Router>

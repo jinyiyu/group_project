@@ -36,8 +36,6 @@ const Register = () => {
     user,
   } = useSelector((state) => state.userAuth);
 
-  console.log(isAuthenticated, user);
-
   useEffect(() => {
     if (token) {
       dispatch(validateRegister(token));

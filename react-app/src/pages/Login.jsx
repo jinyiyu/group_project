@@ -33,8 +33,6 @@ const Login = () => {
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
 
-      console.log("User from action payload:", resultAction.payload);
-
       const loggedInUser = resultAction.payload.user || resultAction.payload;
 
       if (loggedInUser.role === "hr") {
