@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import {
   updateApplicationStatus,
   giveFeedback,
+  fetchIndividualApplication,
+  fetchApplications,
 } from "../store/applicationSlice/application.thunk";
 
 const ApplicationDetails = ({ application, onBack }) => {
@@ -17,12 +19,23 @@ const ApplicationDetails = ({ application, onBack }) => {
         status,
         feedback: application.feedback,
       })
-    );
+    ).then(() => {
+      // Fetch the updated application details after status update
+      dispatch(fetchIndividualApplication(application.user));
+      dispatch(fetchApplications());
+    });
   };
 
   const handleGiveFeedback = () => {
+    console.log(application.user);
     if (feedbackInput.trim()) {
-      dispatch(giveFeedback(application.user, feedbackInput));
+      dispatch(
+        giveFeedback({ userId: application.user, description: feedbackInput })
+      ).then(() => {
+        // Fetch the updated application details after feedback is given
+        dispatch(fetchIndividualApplication(application.user));
+        dispatch(fetchApplications());
+      });
       setFeedbackInput("");
       setFeedbackError("");
     } else {

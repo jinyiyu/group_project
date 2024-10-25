@@ -121,7 +121,7 @@ const HrHousingManagement = () => {
         reportId,
         description: commentInput,
         userId: currentUserId,
-      }),
+      })
     );
     dispatch(fetchHouseDetail(houseId));
     setCommentInput("");
@@ -138,7 +138,7 @@ const HrHousingManagement = () => {
         commentId,
         description: commentInput,
         currentUserId,
-      }),
+      })
     );
     dispatch(fetchHouseDetail(houseId));
     setCommentInput("");
@@ -315,7 +315,7 @@ const HrHousingManagement = () => {
                           {report.comments.map((comment) => (
                             <div className="facility-comment" key={comment.id}>
                               <p>{comment.description}</p>
-                              {/* <p>By: {comment.createdBy}</p> */}
+                              <p>By: {comment.createdBy}</p>
                               <p>
                                 At:{" "}
                                 {new Date(comment.timestamp).toLocaleString()}
