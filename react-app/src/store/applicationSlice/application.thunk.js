@@ -40,6 +40,7 @@ export const giveFeedback = createAsyncThunk(
   "application/giveFeedback",
   async ({ userId, description, createdBy }, { rejectWithValue }) => {
     try {
+      console.log(userId);
       await axios.put(
         `${BASED_URI}/hr/hiring/applications/${userId}/feedback`,
         {

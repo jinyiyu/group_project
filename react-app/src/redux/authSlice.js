@@ -77,7 +77,6 @@ export const logoutUser = createAsyncThunk(
       await axios.get("http://localhost:3000/user/logout", {
         withCredentials: true,
       });
-      // return {};
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message || "Logout failed");
@@ -89,15 +88,13 @@ export const logoutUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    email: null, // Stores email if token is valid
-    accessTokenValid: false, // Tracks if url token for register is valid
-    registerSuccess: false, // Tracks if registration is successful
-
-    loading: false, // Loading state for token validation, registration, and login
-    error: null, // Error message if something goes wrong
-
-    user: { role: "employee", username: "test" }, // Stores user information after login
-    loginSuccess: true, // Tracks if login is successful
+    email: null,
+    accessTokenValid: false,
+    registerSuccess: false,
+    loading: false,
+    error: null,
+    user: null,
+    isAuthenticated: false,
   },
   reducers: {},
   extraReducers: (builder) => {
