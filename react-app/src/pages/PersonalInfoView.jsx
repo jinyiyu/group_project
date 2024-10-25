@@ -10,7 +10,6 @@ import InformationSection from "../components/InformationSection";
 import DocumentGallery from "../components/DocumentGallery";
 
 function PersonalInfoView({ user }) {
-  console.log("user:", user);
   function transformString(str) {
     let result = str.replace(/[A-Z]/g, (match) => ` ${match}`);
     result = result.charAt(0).toUpperCase() + result.slice(1);
