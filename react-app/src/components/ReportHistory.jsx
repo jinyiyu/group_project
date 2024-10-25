@@ -4,12 +4,14 @@ import {
   fetchReportsThunk,
   addCommentThunk,
   updateCommentThunk,
+  changeReportStatusThunk,
 } from "../store/reportSlice/report.thunk";
 import { selectReports } from "../store/reportSlice/report.selectors";
 import CommentModal from "../components/CommentModal";
 import SortReport from "../components/SortReport";
 import { Typography, Button, Box, Pagination, Divider } from "@mui/material";
 import SortByStatus from "./SortByStatus";
+import StatusSwitch from "./StatusSwitch";
 
 const ReportHistory = () => {
   const dispatch = useDispatch();
@@ -22,18 +24,39 @@ const ReportHistory = () => {
   const [sortOption, setSortOption] = useState("latest");
   const reportsPerPage = 5;
   const [statusFilter, setStatusFilter] = useState("all");
+  const [statusMap, setStatusMap] = useState({});
 
   useEffect(() => {
     dispatch(fetchReportsThunk());
   }, [dispatch]);
 
+  useEffect(() => {
+    const initialStatusMap = reports.reduce((acc, report) => {
+      acc[report._id] = report.status;
+      return acc;
+    }, {});
+    setStatusMap(initialStatusMap);
+  }, [reports]);
+
+  const handleStatusChange = (reportId, newStatus) => {
+    // Update local state immediately
+    setStatusMap((prevStatusMap) => ({
+      ...prevStatusMap,
+      [reportId]: newStatus,
+    }));
+
+    // Dispatch thunk to update the backend
+    dispatch(changeReportStatusThunk({ reportId, status: newStatus }));
+  };
+
   const filteredReports = reports.filter((report) => {
+    const currentStatus = statusMap[report._id] || report.status;
     if (statusFilter === "open") {
-      return report.status === "open";
+      return currentStatus === "open";
     } else if (statusFilter === "In Progress") {
-      return report.status === "In Progress";
+      return currentStatus === "In Progress";
     } else if (statusFilter === "closed") {
-      return report.status === "closed";
+      return currentStatus === "closed";
     }
     return true;
   });
@@ -50,7 +73,7 @@ const ReportHistory = () => {
   const totalPages = Math.ceil(totalReports / reportsPerPage);
   const currentReports = sortedReports.slice(
     (currentPage - 1) * reportsPerPage,
-    currentPage * reportsPerPage,
+    currentPage * reportsPerPage
   );
 
   // Handler for set new page status
@@ -79,9 +102,14 @@ const ReportHistory = () => {
     dispatch(addCommentThunk({ reportId, comment: commentDesc }))
       .unwrap()
       .then((updatedReport) => {
+        setStatusMap((prevStatusMap) => ({
+          ...prevStatusMap,
+          [reportId]: "In Progress",
+        }));
         setSelectedReport((prevReport) => ({
           ...prevReport,
           comments: updatedReport.report.comments,
+          status: updatedReport.status,
         }));
       });
   };
@@ -91,9 +119,14 @@ const ReportHistory = () => {
     dispatch(updateCommentThunk({ reportId, commentId, desc: newCommentDesc }))
       .unwrap()
       .then((updatedReport) => {
+        setStatusMap((prevStatusMap) => ({
+          ...prevStatusMap,
+          [reportId]: "In Progress",
+        }));
         setSelectedReport((prevReport) => ({
           ...prevReport,
           comments: updatedReport.report.comments,
+          status: updatedReport.status,
         }));
         setIsUpdating(false);
         setCommentIdToUpdate(null);
@@ -154,7 +187,12 @@ const ReportHistory = () => {
                 })}
               </Box>
               <Box component="span" sx={{ ml: 1 }}>
-                Status: {report.status}
+                <StatusSwitch
+                  status={statusMap[report._id]}
+                  onChangeStatus={(newStatus) =>
+                    handleStatusChange(report._id, newStatus)
+                  }
+                />
               </Box>
             </Typography>
 

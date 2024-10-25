@@ -33,7 +33,15 @@ export const addCommentThunk = createAsyncThunk(
         desc: comment,
       });
 
-      return response.data;
+      const updatedReport = response.data;
+
+      if (updatedReport.status !== "In Progress") {
+        await thunkAPI.dispatch(
+          changeReportStatusThunk({ reportId, status: "In Progress" })
+        );
+      }
+
+      return updatedReport;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -48,6 +56,28 @@ export const updateCommentThunk = createAsyncThunk(
         `/users/${reportId}/comments/${commentId}`,
         { desc }
       );
+
+      const updatedReport = response.data;
+      if (updatedReport.status !== "In Progress") {
+        await thunkAPI.dispatch(
+          changeReportStatusThunk({ reportId, status: "In Progress" })
+        );
+      }
+
+      return updatedReport;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const changeReportStatusThunk = createAsyncThunk(
+  "report/changeReportStatusThunk",
+  async ({ reportId, status }, thunkAPI) => {
+    try {
+      const response = await axios.patch(`/users/${reportId}/status`, {
+        status,
+      });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

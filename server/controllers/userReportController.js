@@ -28,6 +28,31 @@ exports.createReport = async (req, res) => {
   }
 };
 
+exports.changeReportStatus = async (req, res) => {
+  const { reportId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedReport = await Report.findByIdAndUpdate(
+      reportId,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Status updated successfully", report: updatedReport });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating report status", error: error.message });
+  }
+};
+
 exports.getUserReports = async (req, res) => {
   try {
     const userId = req.user.id;
