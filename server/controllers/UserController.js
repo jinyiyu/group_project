@@ -254,6 +254,22 @@ const logout = async (req, res) => {
   }
 };
 
+// get user onboard status  
+const getUserOnboardStatus = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await User.findById(userId).lean().exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ onboardStatus: user.onboardStatus });
+  } catch (error) {
+    return res.status(500).json({ message: `Error fetching user: ${error}` });
+  }
+};
+
+
+
 // is logged in
 const isLoggedIn = async (req, res) => {
   try {
@@ -264,6 +280,7 @@ const isLoggedIn = async (req, res) => {
           username: req.user.userName,
           role: req.user.role,
           id: req.user.id,
+          // onboardStatus: req.user.onboardStatus,
         },
       });
     } else {
@@ -350,3 +367,4 @@ exports.login = login;
 exports.validRegisterURL = validRegisterURL;
 exports.logout = logout;
 exports.isLoggedIn = isLoggedIn;
+exports.getUserOnboardStatus = getUserOnboardStatus;
