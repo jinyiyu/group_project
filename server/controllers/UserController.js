@@ -45,8 +45,8 @@ const fetchUserDataById = async (req, res) => {
 // data can be nested object, should follow the data model, can be partial
 const updateUserData = async (req, res) => {
   // const { userId, data } = req.body;
-  const { data, fromOnBoard } = req.body; 
-  console.log(data)
+  const { data, fromOnBoard } = req.body;
+  console.log(data);
 
   const userId = req.user.id;
 
@@ -60,8 +60,6 @@ const updateUserData = async (req, res) => {
     )
       .lean()
       .exec();
-
-
 
     if (fromOnBoard) {
       updatedUser = await User.findByIdAndUpdate(userId, {
@@ -146,6 +144,10 @@ const register = async (req, res) => {
     });
 
     await newUser.save();
+
+    await House.findByIdAndUpdate(randomHouse[0]._id, {
+      $inc: { numOfResidents: 1 },
+    });
 
     const accessToken = genAccessToken(
       newUser._id,

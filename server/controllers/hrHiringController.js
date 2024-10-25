@@ -132,9 +132,9 @@ exports.getIndividualApplication = async (req, res) => {
 
   try {
     const user = await User.findById(userId)
-      .select(
-        "userProfile.firstName userProfile.lastName userProfile.email onboardStatus feedback"
-      )
+      // .select(
+      //   "userProfile.firstName userProfile.lastName userProfile.email onboardStatus feedback"
+      // )
       .populate({
         path: "feedback",
         select: "desc createdBy timestamp",
@@ -158,6 +158,10 @@ exports.getIndividualApplication = async (req, res) => {
       user: user._id,
       fullName: `${user.userProfile.firstName} ${user.userProfile.lastName}`,
       email: user.userProfile.email,
+      phone: user.contactInfo,
+      ssn: user.userProfile.SSN,
+      gender: user.userProfile.gender,
+      address: user.address,
       onboardStatus: user.onboardStatus,
       form: {
         firstName: user.userProfile.firstName,
@@ -270,15 +274,19 @@ exports.updateApplicationStatus = async (req, res) => {
 // };
 
 // Get all information of individual user - testing - Hieu Tran
-// exports.getIndividual = async (req, res) => {
-//   const { userId } = req.params;
-//   try {
-//     const user = await User.findById(userId);
-//     res.status(200).json(user);
-//   } catch (error) {
-//     console.error("Error fetching application:", error);
-//     res
-//       .status(500)
-//       .json({ success: false, message: "Failed to fetch application", error });
-//   }
-// };
+exports.getIndividual = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    const documents = await Document.find({ user: userId }).select(
+      "documentType fileUrl feedback"
+    );
+    res.status(200).json({ user, documents });
+  } catch (error) {
+    console.error("Error fetching application:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch application", error });
+  }
+};
