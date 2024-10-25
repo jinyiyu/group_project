@@ -33,6 +33,7 @@ import "../assets/styles/onBoarding.css";
 
 const UserForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const documents = useSelector((state) => state.document);
   const [MUIDisabled, setMUIDisabled] = useState(false);
@@ -531,7 +532,8 @@ const UserForm = () => {
             "https://bfgp.s3.amazonaws.com"
           ) ? (
             <>
-              <Button variant="outlined" color="info">
+              <Button variant="outlined" color="info" onClick={() => 
+    navigate('/userVisaPage')}>
                 track your visa status
               </Button>
             </>
@@ -609,6 +611,7 @@ const UserForm = () => {
               label="Do you have a driver’s license?"
               onChange={handleLicenseChange}
               name="employment.status"
+              disabled={user.onboardStatus=="pending"}
             >
               <MenuItem value="yes">Yes</MenuItem>
               <MenuItem value="no">No</MenuItem>

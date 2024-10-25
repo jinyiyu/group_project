@@ -15,8 +15,6 @@ import PersonalInformation from "./pages/PersonalInformation.jsx";
 import Housing from "./pages/Housing.jsx";
 import HrHousingManagement from "./pages/HrHousing.jsx";
 
-// import PrivateRoute from "./components/PrivateRoute";
-
 function App() {
   return (
     <>
