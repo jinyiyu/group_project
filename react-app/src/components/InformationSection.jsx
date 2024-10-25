@@ -90,7 +90,6 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
     },
     [dispatch, setMode]
   );
-  console.log(fields)
 
   return (
     <>
@@ -125,7 +124,7 @@ function InformationSection({ sectionName, labelName, showEditButton = true }) {
               }}
               required={requiredFields.includes(field) ? true : false}
             ></TextField>
-          ): (<StateSelector disabled={mode=="view"} width={"100%"}/>)})}
+          ): (<StateSelector key={field} disabled={mode=="view"} width={"100%"}/>)})}
           {mode == "edit" ? (
             <>
               <Box
