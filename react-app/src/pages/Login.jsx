@@ -9,7 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice";
+import { loginUser } from "../store/authSlice/authSlice.js";
 // import { useNavigate } from "react-router-dom";
 
 const Login = () => {

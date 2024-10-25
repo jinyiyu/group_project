@@ -15,7 +15,7 @@ import PersonalInformation from "./pages/PersonalInformation.jsx";
 import Housing from "./pages/Housing.jsx";
 import HrHousingManagement from "./pages/HrHousing.jsx";
 import { useSelector, useDispatch } from "react-redux";
-import { checkLoginStatus } from "./redux/authSlice";
+import { checkLoginStatus } from "./store/authSlice/authSlice.js";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import Logout from "./components/Logout.jsx";

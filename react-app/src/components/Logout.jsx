@@ -1,7 +1,7 @@
 // src/components/Logout.jsx
 import React from "react";
 import { useDispatch } from "react-redux";
-import { logoutUser } from "../redux/authSlice";
+import { logoutUser } from "../store/authSlice/authSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const Logout = () => {

@@ -8,7 +8,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { checkLoginStatus , getUserOnboardStatus} from "../redux/authSlice";
+import { checkLoginStatus , getUserOnboardStatus} from "../store/authSlice/authSlice.js";
 
 const Navbar = () => {
   const dispatch = useDispatch();
