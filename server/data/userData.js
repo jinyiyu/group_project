@@ -70,7 +70,7 @@ const seedUsers = [
     userName: "jane_doe",
     password: "Password123!",
     role: "employee",
-    onboardStatus: "not started",
+    onboardStatus: "Approved",
     userProfile: {
       firstName: "Jane",
       lastName: "Doe",
@@ -128,10 +128,11 @@ const seedUsers = [
     },
   },
   {
+    _id: "671abce1ac955752214414af",
     userName: "alice_smith",
     password: "Password123!",
     role: "employee",
-    onboardStatus: "not started",
+    onboardStatus: "Approved",
     userProfile: {
       firstName: "Alice",
       lastName: "Smith",
@@ -159,7 +160,7 @@ const seedUsers = [
       expirationDate: new Date("2024-09-30"),
     },
     employment: {
-      status: "GC",
+      status: "OPT",
       start: new Date("2019-03-10"),
       end: null,
     },
@@ -314,7 +315,7 @@ const seedUsers = [
     userName: "emma_jones",
     password: "Password123!",
     role: "employee",
-    onboardStatus: "rejected",
+    onboardStatus: "Rejected",
     userProfile: {
       firstName: "Emma",
       lastName: "Jones",
@@ -375,7 +376,7 @@ const seedUsers = [
     userName: "olivia_clark",
     password: "Password123!",
     role: "employee",
-    onboardStatus: "approved",
+    onboardStatus: "Approved",
     userProfile: {
       firstName: "Olivia",
       lastName: "Clark",
@@ -436,7 +437,7 @@ const seedUsers = [
     userName: "liam_smith",
     password: "Password123!",
     role: "employee",
-    onboardStatus: "pending",
+    onboardStatus: "Pending",
     userProfile: {
       firstName: "Liam",
       lastName: "Smith",

@@ -88,6 +88,9 @@ const VisaStatusManagementPage = () => {
   };
 
   const determineNextStep = (employee) => {
+    if (!employee.latestDocument) {
+      return "No document submitted, next step is to submit OPT receipt.";
+    }
     const { documentType, status } = employee.latestDocument;
 
     if (documentType === "OPT_receipt") {
@@ -140,7 +143,7 @@ const VisaStatusManagementPage = () => {
       message: `Dear ${employee.name.firstName} ${
         employee.name.lastName
       }, \n\nPlease be informed of your next step regarding your visa document: ${determineNextStep(
-        employee,
+        employee
       )}\n\nBest regards,\nVisa Management Team`,
     };
 
@@ -149,7 +152,7 @@ const VisaStatusManagementPage = () => {
         "service_qajtlhi",
         "template_dfpkctt",
         templateParams,
-        "SlwYI4G9g1yD3FUSt",
+        "SlwYI4G9g1yD3FUSt"
       )
       .then(
         (result) => {
@@ -159,7 +162,7 @@ const VisaStatusManagementPage = () => {
         (error) => {
           console.log("Failed to send email:", error.text);
           alert("Failed to send notification.");
-        },
+        }
       );
   };
 
@@ -185,7 +188,7 @@ const VisaStatusManagementPage = () => {
             _id,
             status: "Rejected",
             feedback: userFeedback,
-          }),
+          })
         ).unwrap();
         alert("Document is rejected");
         window.location.reload();
@@ -199,7 +202,7 @@ const VisaStatusManagementPage = () => {
     const filteredEmployees = visaEmployees.filter((employee) =>
       `${employee.name.firstName} ${employee.name.lastName}`
         .toLowerCase()
-        .includes(searchQuery.toLowerCase()),
+        .includes(searchQuery.toLowerCase())
     );
     dispatch(setDisplayedEmployees(filteredEmployees));
     dispatch(setDropdownVisible(false));
@@ -264,13 +267,13 @@ const VisaStatusManagementPage = () => {
                       <div>
                         Start Date:{" "}
                         {moment(employee.workAuthorizationTitle.start).format(
-                          "MMMM Do YYYY",
+                          "MMMM Do YYYY"
                         )}
                       </div>
                       <div>
                         End Date:{" "}
                         {moment(employee.workAuthorizationTitle.end).format(
-                          "MMMM Do YYYY",
+                          "MMMM Do YYYY"
                         )}
                       </div>
                       <div>Days Remaining:{employee.daysRemaining} </div>
@@ -382,7 +385,7 @@ const VisaStatusManagementPage = () => {
                   .filter((employee) =>
                     `${employee.name.firstName} ${employee.name.lastName}`
                       .toLowerCase()
-                      .includes(searchQuery.toLowerCase()),
+                      .includes(searchQuery.toLowerCase())
                   )
                   .map((employee, index) => (
                     <li
@@ -394,13 +397,13 @@ const VisaStatusManagementPage = () => {
                       }}
                       onClick={() =>
                         handleDropdownClick(
-                          `${employee.name.firstName} ${employee.name.lastName}`,
+                          `${employee.name.firstName} ${employee.name.lastName}`
                         )
                       }
                     >
                       {highlightSearchTerm(
                         `${employee.name.firstName} ${employee.name.lastName}`,
-                        searchQuery,
+                        searchQuery
                       )}
                     </li>
                   ))}
@@ -441,13 +444,13 @@ const VisaStatusManagementPage = () => {
                           <div>
                             Start Date:{" "}
                             {moment(
-                              visaEmployee["Work Authorization Title"].start,
+                              visaEmployee["Work Authorization Title"].start
                             ).format("MMMM Do YYYY")}
                           </div>
                           <div>
                             End Date:{" "}
                             {moment(
-                              visaEmployee["Work Authorization Title"].end,
+                              visaEmployee["Work Authorization Title"].end
                             ).format("MMMM Do YYYY")}
                           </div>
                           <div>
@@ -459,10 +462,10 @@ const VisaStatusManagementPage = () => {
                         Next steps: {determineNextStep(visaEmployee)}
                       </TableCell>
                       <TableCell>
-                        {visaEmployee.documents.map((doc, index) => (
+                        {visaEmployee?.documents?.map((doc, index) => (
                           <div key={index}>
                             <span>
-                              document{doc.index}: {doc.documentType}
+                              document{index}: {doc.documentType}
                             </span>
                           </div>
                         ))}
