@@ -8,23 +8,20 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser, checkLoginStatus } from "../redux/authSlice";
+import { checkLoginStatus , getUserOnboardStatus} from "../redux/authSlice";
 
-// Hieu Tran NavBar
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated, loading } = useSelector(
+  const { user, isAuthenticated, loading, onboardStatus } = useSelector(
     (state) => state.userAuth
   );
 
   useEffect(() => {
     dispatch(checkLoginStatus());
+    // if (user && user.role === "employee") {
+      dispatch(getUserOnboardStatus());
+    // }
   }, [dispatch]);
-
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    window.location.href = "http://localhost:5173/user/login";
-  };
 
   if (loading) {
     return <CircularProgress />;
@@ -34,7 +31,12 @@ const Navbar = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-          HR Portal
+          {/*HR Portal*/}
+          {isAuthenticated
+            ? user.role === "hr"
+              ? "HR Portal"
+              : "Employee Portal"
+            : "Welcome, Please login"}
         </Typography>
 
         {/* If not authenticated, show Login button */}
@@ -64,7 +66,7 @@ const Navbar = () => {
             <Button color="inherit" component={Link} to="/hrHousing">
               Housing
             </Button>
-            <Button color="inherit" onClick={handleLogout}>
+            <Button color="inherit" component={Link} to={"/user/logout"}>
               Logout
             </Button>
           </>
@@ -76,16 +78,27 @@ const Navbar = () => {
             <Button color="inherit" component={Link} to="/onboarding">
               Onboarding
             </Button>
-            <Button color="inherit" component={Link} to="/personalInformation">
-              Personal Information
-            </Button>
-            <Button color="inherit" component={Link} to="/housing">
-              Housing
-            </Button>
-            <Button color="inherit" component={Link} to="/userVisaPage">
-              User Visa Page
-            </Button>
-            <Button color="inherit" onClick={handleLogout}>
+
+            {/* only show when user.onboardStatus == approved */}
+            {onboardStatus === "approved" && (
+              <>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/personalInformation"
+                >
+                  Personal Information
+                </Button>
+                <Button color="inherit" component={Link} to="/housing">
+                  Housing
+                </Button>
+                <Button color="inherit" component={Link} to="/userVisaPage">
+                  User Visa Page
+                </Button>
+              </>
+            )}
+
+            <Button color="inherit" component={Link} to={"/user/logout"}>
               Logout
             </Button>
           </>

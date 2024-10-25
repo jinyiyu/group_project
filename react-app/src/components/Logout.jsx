@@ -10,7 +10,7 @@ const Logout = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser())
-      .unwrap()
+      // .unwrap()
       .then(() => {
         alert("Logout successful");
         navigate("/"); // Redirect to homepage
