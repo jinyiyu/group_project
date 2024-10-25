@@ -8,7 +8,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { checkLoginStatus , getUserOnboardStatus} from "../store/authSlice/authSlice.js";
+import {
+  checkLoginStatus,
+  getUserOnboardStatus,
+} from "../store/authSlice/authSlice.js";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -19,7 +22,7 @@ const Navbar = () => {
   useEffect(() => {
     dispatch(checkLoginStatus());
     // if (user && user.role === "employee") {
-      dispatch(getUserOnboardStatus());
+    dispatch(getUserOnboardStatus());
     // }
   }, [dispatch]);
 
@@ -75,12 +78,19 @@ const Navbar = () => {
         {/* Nav for Employee logged in */}
         {isAuthenticated && user.role === "employee" && (
           <>
-            <Button color="inherit" component={Link} to="/onboarding">
-              Onboarding
-            </Button>
+            {onboardStatus !== "Approved" && (
+              <>
+                <Button color="inherit" component={Link} to="/onboarding">
+                  Onboarding
+                </Button>
+                <Button color="inherit" component={Link} to="/userVisaPage">
+                  User Visa Page
+                </Button>
+              </>
+            )}
 
             {/* only show when user.onboardStatus == approved */}
-            {onboardStatus === "approved" && (
+            {onboardStatus === "Approved" && (
               <>
                 <Button
                   color="inherit"
@@ -91,9 +101,6 @@ const Navbar = () => {
                 </Button>
                 <Button color="inherit" component={Link} to="/housing">
                   Housing
-                </Button>
-                <Button color="inherit" component={Link} to="/userVisaPage">
-                  User Visa Page
                 </Button>
               </>
             )}
