@@ -30,7 +30,15 @@ const HrHousingManagement = () => {
   const [selectedHouseId, setSelectedHouseId] = useState(null);
   const [activeTab, setActiveTab] = useState("facility");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const reportsPerPage = 3;
+
   const [commentInput, setCommentInput] = useState("");
+  const [commentInputs, setCommentInputs] = useState({});
+
+  // const [editingComment, setEditingComment] = useState(null);
+
+  const [editingCommentInputs, setEditingCommentInputs] = useState({});
   const [editingComment, setEditingComment] = useState(null);
 
   const [user, setUser] = useState(null);
@@ -59,6 +67,11 @@ const HrHousingManagement = () => {
       return () => clearTimeout(timer);
     }
   }, [inputError]);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    dispatch(fetchHouseDetail({ houseId: selectedHouseId, page: pageNumber }));
+  };
 
   const handleAddHouse = async () => {
     if (
@@ -107,11 +120,12 @@ const HrHousingManagement = () => {
   const handleSummaryView = (houseId) => {
     setSelectedHouseId(houseId);
     setActiveTab("facility");
-    dispatch(fetchHouseDetail(houseId));
+    setCurrentPage(1);
+    dispatch(fetchHouseDetail({ houseId, page: 1 }));
   };
 
   const handleAddComment = async (reportId, houseId) => {
-    if (!commentInput) {
+    if (!commentInputs[reportId]) {
       setInputError("Comment cannot be empty.");
       return;
     }
@@ -119,30 +133,53 @@ const HrHousingManagement = () => {
     await dispatch(
       addCommentToFacilityReport({
         reportId,
-        description: commentInput,
+        description: commentInputs[reportId],
         userId: currentUserId,
       })
     );
-    dispatch(fetchHouseDetail(houseId));
-    setCommentInput("");
+
+    // Clear only the comment input for the specific report
+    setCommentInputs((prev) => ({ ...prev, [reportId]: "" }));
+    dispatch(fetchHouseDetail({ houseId, page: currentPage }));
   };
 
+  // const handleEditComment = async (reportId, commentId, houseId) => {
+  //   if (!commentInput) {
+  //     setInputError("Comment cannot be empty.");
+  //     return;
+  //   }
+  //   await dispatch(
+  //     updateCommentToFacilityReport({
+  //       reportId,
+  //       commentId,
+  //       description: commentInput,
+  //       currentUserId,
+  //     })
+  //   );
+  //   dispatch(fetchHouseDetail({ houseId, page: currentPage }));
+  //   setCommentInput("");
+  //   setEditingComment(null);
+  // };
+
   const handleEditComment = async (reportId, commentId, houseId) => {
-    if (!commentInput) {
+    if (!editingCommentInputs[commentId]) {
       setInputError("Comment cannot be empty.");
       return;
     }
+
     await dispatch(
       updateCommentToFacilityReport({
         reportId,
         commentId,
-        description: commentInput,
+        description: editingCommentInputs[commentId],
         currentUserId,
       })
     );
-    dispatch(fetchHouseDetail(houseId));
-    setCommentInput("");
+
+    // Clear only the specific comment input for the edited comment
+    setEditingCommentInputs((prev) => ({ ...prev, [commentId]: "" }));
     setEditingComment(null);
+    dispatch(fetchHouseDetail({ houseId, page: currentPage }));
   };
 
   const handleOpenModal = (id) => {
@@ -161,6 +198,8 @@ const HrHousingManagement = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const currentReports = houseDetails?.facilityReports || [];
 
   return (
     <div>
@@ -296,54 +335,49 @@ const HrHousingManagement = () => {
                     <p>Chairs: {houseDetails.facilityInfo.chairs}</p>
 
                     <h4>Facility Reports:</h4>
-                    {houseDetails.facilityReports
-                      .slice(0, 5)
-                      .map((report, index) => (
-                        <div
-                          className="facility-report"
-                          key={report.id || index}
-                        >
-                          <h4>{report.title}</h4>
-                          <p>Description: {report.description}</p>
-                          <p>Status: {report.status}</p>
-                          <p>Created by: {report.createdBy}</p>
-                          <p>
-                            Date: {new Date(report.timestamp).toLocaleString()}
-                          </p>
+                    {currentReports.map((report) => (
+                      <div className="facility-report" key={report.id}>
+                        <h4>{report.title}</h4>
+                        <p>Description: {report.description}</p>
+                        <p>Status: {report.status}</p>
+                        <p>Created by: {report.createdBy}</p>
+                        <p>
+                          Date: {new Date(report.timestamp).toLocaleString()}
+                        </p>
 
-                          <h4>Comments:</h4>
-                          {report.comments.map((comment) => (
-                            <div className="facility-comment" key={comment.id}>
-                              <p>{comment.description}</p>
-                              <p>By: {comment.createdBy}</p>
-                              <p>
-                                At:{" "}
-                                {new Date(comment.timestamp).toLocaleString()}
-                              </p>
-                              {/* If the comment is by the current user, allow editing */}
-                              {comment.commentUserId === currentUserId && (
-                                <button
-                                  onClick={() => setEditingComment(comment.id)}
-                                >
-                                  Edit Comment
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                          <div>
-                            <textarea
-                              placeholder="Enter your comment"
-                              value={commentInput}
-                              onChange={(e) => setCommentInput(e.target.value)}
-                            ></textarea>{" "}
-                            <br />
-                            {editingComment ? (
+                        <h4>Comments:</h4>
+                        {report.comments.map((comment) => (
+                          <div className="facility-comment" key={comment.id}>
+                            <p>{comment.description}</p>
+                            <p>By: {comment.createdBy}</p>
+                            <p>
+                              At: {new Date(comment.timestamp).toLocaleString()}
+                            </p>
+                            {/* {comment.commentUserId === currentUserId && (
+                              <button
+                                onClick={() => setEditingComment(comment.id)}
+                              >
+                                Edit Comment
+                              </button>
+                            )} */}
+                            {editingComment === comment.id ? (
                               <div>
+                                <textarea
+                                  placeholder="Edit your comment"
+                                  value={editingCommentInputs[comment.id] || ""}
+                                  onChange={(e) =>
+                                    setEditingCommentInputs((prev) => ({
+                                      ...prev,
+                                      [comment.id]: e.target.value,
+                                    }))
+                                  }
+                                ></textarea>
+                                <br />
                                 <button
                                   onClick={() =>
                                     handleEditComment(
                                       report.id,
-                                      editingComment,
+                                      comment.id,
                                       house.id
                                     )
                                   }
@@ -353,24 +387,87 @@ const HrHousingManagement = () => {
                                 <button
                                   onClick={() => {
                                     setEditingComment(null);
-                                    setCommentInput("");
+                                    setEditingCommentInputs((prev) => ({
+                                      ...prev,
+                                      [comment.id]: "",
+                                    }));
                                   }}
                                 >
                                   Cancel
                                 </button>
                               </div>
                             ) : (
-                              <button
-                                onClick={() =>
-                                  handleAddComment(report.id, house.id)
-                                }
-                              >
-                                Add Comment
-                              </button>
+                              comment.commentUserId === currentUserId && (
+                                <button
+                                  onClick={() => setEditingComment(comment.id)}
+                                >
+                                  Edit Comment
+                                </button>
+                              )
                             )}
                           </div>
+                        ))}
+
+                        <div>
+                          <textarea
+                            placeholder="Enter your comment"
+                            value={commentInputs[report.id] || ""}
+                            onChange={(e) =>
+                              setCommentInputs((prev) => ({
+                                ...prev,
+                                [report.id]: e.target.value,
+                              }))
+                            }
+                          ></textarea>
+                          <br />
+                          {editingComment ? (
+                            <div>
+                              <button
+                                onClick={() =>
+                                  handleEditComment(
+                                    report.id,
+                                    editingComment,
+                                    house.id
+                                  )
+                                }
+                              >
+                                Update Comment
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingComment(null);
+                                  setCommentInput("");
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                handleAddComment(report.id, house.id)
+                              }
+                            >
+                              Add Comment
+                            </button>
+                          )}
                         </div>
-                      ))}
+                      </div>
+                    ))}
+                    <div className="pagination-controls">
+                      <button
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentReports.length < reportsPerPage}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                 )}
 

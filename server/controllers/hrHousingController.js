@@ -33,6 +33,8 @@ exports.getAllHouses = async (req, res) => {
 // Get house detail by house id
 exports.getHouseDetail = async (req, res) => {
   const { houseId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 3;
 
   try {
     const house = await House.findById(houseId);
@@ -51,7 +53,14 @@ exports.getHouseDetail = async (req, res) => {
       createdBy: { $in: employees.map((emp) => emp._id) },
     })
       .populate("createdBy", "userName")
-      .populate("comments.createdBy", "userName");
+      .populate("comments.createdBy", "userName")
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalReports = await Report.countDocuments({
+      createdBy: { $in: employees.map((emp) => emp._id) },
+    });
+    const totalReportPages = Math.ceil(totalReports / limit);
 
     const houseDetails = {
       id: house._id,
@@ -90,6 +99,10 @@ exports.getHouseDetail = async (req, res) => {
         email: employee.userProfile?.email || "N/A",
         car: employee.car || "N/A",
       })),
+      pagination: {
+        currentPage: page,
+        totalReportPages,
+      },
     };
 
     // Send the response

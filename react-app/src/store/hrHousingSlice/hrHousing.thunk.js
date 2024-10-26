@@ -17,9 +17,11 @@ export const fetchAllHouses = createAsyncThunk(
 
 export const fetchHouseDetail = createAsyncThunk(
   "hrHousing/fetchHouseDetail",
-  async (houseId, { rejectWithValue }) => {
+  async ({ houseId, page }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${BASED_URI}/hr/housing/${houseId}`);
+      const response = await axios.get(
+        `${BASED_URI}/hr/housing/${houseId}?page=${page}`
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

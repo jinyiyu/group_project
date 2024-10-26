@@ -11,7 +11,7 @@ import {
   Select,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import { fetchUserThunk } from "../store/userSlice/userThunks";
 import { fetchDocumentThunk } from "../store/documentSlice/documentThunk";
@@ -42,9 +42,11 @@ const UserForm = () => {
   const [other, setOther] = useState("");
   const BASE_URL = "http://localhost:3000";
 
-
   useEffect(() => {
-    if (user.onboardStatus == "pending") {
+    if (
+      (user.onboardStatus == "pending") |
+      (user.onboardStatus == "approved")
+    ) {
       disableAllInputs();
     }
   });
@@ -270,7 +272,7 @@ const UserForm = () => {
             onChange={handleChange}
             required={true}
           />
-{/* 
+          {/* 
           <InputField
             name="address.state"
             label="State"
@@ -278,7 +280,7 @@ const UserForm = () => {
             required={true}
           /> */}
 
-          <StateSelector disabled={MUIDisabled} width={"12vw"}/>
+          <StateSelector disabled={MUIDisabled} width={"12vw"} />
 
           <InputField
             name="address.zip"
@@ -532,8 +534,11 @@ const UserForm = () => {
             "https://bfgp.s3.amazonaws.com"
           ) ? (
             <>
-              <Button variant="outlined" color="info" onClick={() => 
-    navigate('/userVisaPage')}>
+              <Button
+                variant="outlined"
+                color="info"
+                onClick={() => navigate("/userVisaPage")}
+              >
                 track your visa status
               </Button>
             </>
@@ -611,7 +616,7 @@ const UserForm = () => {
               label="Do you have a driver’s license?"
               onChange={handleLicenseChange}
               name="employment.status"
-              disabled={user.onboardStatus=="pending"}
+              disabled={user.onboardStatus == "pending"}
             >
               <MenuItem value="yes">Yes</MenuItem>
               <MenuItem value="no">No</MenuItem>
@@ -813,7 +818,8 @@ const UserForm = () => {
         )}{" "}
       </form>
 
-      {user.onboardStatus !== "pending" ? (
+      {user.onboardStatus == "pending" ||
+      user.onboardStatus == "not started" ? (
         <>
           <LineDivider label="Add Emergency Contact" />
           <Box

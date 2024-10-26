@@ -31,6 +31,7 @@ const getProfile = async (req, res) => {
       "contactInfo.cellPhone": 1,
     });
 
+    console.log(users);
     // Map users to the desired profile format
     const profiles = users.map((user) => ({
       id: user._id,
@@ -41,7 +42,7 @@ const getProfile = async (req, res) => {
       },
       SSN: user.userProfile.SSN,
       "Work Authorization Title": user.employment.status,
-      "Phone Number": user.contactInfo.cellPhone,
+      "Phone Number": user.contactInfo?.cellPhone || "N/A",
       Email: user.userProfile.email,
     }));
 
