@@ -92,7 +92,7 @@ const driverLicenseSchema = new mongoose.Schema({
   number: {
     type: String,
     default: "",
-    required: true,
+    // required: true,
   },
   expirationDate: {
     type: Date,

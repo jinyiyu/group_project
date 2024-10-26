@@ -35,7 +35,6 @@ const LoginHOC = (WrappedComponent) => {
         return <Navigate to="/onboarding" />;
       }
     }
-
     return <WrappedComponent {...props} />;
   };
 };
@@ -138,7 +137,7 @@ function App() {
               element={<ProtectedEmployeeSummaryView />}
             />
             {/* <Housing /> */}
-            <Route path={"housing"} element={<ProtectedHousing />} />
+            <Route path="housing" element={<ProtectedHousing />} />
             {/* <UserVisaPage /> */}
             <Route path="userVisaPage" element={<ProtectedUserVisaPage />} />
             {/* <OnBoarding /> */}

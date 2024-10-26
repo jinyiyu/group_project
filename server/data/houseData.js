@@ -1,7 +1,7 @@
 const seedHouses = [
   {
     address: "123 Maple Street",
-    numOfResidents: 3,
+    numOfResidents: 0,
     landlord: {
       name: "John Doe",
       phone: "555-1234",
@@ -17,7 +17,7 @@ const seedHouses = [
   },
   {
     address: "456 Oak Avenue",
-    numOfResidents: 4,
+    numOfResidents: 0,
     landlord: {
       name: "Jane Smith",
       phone: "555-5678",

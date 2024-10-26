@@ -4,12 +4,18 @@ import { Alert, Chip, Stack } from "@mui/material";
 
 const Feedback = () => {
   const user = useSelector((state) => state.user);
+  const getColor = {
+    pending: "info",
+    "not started": "info",
+    rejected: "warning",
+    approved: "success",
+  };
 
   return (
     <>
       <Chip
         label={`Status: ${user.onboardStatus}`}
-        color={user.onboardStatus == "pending" ? "info" : "warning"}
+        color={getColor[user.onboardStatus]}
         sx={{ margin: "1vh", fontSize: "2vh", borderRadius: "1vh" }}
       />
 

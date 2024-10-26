@@ -57,6 +57,20 @@ const seedDatabase = async () => {
     const createdUsers = await User.insertMany(usersWithHashedPasswords);
     const userIds = createdUsers.map((user) => user._id);
 
+    // Calculate numOfResidents for each house based on assigned users
+    const houseResidentCounts = seedUsers.reduce((acc, user) => {
+      const houseId = user.house.toString();
+      acc[houseId] = (acc[houseId] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Update each house's numOfResidents
+    await Promise.all(
+      Object.entries(houseResidentCounts).map(async ([houseId, count]) => {
+        await House.findByIdAndUpdate(houseId, { numOfResidents: count });
+      })
+    );
+
     // Update seedDocument with actual user IDs - Hieu Tran edit
     const documentsWithUsers = seedDocument.map((document, index) => ({
       ...document,

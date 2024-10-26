@@ -51,9 +51,30 @@ const ApplicationDetails = ({ application, onBack }) => {
   return (
     <div>
       <h2>Onboarding Applications</h2>
-      <h2>Application Details for {application.fullName}</h2>
-      <p>Email: {application.email}</p>
-      <p>Status: {application.onboardStatus}</p>
+      <h3>Application Details for {application.fullName}</h3>
+      <p>Full Name: {application.fullName}</p>
+      <p>
+        Address:{" "}
+        {application.address && (
+          <span>
+            {application.address.apt} {application.address.strName}{" "}
+            {application.address.city} {application.address.state}{" "}
+            {application.address.zip}
+          </span>
+        )}
+      </p>
+      <ul>
+        <h3>Contact Info:</h3>
+        <li>Email: {application.email}</li>
+        {application.phone.cellPhone && (
+          <li>Home: {application.phone.cellPhone}</li>
+        )}
+        {application.phone.workPhone && (
+          <li>Work: {application.phone.workPhone}</li>
+        )}
+      </ul>
+
+      <p>Onboarding Status: {application.onboardStatus}</p>
       <h3>Documents</h3>
       <ul>
         {application.form?.documents?.map((doc) => (
